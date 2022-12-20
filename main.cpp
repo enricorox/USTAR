@@ -44,6 +44,12 @@ int main(int argc, char **argv) {
 
     DBG dbg(params.input_file, params.kmer_size);
     dbg.print_info();
-    dbg.verify_overlaps();
-    return 0;
+
+    if(dbg.verify_overlaps() && dbg.validate())
+        cout << "DBG is correct!" << endl;
+    else
+        cout << "DBG is NOT correct!" << endl;
+
+
+    return EXIT_SUCCESS;
 }

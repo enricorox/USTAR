@@ -4,11 +4,10 @@
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <cstring>
 #include "DBG.h"
 
-void DBG::parse_bcalm_file(const string &bcalm_file_name) {
+void DBG::parse_bcalm_file() {
     ifstream bcalm_file;
     bcalm_file.open(bcalm_file_name);
 
@@ -92,29 +91,30 @@ void DBG::parse_bcalm_file(const string &bcalm_file_name) {
 DBG::DBG(const string &bcalm_file_name, int kmer_size){
     this->bcalm_file_name = bcalm_file_name;
     this->kmer_size = kmer_size;
-    parse_bcalm_file(bcalm_file_name);
 
-    for(auto &node : nodes) {
+    // build the graph
+    parse_bcalm_file();
+
+    // compute graph parameters
+    for(const auto &node : nodes) {
         n_edges += node.edges.size();
         n_kmers += node.abundances.size();
     }
 }
 
-DBG::~DBG() {
-
-}
+DBG::~DBG() = default;
 
 void DBG::print_info() {
     cout << "Info for " << bcalm_file_name << ":" << endl;
     cout << "\tnumber of kmers: " << n_kmers << endl;
     cout << "\tnumber of nodes: " << nodes.size() << endl;
     cout << "\tnumber of edges: " << n_edges << endl;
-    cout << "\taverage number of edges: " << 1.0 * n_edges / nodes.size() << endl;
+    cout << "\taverage number of edges: " << (double) n_edges / (double) nodes.size() << endl;
 }
 
 bool DBG::verify_overlaps() {
-    for(auto &node : nodes){
-        for(auto &edge : node.edges)
+    for(const auto &node : nodes){
+        for(const auto &edge : node.edges)
             if(!overlaps(node, edge))
                 return false;
     }
@@ -122,5 +122,80 @@ bool DBG::verify_overlaps() {
 }
 
 bool DBG::overlaps(const node_t &node, const edge_t &edge){
+    string u1, u2;
+    if (edge.forward) // + --> +/-
+        u1 = node.unitig.substr(node.unitig.length() - kmer_size + 1);
+    else // - --> +/-
+        u1 = reverse_complement(node.unitig.substr(0, kmer_size - 1));
 
+    if(edge.to_forward) // +/- --> +
+        u2 = nodes[edge.successor].unitig.substr(0, kmer_size - 1);
+    else  // +/- --> -
+        u2 = reverse_complement(nodes[edge.successor].unitig.substr(nodes[edge.successor].unitig.length() - kmer_size + 1));
+
+    return u1 == u2;
+}
+
+string DBG::reverse_complement(const string &s) {
+    string rc(s);
+
+    char c;
+    for(int i = 0; i < s.length(); i++) {
+        switch (s[i]) {
+            case 'A':
+            case 'a':
+                c = 'T';
+                break;
+            case 'C':
+            case 'c':
+                c = 'G';
+                break;
+            case 'T':
+            case 't':
+                c = 'A';
+                break;
+            case 'G':
+            case 'g':
+                c = 'C';
+                break;
+        }
+        rc[s.length() - 1 - i] = c;
+    }
+    return rc;
+}
+
+void DBG::to_bcalm_file(const string &file_name) {
+    ofstream file;
+    file.open(file_name);
+
+    int id = 0;
+    for(const auto &node : nodes){
+        // >3 LN:i:33 ab:Z:2 2 3    L:+:138996:+
+        // CAAAACCAGACATAATAAAAATACTAATTAATG
+        file << ">" << id++ << " LN:i:" << node.length << " ab:Z:";
+        for(auto &ab : node.abundances)
+            file << ab << " ";
+        for(auto &edge : node.edges)
+            file << "L:" << (edge.forward?"+":"-") << ":" << edge.successor << ":" << (edge.to_forward?"+":"-") << " ";
+        file << "\n" << node.unitig << "\n";
+    }
+
+    file.close();
+}
+
+bool DBG::validate(){
+    string test = "USTAR-test.fasta";
+    to_bcalm_file(test);
+
+    ifstream s1, s2;
+    s1.open(bcalm_file_name);
+    s2.open(test);
+
+    string tok1, tok2;
+    while(s1 >> tok1 && s2 >> tok2)
+        if(tok1 != tok2) {
+            cout << tok1 << " (" << tok1.length() <<") != " << tok2 << " (" << tok2.length() << ")" << endl;
+            return false;
+        }
+    return true;
 }

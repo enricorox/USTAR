@@ -36,7 +36,9 @@ class DBG{
      * Parse the BCALM2 file
      * @param bcalm_file_name
      */
-    void parse_bcalm_file(const string &bcalm_file_name);
+    void parse_bcalm_file();
+
+    bool overlaps(const node_t &node, const edge_t &edge);
 
 public:
     /**
@@ -51,7 +53,11 @@ public:
 
     bool verify_overlaps();
 
-    bool overlaps(const node_t &node, const edge_t &edge);
+    void to_bcalm_file(const string &file_name);
+
+    bool validate();
+
+    static string reverse_complement(const string &s);
 };
 
 #endif //USTAR_DBG_H
