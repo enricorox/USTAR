@@ -1,0 +1,60 @@
+#!/bin/bash
+
+set -e
+
+# path for dsk and dsk2ascii
+PATH="/home/enrico/bio-bin/dsk/bin/:$PATH"
+
+DEBUG=1
+
+help(){
+   # Display Help
+   echo
+   echo "Syntax: ./$(basename "$0") <kmer_size> <file1> <file2>"
+   echo "This scripts takes as input the value of k-mer size, and 2 fasta files."
+   echo "It outputs SUCCESS if they represent the same set of k-mers, and gives a WARNING otherwise."
+   echo "NOTE1: A k-mer and its reverse complement is treated as equal."
+   echo "NOTE2: Counts must not be in def-lines or in separate file."
+   echo
+   exit
+}
+
+validate(){
+  k=$1
+  fasta1=$2
+  fasta2=$3
+  if [ ! -f "$fasta1" ]; then
+    echo "The file '$2' does not exist."
+    exit
+  fi
+  if [ ! -f "$fasta2" ]; then
+    echo "The file '$3' does not exist."
+    exit
+  fi
+
+  echo "Checking whether file '$(basename "$fasta1")' and file '$(basename "$fasta2")' contain same $k-mers...";
+  dsk -file "$fasta1" -kmer-size "$k" -abundance-min 1  -verbose 0 -out unitigs.h5
+  dsk -file "$fasta2" -kmer-size "$k" -abundance-min 1  -verbose 0 -out spss.h5
+  dsk2ascii -file unitigs.h5 -out unitigs.txt  -verbose 0
+  dsk2ascii -file spss.h5 -out spss.txt  -verbose 0
+
+  cut -d' ' -f1 < unitigs.txt | sort  -o sorted_unitigs.txt;
+  cut -d' ' -f1 < spss.txt | sort  -o sorted_spss.txt;
+
+  if [[ $(cmp sorted_unitigs.txt sorted_spss.txt) ]]; then
+    echo '### SUCCESS: The two files contain same k-mers! ###'
+  else
+    echo '### WARNING: Files contain different k-mers! ###'
+  fi
+
+  if [[ DEBUG -eq 0 ]];  then
+    rm -rf sorted_spss.txt spss.txt unitigs.txt unitigs.h5 spss.h5
+    rm -rf sorted_unitigs.txt
+  fi
+}
+
+if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+  help
+fi
+
+validate "$1" "$2" "$3"

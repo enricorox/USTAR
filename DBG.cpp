@@ -78,6 +78,7 @@ void DBG::parse_bcalm_file() {
         // check consistency
         if((node.unitig.size() - kmer_size + 1) != node.abundances.size()){
             cerr << "Bad formatted input file: wrong number of abundances!" << endl;
+            cerr << "Also make sure that kmer_size=" << kmer_size << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -96,10 +97,13 @@ DBG::DBG(const string &bcalm_file_name, int kmer_size){
     parse_bcalm_file();
 
     // compute graph parameters
+    size_t sum_unitig_length = 0;
     for(const auto &node : nodes) {
         n_edges += node.edges.size();
         n_kmers += node.abundances.size();
+        sum_unitig_length += node.length;
     }
+    avg_unitig_len = (double) sum_unitig_length / (double) nodes.size();
 }
 
 DBG::~DBG() = default;
@@ -110,6 +114,7 @@ void DBG::print_info() {
     cout << "\tnumber of nodes: " << nodes.size() << endl;
     cout << "\tnumber of edges: " << n_edges << endl;
     cout << "\taverage number of edges: " << (double) n_edges / (double) nodes.size() << endl;
+    cout << "\taverage unitig length: " << avg_unitig_len << endl;
 }
 
 bool DBG::verify_overlaps() {
@@ -197,5 +202,39 @@ bool DBG::validate(){
             cout << tok1 << " (" << tok1.length() <<") != " << tok2 << " (" << tok2.length() << ")" << endl;
             return false;
         }
+    return true;
+}
+
+string DBG::spell(const vector<node_t *> &path_nodes, const vector<edge_t *> &path_edges) {
+    if(!check_path_consistency(path_nodes, path_edges))
+        return "";
+
+    string simplitig;
+    if(path_edges.at(0)->forward)
+        simplitig = path_nodes.at(0)->unitig;
+    else
+        simplitig = reverse_complement(path_nodes.at(0)->unitig);
+
+    for(int i = 1; i < path_edges.size(); i++){
+
+    }
+    return simplitig;
+}
+
+bool DBG::check_path_consistency(const vector<node_t *> &path_nodes, const vector<edge_t *> &path_edges) {
+    if(path_edges.size() != path_nodes.size() - 1)
+        return false;
+
+    bool last_forward = path_edges.at(0)->to_forward;
+    for(int i = 1; i < path_edges.size(); i++){
+        // check node-->edge-->node consistency
+        if(&nodes.at(path_edges.at(i - 1)->successor) != path_nodes.at(i))
+            return false;
+
+        // check edge signs consistency
+        if(last_forward != path_edges.at(i)->forward)
+            return false;
+        last_forward = path_edges.at(i)->to_forward;
+    }
     return true;
 }

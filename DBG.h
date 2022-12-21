@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#define MAX_LINE_LEN 10000
+#define MAX_LINE_LEN 100000
 
 using namespace std;
 
@@ -28,10 +28,11 @@ struct node_t{
 
 class DBG{
     string bcalm_file_name;
-    int kmer_size;
+    int kmer_size = 0;
     vector<node_t> nodes;
     size_t n_edges = 0;
     size_t n_kmers = 0;
+    double avg_unitig_len = 0;
     /**
      * Parse the BCALM2 file
      * @param bcalm_file_name
@@ -58,6 +59,10 @@ public:
     bool validate();
 
     static string reverse_complement(const string &s);
+
+    string spell(const vector<node_t *> &path_nodes, const vector<edge_t *> &path_edges);
+
+    bool check_path_consistency(const vector<node_t *> &path_nodes, const vector<edge_t *> &path_edges);
 };
 
 #endif //USTAR_DBG_H
