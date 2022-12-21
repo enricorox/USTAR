@@ -17,9 +17,9 @@ void DBG::parse_bcalm_file() {
     }
 
     string line;
-    int serial;
-    char dyn_line[MAX_LINE_LEN];
     while(getline(bcalm_file, line)){
+        size_t serial;
+        char dyn_line[MAX_LINE_LEN];
         // make a new node
         node_t node;
 
@@ -40,7 +40,7 @@ void DBG::parse_bcalm_file() {
 
         // find BCALM2 sequence serial and unitig length
         // format: (ignore 1 char) (read 1 integer) (ignore 5 char) (read 1 integer) (read 1 string)
-        sscanf(line.c_str(), "%*c %d %*5c %d %[^\n]s", &serial, &node.length, dyn_line);
+        sscanf(line.c_str(), "%*c %zd %*5c %d %[^\n]s", &serial, &node.length, dyn_line);
 
         // check consistency
         if(serial != nodes.size()){
@@ -108,10 +108,10 @@ DBG::DBG(const string &bcalm_file_name, int kmer_size){
         n_arcs += node.arcs.size();
         n_kmers += node.abundances.size();
         sum_unitig_length += node.length;
-        sum_abundances += node.avg_abundance * node.abundances.size();
+        sum_abundances += node.avg_abundance * (double) node.abundances.size();
     }
     avg_unitig_len = (double) sum_unitig_length / (double) nodes.size();
-    avg_abundances = sum_abundances / n_kmers;
+    avg_abundances = sum_abundances / (double) n_kmers;
 }
 
 DBG::~DBG() = default;
@@ -154,7 +154,7 @@ string DBG::reverse_complement(const string &s) {
     string rc(s);
 
     char c;
-    for(int i = 0; i < s.length(); i++) {
+    for(size_t i = 0; i < s.length(); i++) {
         switch (s[i]) {
             case 'A':
             case 'a':
@@ -172,6 +172,8 @@ string DBG::reverse_complement(const string &s) {
             case 'g':
                 c = 'C';
                 break;
+            default:
+                c = 'N';
         }
         rc[s.length() - 1 - i] = c;
     }
@@ -214,55 +216,6 @@ bool DBG::validate(){
     return true;
 }
 
-/*
-string DBG::spell(const vector<const node_t *> &path_nodes, const vector<const arcs_t *> &path_arcs) {
-    if(!check_path_consistency(path_nodes, path_arcs)) {
-        cerr << "This path is not consistent!" << endl;
-        exit(EXIT_FAILURE);
-    }else
-        cout << "Path is consistent" << endl;
-
-    string simplitig;
-    if(path_arcs.empty() || path_arcs.at(0)->forward)
-        simplitig = path_nodes.at(0)->unitig;
-    else
-        simplitig = reverse_complement(path_nodes.at(0)->unitig);
-
-    for(int i = 0; i < path_arcs.size(); i++){
-        if(path_arcs.at(i)->to_forward)
-            simplitig += path_nodes.at(i + 1)->unitig.substr(kmer_size - 1);
-        else
-            simplitig += reverse_complement(path_nodes.at(i + 1)->unitig.substr(kmer_size - 1));
-    }
-    return simplitig;
-}
-*/
-bool DBG::check_path_consistency(const vector<const node_t *> &path_nodes, const vector<const arcs_t *> &path_arcs) {
-    if(path_arcs.size() != path_nodes.size() - 1) {
-        return false;
-    }
-    if(path_arcs.empty())
-        return true;
-
-    cout << "checking consistency..." << endl;
-    bool last_forward = path_arcs.at(0)->to_forward;
-    for(int i = 1; i < path_arcs.size(); i++){
-        // check node-->edge-->node consistency
-        if(&nodes.at(path_arcs.at(i - 1)->successor) != path_nodes.at(i))
-            return false;
-
-        // check edge signs consistency
-        if(last_forward != path_arcs.at(i)->forward)
-            return false;
-        last_forward = path_arcs.at(i)->to_forward;
-    }
-    return true;
-}
-
-const vector<node_t> * DBG::get_nodes(){
-    return &nodes;
-}
-
 void DBG::get_nodes_from(int node, vector<size_t> &to_nodes, vector<bool> &forwards) {
     to_nodes.clear();
     forwards.clear();
@@ -297,7 +250,7 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
     else
         simplitig = reverse_complement(nodes.at(path_nodes.at(0)).unitig);
 
-    for(int i = 1; i < path_nodes.size(); i++){
+    for(size_t i = 1; i < path_nodes.size(); i++){
         if(forwards.at(i))
             simplitig += nodes.at(path_nodes.at(i)).unitig.substr(kmer_size - 1);
         else
@@ -308,13 +261,28 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
 }
 
 void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts) {
-    for (int i = 0; i < path_nodes.size(); i++)
+    for (size_t i = 0; i < path_nodes.size(); i++)
         if (forwards.at(i))
-            for (size_t k = 0; k < nodes.at(path_nodes.at(i)).abundances.size(); k++)
-                counts.push_back(nodes.at(path_nodes.at(i)).abundances.at(k));
+            for(uint32_t abundance : nodes.at(path_nodes.at(i)).abundances)
+                counts.push_back(abundance);
         else
-            for (size_t k = nodes.at(path_nodes.at(i)).abundances.size() - 1; k > -1; k--)
+            for(int k = int (nodes.at(path_nodes.at(i)).abundances.size() - 1); k > -1; k--)
                 counts.push_back(nodes.at(path_nodes.at(i)).abundances.at(k));
+}
+
+bool DBG::check_path_consistency(const vector<size_t> &path_nodes, const vector<bool> &forwards) {
+    if(path_nodes.size() != forwards.size())
+        return false;
+
+    for(size_t i = 0; i < path_nodes.size() - 1; i++){
+        bool done = false;
+        for(auto arc : nodes.at(path_nodes.at(i)).arcs)
+            if(arc.forward == forwards.at(i) && arc.successor == path_nodes.at(i + 1))
+                done = true;
+        if(!done)
+            return false;
+    }
+    return true;
 }
 
 

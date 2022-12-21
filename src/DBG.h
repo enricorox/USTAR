@@ -62,17 +62,13 @@ public:
 
     static string reverse_complement(const string &s);
 
-    // string spell(const vector<const node_t *> &path_nodes, const vector<const arcs_t *> &path_arcs);
-
-    bool check_path_consistency(const vector<const node_t *> &path_nodes, const vector<const arcs_t *> &path_arcs);
-
-    const vector<node_t> * get_nodes();
-
     void get_nodes_from(int node, vector<size_t> &to_nodes, vector<bool> &forwards);
 
     void get_consistent_nodes_from(int node, bool forward, vector<size_t> &to_nodes, vector<bool> &forwards);
 
     string spell(const vector<size_t> &path_nodes, const vector<bool> &forwards);
+
+    bool check_path_consistency(const vector<size_t> &path_nodes, const vector<bool> &forwards);
 
     void get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts);
 };

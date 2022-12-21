@@ -11,14 +11,11 @@ using namespace std;
 
 class SPSS{
     DBG *dbg;
-    const vector<node_t> *nodes;
 
 public:
     explicit SPSS(DBG *dbg);
 
-    // void test();
-
-    void simpler_test();
+    void simpler_test(const vector<size_t> &nodes, const vector<bool> &forwards);
 };
 
 #endif //USTAR_SPSS_H

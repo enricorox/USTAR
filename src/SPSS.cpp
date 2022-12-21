@@ -7,31 +7,13 @@
 
 SPSS::SPSS(DBG *dbg){
     this->dbg = dbg;
-    nodes = dbg->get_nodes();
 }
 
-/*
-void SPSS::test() {
-    vector<const node_t *> path_nodes;
-    vector<const arcs_t *> path_arcs;
-
-    const node_t *node = &nodes->at(7);
-    path_nodes.push_back(node);
-    path_arcs.push_back(&node->arcs.at(0));
-
-    node = &nodes->at(node->arcs.at(0).successor);
-    path_nodes.push_back(node);
-    path_arcs.push_back(&node->arcs.at(2));
-    node = &nodes->at(node->arcs.at(2).successor);
-    path_nodes.push_back(node);
-
-    string contig = dbg->spell(path_nodes, path_arcs);
-    cout << contig << " (" << contig.length() << ")" << endl;
-}
-*/
-void SPSS::simpler_test() {
-    vector<size_t> nodes = {7, 1578, 101636};
-    vector<bool> forwards = {true, true, true};
+void SPSS::simpler_test(const vector<size_t> &nodes, const vector<bool> &forwards) {
+    if(dbg->check_path_consistency(nodes, forwards))
+        cout << "Path is consistent!" << endl;
+    else
+        cout << "Path is NOT consistent!" << endl;
 
     string contig = dbg->spell(nodes, forwards);
     cout << contig << " (" << contig.length() << ")" << endl;

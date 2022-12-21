@@ -64,7 +64,17 @@ int main(int argc, char **argv) {
     }
 
     SPSS spss(&dbg);
-    spss.simpler_test();
+    vector<size_t> nodes = {7, 157883, 101636};
+    vector<bool> forwards = {true, true, true};
+    spss.simpler_test(nodes, forwards);
+
+    nodes = {7, 157883, 82391};
+    forwards = {true, true, true};
+    spss.simpler_test(nodes, forwards);
+
+    nodes = {7, 157883, 114132};
+    forwards = {true, true, true};
+    spss.simpler_test(nodes, forwards);
 
     return EXIT_SUCCESS;
 }
