@@ -3,4 +3,4 @@ project(USTAR)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(USTAR main.cpp DBG.cpp)
+add_executable(USTAR src/main.cpp src/DBG.cpp src/SPSS.cpp)
