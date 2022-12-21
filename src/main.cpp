@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 
     // make an SPSS
     SPSS spss(&dbg);
-
+    spss.test();
 
     return EXIT_SUCCESS;
 }

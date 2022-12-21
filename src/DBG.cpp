@@ -138,6 +138,7 @@ void DBG::print_info() {
     cout << "\taverage number of arcs: " << (double) n_arcs / (double) nodes.size() << endl;
     cout << "\taverage unitig length: " << avg_unitig_len << endl;
     cout << "\taverage abundances: " << avg_abundances << endl;
+    cout << endl;
 }
 
 bool DBG::verify_overlaps() {
@@ -309,6 +310,14 @@ bool DBG::check_path_consistency(const vector<size_t> &path_nodes, const vector<
             return false;
     }
     return true;
+}
+
+uint32_t DBG::get_n_kmers() const {
+    return n_kmers;
+}
+
+uint32_t DBG::get_n_nodes() const {
+    return nodes.size();
 }
 
 
