@@ -9,6 +9,7 @@ using namespace std;
 
 struct params_t{
     string input_file = "../experiments/k31.a1.unitigs.fa";
+    string output_file = "out.ustar.fasta";
     int kmer_size = 31;
     bool verify_input = false;
 };

@@ -15,7 +15,7 @@ class SPSS{
 public:
     explicit SPSS(DBG *dbg);
 
-    void simpler_test(const vector<size_t> &nodes, const vector<bool> &forwards);
+    void test();
 };
 
 #endif //USTAR_SPSS_H

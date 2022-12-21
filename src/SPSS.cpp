@@ -9,18 +9,26 @@ SPSS::SPSS(DBG *dbg){
     this->dbg = dbg;
 }
 
-void SPSS::simpler_test(const vector<size_t> &nodes, const vector<bool> &forwards) {
-    if(dbg->check_path_consistency(nodes, forwards))
-        cout << "Path is consistent!" << endl;
-    else
-        cout << "Path is NOT consistent!" << endl;
+void SPSS::test() {
+    vector<vector<size_t>> nodes_v = {{7, 157883, 101636}, {7, 157883, 82391}, {7, 157883, 114132}};
+    vector<vector<bool>> forwards_v = {{true, true, true}, {true, true, true}, {true, true, true}};
 
-    string contig = dbg->spell(nodes, forwards);
-    cout << contig << " (" << contig.length() << ")" << endl;
+    for(int i = 0; i < nodes_v.size(); i++) {
+        auto &nodes = nodes_v.at(i);
+        auto &forwards = forwards_v.at(i);
 
-    vector<uint32_t> counts;
-    dbg->get_counts(nodes, forwards, counts);
-    for(auto count : counts)
-        cout << count << " ";
-    cout << endl;
+        if (dbg->check_path_consistency(nodes, forwards))
+            cout << "Path is consistent!" << endl;
+        else
+            cout << "Path is NOT consistent!" << endl;
+
+        string contig = dbg->spell(nodes, forwards);
+        cout << contig << " (" << contig.length() << ")" << endl;
+
+        vector<uint32_t> counts;
+        dbg->get_counts(nodes, forwards, counts);
+        for (auto count: counts)
+            cout << count << " ";
+        cout << endl;
+    }
 }
