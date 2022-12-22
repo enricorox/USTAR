@@ -43,7 +43,7 @@ void SPSS::test() {
     cout << contig << " (" << contig.length() << ")" << endl;
 }
 
-void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards) {
+void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
     path_nodes.clear(); path_forwards.clear();
 
     vector<size_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
@@ -76,23 +76,27 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
     }
 
     // backward extending
-    node = seed;
-    forward = seed_forward;
-    while(true){
-        dbg->get_consistent_nodes_from(node, !forward, to_nodes, to_forwards, saturated);
-        if(to_nodes.empty())
-            break;
-        node = to_nodes.at(0);
-        forward = to_forwards.at(0);
-        saturated.at(node) = true;
-        path_nodes_d.push_front(node);
-        path_forwards_d.push_front(forward);
+    if(two_way) {
+        node = seed;
+        forward = seed_forward;
+        while (true) {
+            dbg->get_consistent_nodes_from(node, !forward, to_nodes, to_forwards, saturated);
+            if (to_nodes.empty())
+                break;
+            node = to_nodes.at(0);
+            forward = to_forwards.at(0);
+            saturated.at(node) = true;
+            path_nodes_d.push_front(node);
+            path_forwards_d.push_front(forward);
+        }
     }
 
     for(size_t i = 0; i < path_forwards_d.size(); i++){
         path_nodes.push_back(path_nodes_d.at(i));
         path_forwards.push_back(path_forwards_d.at(i));
     }
+    if(!dbg->check_path_consistency(path_nodes, path_forwards))
+        cerr << "Inconsistent path!\n";
 }
 
 void SPSS::extract_simplitigs() {
@@ -103,7 +107,7 @@ void SPSS::extract_simplitigs() {
     vector<size_t> path_nodes; vector<bool> path_forwards;
     for(size_t seed = 0; seed < n_nodes; seed++){
         if(saturated[seed]) continue;
-        extends(seed, path_nodes, path_forwards);
+        extends(seed, path_nodes, path_forwards, false);
         simplitigs_path_nodes.push_back(path_nodes);
         simplitigs_path_forwards.push_back(path_forwards);
     }
@@ -135,4 +139,23 @@ void SPSS::to_counts_file(const string &file_name) {
             counts_file << c << "\n";
     }
     counts_file.close();
+}
+
+void SPSS::print_info(){
+    if(n_simplitigs == 0){
+        cerr << "Need to extract simplitigs first!" << endl;
+        exit(EXIT_FAILURE);
+    }
+    size_t c_length = 0;
+    for(auto &simplitig : simplitigs_path_nodes){
+        c_length += dbg->get_node(simplitig.at(0)).length;
+        for(size_t i = 1; i < simplitig.size(); i++)
+            c_length += dbg->get_node(simplitig.at(i)).length - dbg->get_kmer_size() + 1;
+    }
+
+    cout << "Simplitigs info:" << endl;
+    cout << "\tnumber of simplitigs: NS = " << n_simplitigs << endl;
+    cout << "\tcumulative length: CL = " << c_length << endl;
+    cout << "\taverage simplitigs length: " << (double) c_length / (double) n_simplitigs << endl;
+    cout << endl;
 }

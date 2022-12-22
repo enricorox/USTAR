@@ -6,6 +6,7 @@
 #define USTAR_SPSS_H
 
 #include "DBG.h"
+#include "Encoder.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ class SPSS{
     // saturated nodes
     vector<bool> saturated;
 
-    void extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards);
+    void extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way=true);
 
 public:
     explicit SPSS(DBG *dbg);
@@ -33,6 +34,8 @@ public:
     void to_counts_file(const string &file_name);
 
     void test();
+
+    void print_info();
 };
 
 #endif //USTAR_SPSS_H
