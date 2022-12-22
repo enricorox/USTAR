@@ -138,13 +138,13 @@ DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size){
 DBG::~DBG() = default;
 
 void DBG::print_info() {
-    cout << "Info for " << bcalm_file_name << ":" << endl;
-    cout << "\tnumber of kmers: " << n_kmers << endl;
-    cout << "\tnumber of nodes: " << nodes.size() << endl;
-    cout << "\tnumber of arcs: " << n_arcs << endl;
-    cout << "\taverage number of arcs: " << (double) n_arcs / (double) nodes.size() << endl;
-    cout << "\taverage unitig length: " << avg_unitig_len << endl;
-    cout << "\taverage abundances: " << avg_abundances << endl;
+    cout << "Info for " << bcalm_file_name << ":\n";
+    cout << "\tnumber of kmers: " << n_kmers << "\n";
+    cout << "\tnumber of nodes: " << nodes.size() << "\n";
+    cout << "\tnumber of arcs: " << n_arcs << "\n";
+    cout << "\taverage number of arcs: " << (double) n_arcs / (double) nodes.size() << "\n";
+    cout << "\taverage unitig length: " << avg_unitig_len << "\n";
+    cout << "\taverage abundances: " << avg_abundances << "\n";
     cout << endl;
 }
 
@@ -246,17 +246,18 @@ bool DBG::validate(){
 bool DBG::verify_input(){
     bool good = true;
     if (verify_overlaps())
-        cout << "YES! DBG is an overlapping graph!" << endl;
+        cout << "YES! DBG is an overlapping graph!\n";
     else {
-        cout << "OOPS! DBG is NOT an overlapping graph" << endl;
+        cout << "OOPS! DBG is NOT an overlapping graph\n";
         good = false;
     }
     if(validate())
-        cout << "YES! DBG is the same as BCALM2 one!" << endl;
+        cout << "YES! DBG is the same as BCALM2 one!\n";
     else {
-        cout << "OOPS! DBG is NOT the same as BCALM2 one!" << endl;
+        cout << "OOPS! DBG is NOT the same as BCALM2 one!\n";
         good = false;
     }
+    cout << endl;
     return good;
 }
 

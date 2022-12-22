@@ -64,6 +64,7 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
         }
     }
 
+    // convert to vector
     for(size_t i = 0; i < path_forwards_d.size(); i++){
         path_nodes.push_back(path_nodes_d[i]);
         path_forwards.push_back(path_forwards_d[i]);
@@ -127,9 +128,9 @@ void SPSS::print_info(){
             c_length += dbg->get_node(simplitig[i]).length - (dbg->get_kmer_size() - 1);
     }
 
-    cout << "Simplitigs info:" << endl;
-    cout << "\tnumber of simplitigs: NS = " << n_simplitigs << endl;
-    cout << "\tcumulative length: CL = " << c_length << endl;
-    cout << "\taverage simplitigs length: " << (double) c_length / (double) n_simplitigs << endl;
+    cout << "Simplitigs info:\n";
+    cout << "\tnumber of simplitigs: NS = " << n_simplitigs << "\n";
+    cout << "\tcumulative length: CL = " << c_length << "\n";
+    cout << "\taverage simplitigs length: " << (double) c_length / (double) n_simplitigs << "\n";
     cout << endl;
 }
