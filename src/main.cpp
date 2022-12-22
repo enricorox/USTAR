@@ -10,7 +10,7 @@ void print_help(){
     cout << "Usage: ./USTAR -i <bcalm_file> -k <kmer_size>" << endl;
     cout << "Options:" << endl;
     cout << "\t-o" << "\toutput file" << endl;
-    cout << "\t-v" << "\tvalidate input" << endl;
+    cout << "\t-v" << "\tvalidate input and exit" << endl;
 }
 
 void print_params(const params_t &params){
@@ -68,7 +68,7 @@ void parse_cli(int argc, char **argv, params_t &params){
 }
 
 int main(int argc, char **argv) {
-    cout << "===== USTAR by enricorox =====" << endl;
+    cout << "===== Unitig STitch STar (USTAR) =====" << endl;
     // cli parameters
     params_t params;
     parse_cli(argc, argv, params);
@@ -79,23 +79,28 @@ int main(int argc, char **argv) {
     dbg.print_info();
 
     if(params.verify_input) {
-        if (dbg.verify_overlaps())
-            cout << "DBG is an overlapping graph!" << endl;
+        if(dbg.verify_input())
+            exit(EXIT_SUCCESS);
         else
-            cout << "DBG is NOT an overlapping graph" << endl;
-        if(dbg.validate())
-            cout << "DBG is the same as BCALM2 one!" << endl;
-        else
-            cout << "DBG is NOT the same as BCALM2 one!" << endl;
+            exit(EXIT_FAILURE);
     }
 
     // make an SPSS
     SPSS spss(&dbg);
 
     // compute simplitigs
+    cout << "Extracting simplitigs..." << endl;
     spss.extract_simplitigs();
-    spss.to_fasta_file(params.output_file + ".ustar.fa");
-    spss.to_counts_file(params.output_file + ".ustar.counts");
+
+    spss.print_info();
+
+    // save to disk
+    string fasta_file_name = params.output_file + ".ustar.fa";
+    string counts_file_name = params.output_file + ".ustar.counts";
+    spss.to_fasta_file(fasta_file_name);
+    cout << "Simplitigs written to disk: " << fasta_file_name << endl;
+    spss.to_counts_file(counts_file_name);
+    cout << "Counts written to disk: " << counts_file_name << endl;
 
     return EXIT_SUCCESS;
 }
