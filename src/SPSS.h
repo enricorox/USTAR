@@ -33,8 +33,6 @@ public:
 
     void to_counts_file(const string &file_name);
 
-    void test();
-
     void print_info();
 };
 
