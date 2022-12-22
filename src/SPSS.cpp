@@ -78,16 +78,16 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
     // backward extending
     if(two_way) {
         node = seed;
-        forward = seed_forward;
+        forward = (!seed_forward);
         while (true) {
-            dbg->get_consistent_nodes_from(node, !forward, to_nodes, to_forwards, saturated);
+            dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, saturated);
             if (to_nodes.empty())
                 break;
             node = to_nodes.at(0);
             forward = to_forwards.at(0);
             saturated.at(node) = true;
             path_nodes_d.push_front(node);
-            path_forwards_d.push_front(forward);
+            path_forwards_d.push_front(!forward);
         }
     }
 
@@ -107,7 +107,7 @@ void SPSS::extract_simplitigs() {
     vector<size_t> path_nodes; vector<bool> path_forwards;
     for(size_t seed = 0; seed < n_nodes; seed++){
         if(saturated[seed]) continue;
-        extends(seed, path_nodes, path_forwards, false);
+        extends(seed, path_nodes, path_forwards, true);
         simplitigs_path_nodes.push_back(path_nodes);
         simplitigs_path_forwards.push_back(path_forwards);
     }
