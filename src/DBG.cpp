@@ -307,7 +307,7 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
             contig += nodes.at(path_nodes.at(i)).unitig.substr(kmer_size - 1);
         else {
             string unitig = nodes.at(path_nodes.at(i)).unitig;
-            size_t len = unitig.length() - kmer_size + 1;
+            size_t len = unitig.length() - (kmer_size - 1);
             contig += reverse_complement(unitig.substr(0, len));
         }
     }
