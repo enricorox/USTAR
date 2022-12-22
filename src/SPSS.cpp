@@ -96,6 +96,10 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
 }
 
 void SPSS::extract_simplitigs() {
+    // reset simplitigs if already computed
+    simplitigs_path_nodes.clear();
+    simplitigs_path_forwards.clear();
+
     vector<size_t> path_nodes; vector<bool> path_forwards;
     for(size_t seed = 0; seed < n_nodes; seed++){
         if(saturated[seed]) continue;
@@ -106,7 +110,7 @@ void SPSS::extract_simplitigs() {
     n_simplitigs = simplitigs_path_nodes.size();
 }
 
-void SPSS::to_fasta(const string &file_name) {
+void SPSS::to_fasta_file(const string &file_name) {
     if(n_simplitigs == 0){
         cerr << "Need to extract simplitigs first!" << endl;
         exit(EXIT_FAILURE);
@@ -115,7 +119,20 @@ void SPSS::to_fasta(const string &file_name) {
     fasta.open(file_name);
     for(size_t i = 0; i < n_simplitigs; i++){
         fasta << ">\n";
-        fasta << dbg->spell(simplitigs_path_nodes.at(i), simplitigs_path_forwards.at(i)) << "\n";
+        fasta << dbg->spell(simplitigs_path_nodes[i], simplitigs_path_forwards[i]) << "\n";
     }
     fasta.close();
+}
+
+void SPSS::to_counts_file(const string &file_name) {
+    ofstream counts_file;
+    counts_file.open(file_name);
+    vector<uint32_t> counts;
+    for(size_t i = 0; i < n_simplitigs; i++){
+        counts.clear();
+        dbg->get_counts(simplitigs_path_nodes[i], simplitigs_path_forwards[i], counts);
+        for(auto c : counts)
+            counts_file << c << "\n";
+    }
+    counts_file.close();
 }

@@ -91,9 +91,11 @@ int main(int argc, char **argv) {
 
     // make an SPSS
     SPSS spss(&dbg);
-    //spss.test();
+
+    // compute simplitigs
     spss.extract_simplitigs();
-    spss.to_fasta(params.output_file);
+    spss.to_fasta_file(params.output_file + ".ustar.fa");
+    spss.to_counts_file(params.output_file + ".ustar.counts");
 
     return EXIT_SUCCESS;
 }

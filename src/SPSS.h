@@ -28,7 +28,9 @@ public:
 
     void extract_simplitigs();
 
-    void to_fasta(const string &file_name);
+    void to_fasta_file(const string &file_name);
+
+    void to_counts_file(const string &file_name);
 
     void test();
 };
