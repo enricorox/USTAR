@@ -2,6 +2,7 @@
 // Created by enrico on 22/12/22.
 //
 #include <iostream>
+#include <fstream>
 #include "SPSS.h"
 
 using namespace std;
@@ -25,10 +26,23 @@ int main(){
         DBG dbg(file_name, 3);
         dbg.verify_input();
         dbg.print_info();
-        SPSS spss(&dbg);
+        SPSS spss(&dbg, true);
         spss.extract_simplitigs();
         spss.print_info();
         spss.to_fasta_file(file_name_base + ".ustar.fa");
+
+        // verify output
+        ifstream fasta;
+        fasta.open(file_name_base + ".ustar.fa");
+        string in;
+        fasta >> in >> in;
+        if(in != "ACTGG"){
+            cerr << "Output must be: ACTGG!" << endl;
+            cerr << "Found " << in << " instead." << endl;
+            exit(EXIT_FAILURE);
+        }else
+            cout << "YES! Output is correct!" << endl;
+        fasta.close();
         cout << endl;
     }
 }

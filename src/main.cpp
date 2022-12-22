@@ -4,13 +4,19 @@
 #include "DBG.h"
 #include "SPSS.h"
 
+#define VERSION "0.1"
+
 using namespace std;
 
 void print_help(){
-    cout << "Usage: ./USTAR -i <bcalm_file> -k <kmer_size>" << endl;
-    cout << "Options:" << endl;
-    cout << "\t-o" << "\toutput file" << endl;
-    cout << "\t-v" << "\tvalidate input and exit" << endl;
+    cout << "Find a Spectrum Preserving String Set (aka simplitigs) for the input file.\n";
+    cout << "Compute the kmer counts vector.\n\n";
+    cout << "Usage: ./USTAR -i <bcalm_file> -k <kmer_size>\n";
+    cout << "Options:\n";
+    cout << "\t-o \toutput file\n";
+    cout << "\t-v \tprint version\n";
+    cout << "\t-d \tdebug\n";
+    cout << "\t-h \tprint this help\n" << endl;
 }
 
 void print_params(const params_t &params){
@@ -18,14 +24,14 @@ void print_params(const params_t &params){
     cout << "\tinput file: " << params.input_file << endl;
     cout << "\toutput file: " << params.output_file << endl;
     cout << "\tkmer_size: " << params.kmer_size << endl;
-    cout << "\tverify_input: " << (params.verify_input?"true":"false") << endl;
+    cout << "\tdebug: " << (params.debug?"true":"false") << endl;
     cout << endl;
 }
 
 void parse_cli(int argc, char **argv, params_t &params){
     bool done = false;
     int c;
-    while((c = getopt(argc, argv, "i:k:vo:")) != -1){
+    while((c = getopt(argc, argv, "i:k:vo:dh")) != -1){
         done = true;
         switch(c){
             case 'i':
@@ -53,8 +59,15 @@ void parse_cli(int argc, char **argv, params_t &params){
                 }
                 break;
             case 'v':
-                params.verify_input = true;
+                cout << "Version " << VERSION << endl;
+                exit(EXIT_SUCCESS);
                 break;
+            case 'd':
+                params.debug = true;
+                break;
+            case 'h':
+                print_help();
+                exit(EXIT_SUCCESS);
             default:
                 cerr << "WARNING: unknown parameter!" << endl;
                 print_help();
@@ -68,7 +81,7 @@ void parse_cli(int argc, char **argv, params_t &params){
 }
 
 int main(int argc, char **argv) {
-    cout << "===== Unitig STitch STar (USTAR) =====" << endl;
+    cout << "===== Unitig STitch STar (USTAR) v" VERSION " =====" << endl;
     // cli parameters
     params_t params;
     parse_cli(argc, argv, params);
@@ -78,12 +91,9 @@ int main(int argc, char **argv) {
     DBG dbg(params.input_file, params.kmer_size);
     dbg.print_info();
 
-    if(params.verify_input) {
-        if(dbg.verify_input())
-            exit(EXIT_SUCCESS);
-        else
-            exit(EXIT_FAILURE);
-    }
+    // verify input
+    if(params.debug)
+        dbg.verify_input();
 
     // make an SPSS
     SPSS spss(&dbg);
