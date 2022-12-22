@@ -16,19 +16,15 @@ help(){
    echo "NOTE1: A k-mer and its reverse complement is treated as equal."
    echo "NOTE2: Counts must not be in def-lines or in separate file."
    echo
-   exit
 }
 
 validate(){
-  k=$1
-  fasta1=$2
-  fasta2=$3
   if [ ! -f "$fasta1" ]; then
-    echo "The file '$2' does not exist."
+    echo "The file '$fasta1' does not exist."
     exit
   fi
   if [ ! -f "$fasta2" ]; then
-    echo "The file '$3' does not exist."
+    echo "The file '$fasta2' does not exist."
     exit
   fi
 
@@ -55,8 +51,10 @@ validate(){
   fi
 }
 
-if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
-  help
-fi
+help
 
-validate "$1" "$2" "$3"
+k=${1:-31}
+fasta1=${2:-"/home/enrico/CLionProjects/UST/SRR/SRR001665/SRR001665_1.a2.unitigs.fa"}
+fasta2=${3:-"/home/enrico/USTAR/cmake-build-debug/out.ustar.fa"}
+
+validate
