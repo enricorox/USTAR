@@ -41,7 +41,8 @@ validate(){
   cut -d' ' -f1 < unitigs.txt | sort  -o sorted_unitigs.txt;
   cut -d' ' -f1 < spss.txt | sort  -o sorted_spss.txt;
 
-  if [[ $(cmp sorted_unitigs.txt sorted_spss.txt) ]]; then
+
+  if cmp sorted_unitigs.txt sorted_spss.txt; then
     echo '### SUCCESS: The two files contain same k-mers! ###'
   else
     echo '### WARNING: Files contain different k-mers! ###'
