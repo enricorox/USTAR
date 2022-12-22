@@ -48,9 +48,10 @@ validate(){
     echo '### WARNING: Files contain different k-mers! ###'
   fi
 
+  rm -f spss.txt unitigs.txt unitigs.h5 spss.h5
   if [[ DEBUG -eq 0 ]];  then
-    rm -rf sorted_spss.txt spss.txt unitigs.txt unitigs.h5 spss.h5
-    rm -rf sorted_unitigs.txt
+    rm -f sorted_spss.txt
+    rm -f sorted_unitigs.txt
   fi
 }
 
