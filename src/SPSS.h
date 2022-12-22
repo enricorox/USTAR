@@ -24,7 +24,7 @@ class SPSS{
     // saturated nodes
     vector<bool> saturated;
 
-    void extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way=true);
+    void extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way);
 
 public:
     explicit SPSS(DBG *dbg, bool debug=false);

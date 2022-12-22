@@ -14,7 +14,7 @@ help(){
    echo "This scripts takes as input the value of k-mer size, and 2 fasta files."
    echo "It outputs SUCCESS if they represent the same set of k-mers, and gives a WARNING otherwise."
    echo "NOTE1: A k-mer and its reverse complement is treated as equal."
-   echo "NOTE2: Counts must not be in def-lines or in separate file."
+   echo "NOTE2: Counts must not be in def-lines or in separated file. They are ignored anyways!"
    echo
 }
 
