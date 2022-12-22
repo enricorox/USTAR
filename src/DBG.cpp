@@ -316,6 +316,10 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
 }
 
 void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts) {
+    //          3 5
+    // forward: A C T T
+    //          5 3
+    // rev-com: A A G T
     for (size_t i = 0; i < path_nodes.size(); i++)
         if (forwards.at(i)) // read forward
             for(uint32_t abundance : nodes.at(path_nodes.at(i)).abundances)
