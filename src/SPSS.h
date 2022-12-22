@@ -16,12 +16,19 @@ class SPSS{
     // simplitigs
     vector<vector<size_t>> simplitigs_path_nodes;
     vector<vector<bool>> simplitigs_path_forwards;
+    size_t n_simplitigs = 0;
 
     // saturated nodes
     vector<bool> saturated;
 
+    void extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards);
+
 public:
     explicit SPSS(DBG *dbg);
+
+    void extract_simplitigs();
+
+    void to_fasta(const string &file_name);
 
     void test();
 };

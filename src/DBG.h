@@ -94,18 +94,20 @@ public:
      * Get nodes reachable from node
      * @param node the current node ID
      * @param to_nodes a list of node IDs
-     * @param forwards how a node must be read
+     * @param to_forwards how a node must be read
+     * @param mask nodes to filter
      */
-    void get_nodes_from(int node, vector<size_t> &to_nodes, vector<bool> &forwards);
+    void get_nodes_from(uint32_t node, vector<bool> &forwards, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask);
 
     /**
      * Like get_nodes_from() but nodes are path-consistent
      * @param node the current node ID
      * @param forward the direction of the current node
      * @param to_nodes a list of node IDs
-     * @param forwards how a node must be read
+     * @param to_forwards how a node must be read
+     * @param mask nodes to filter
      */
-    void get_consistent_nodes_from(int node, bool forward, vector<size_t> &to_nodes, vector<bool> &forwards);
+    void get_consistent_nodes_from(uint32_t node, bool forward, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask);
 
     /**
      * Compute the spell of this path, gluing node labels

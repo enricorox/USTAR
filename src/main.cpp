@@ -91,7 +91,9 @@ int main(int argc, char **argv) {
 
     // make an SPSS
     SPSS spss(&dbg);
-    spss.test();
+    //spss.test();
+    spss.extract_simplitigs();
+    spss.to_fasta(params.output_file);
 
     return EXIT_SUCCESS;
 }

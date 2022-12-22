@@ -236,26 +236,29 @@ bool DBG::validate(){
     return true;
 }
 
-void DBG::get_nodes_from(int node, vector<size_t> &to_nodes, vector<bool> &forwards) {
+void DBG::get_nodes_from(uint32_t node, vector<bool> &forwards, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
     // vectors must be empty
     to_nodes.clear();
-    forwards.clear();
+    to_forwards.clear();
 
     for(auto &arc : nodes.at(node).arcs){
+        if(mask.at(arc.successor)) continue;
         to_nodes.push_back(arc.successor);
-        forwards.push_back(arc.to_forward);
+        forwards.push_back(arc.forward);
+        to_forwards.push_back(arc.to_forward);
     }
 }
 
-void DBG::get_consistent_nodes_from(int node, bool forward, vector<size_t> &to_nodes, vector<bool> &forwards) {
+void DBG::get_consistent_nodes_from(uint32_t node, bool forward, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
     // vectors must be empty
     to_nodes.clear();
-    forwards.clear();
+    to_forwards.clear();
 
     for(auto &arc : nodes.at(node).arcs){
+        if(mask.at(arc.successor)) continue;
         if(arc.forward == forward) { // consistent nodes only
             to_nodes.push_back(arc.successor);
-            forwards.push_back(arc.to_forward);
+            to_forwards.push_back(arc.to_forward);
         }
     }
 }
@@ -265,8 +268,10 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
         cerr << "Inconsistent path!" << endl;
         exit(EXIT_FAILURE);
     }
-    if(path_nodes.empty())
-        return "";
+    if(path_nodes.empty()) {
+        cerr << "You're not allowed to spell an empty path!" << endl;
+        exit(EXIT_FAILURE);
+    }
 
     string contig;
     // first node as a seed
