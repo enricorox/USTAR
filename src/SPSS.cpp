@@ -7,8 +7,10 @@
 #include <fstream>
 #include "SPSS.h"
 
-SPSS::SPSS(DBG *dbg){
+SPSS::SPSS(DBG *dbg, bool debug){
     this->dbg = dbg;
+    this->debug = debug;
+
     n_nodes = dbg->get_n_nodes();
     saturated.resize(n_nodes);
     fill(saturated.begin(), saturated.end(), false);
@@ -32,15 +34,15 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
         return;
     }
     // choose arbitrarily the first arc (if any!)
-    bool seed_forward = forwards.at(0);
+    bool seed_forward = forwards[0];
     bool forward = seed_forward;
     path_forwards_d.push_back(forward);
     while(true){
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, saturated);
         if(to_nodes.empty())
             break;
-        node = to_nodes.at(0);
-        forward = to_forwards.at(0);
+        node = to_nodes[0];
+        forward = to_forwards[0];
         saturated.at(node) = true;
         path_nodes_d.push_back(node);
         path_forwards_d.push_back(forward);
@@ -54,8 +56,8 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
             dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, saturated);
             if (to_nodes.empty())
                 break;
-            node = to_nodes.at(0);
-            forward = to_forwards.at(0);
+            node = to_nodes[0];
+            forward = to_forwards[0];
             saturated.at(node) = true;
             path_nodes_d.push_front(node);
             path_forwards_d.push_front(!forward);
@@ -63,14 +65,15 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
     }
 
     for(size_t i = 0; i < path_forwards_d.size(); i++){
-        path_nodes.push_back(path_nodes_d.at(i));
-        path_forwards.push_back(path_forwards_d.at(i));
+        path_nodes.push_back(path_nodes_d[i]);
+        path_forwards.push_back(path_forwards_d[i]);
     }
-    if(!dbg->check_path_consistency(path_nodes, path_forwards))
+
+    if(debug && !dbg->check_path_consistency(path_nodes, path_forwards))
         cerr << "Inconsistent path!\n";
 }
 
-void SPSS::extract_simplitigs() {
+void SPSS::extract_simplitigs(bool two_way) {
     // reset simplitigs if already computed
     simplitigs_path_nodes.clear();
     simplitigs_path_forwards.clear();
@@ -78,7 +81,7 @@ void SPSS::extract_simplitigs() {
     vector<size_t> path_nodes; vector<bool> path_forwards;
     for(size_t seed = 0; seed < n_nodes; seed++){
         if(saturated[seed]) continue;
-        extends(seed, path_nodes, path_forwards, true);
+        extends(seed, path_nodes, path_forwards, two_way);
         simplitigs_path_nodes.push_back(path_nodes);
         simplitigs_path_forwards.push_back(path_forwards);
     }
@@ -119,9 +122,9 @@ void SPSS::print_info(){
     }
     size_t c_length = 0;
     for(auto &simplitig : simplitigs_path_nodes){
-        c_length += dbg->get_node(simplitig.at(0)).length;
+        c_length += dbg->get_node(simplitig[0]).length;
         for(size_t i = 1; i < simplitig.size(); i++)
-            c_length += dbg->get_node(simplitig.at(i)).length - dbg->get_kmer_size() + 1;
+            c_length += dbg->get_node(simplitig[i]).length - (dbg->get_kmer_size() - 1);
     }
 
     cout << "Simplitigs info:" << endl;

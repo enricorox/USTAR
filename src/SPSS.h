@@ -11,6 +11,8 @@
 using namespace std;
 
 class SPSS{
+    bool debug;
+
     DBG *dbg;
     uint32_t n_nodes;
 
@@ -25,9 +27,9 @@ class SPSS{
     void extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way=true);
 
 public:
-    explicit SPSS(DBG *dbg);
+    explicit SPSS(DBG *dbg, bool debug=false);
 
-    void extract_simplitigs();
+    void extract_simplitigs(bool two_way=true);
 
     void to_fasta_file(const string &file_name);
 
