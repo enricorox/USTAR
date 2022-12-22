@@ -34,9 +34,13 @@ validate(){
   dsk2ascii -file unitigs.h5 -out unitigs.txt  -verbose 0
   dsk2ascii -file spss.h5 -out spss.txt  -verbose 0
 
+  # test only kmers
   cut -d' ' -f1 < unitigs.txt | sort  -o sorted_unitigs.txt;
   cut -d' ' -f1 < spss.txt | sort  -o sorted_spss.txt;
 
+  # test kmers and counts
+  # sort  -o sorted_unitigs.txt < unitigs.txt
+  # sort  -o sorted_spss.txt < spss.txt
 
   if cmp sorted_unitigs.txt sorted_spss.txt; then
     echo '### SUCCESS: The two files contain same k-mers! ###'
@@ -44,7 +48,8 @@ validate(){
     echo '### WARNING: Files contain different k-mers! ###'
   fi
 
-  rm -f spss.txt unitigs.txt unitigs.h5 spss.h5
+  rm -f unitigs.h5 spss.h5
+  rm -f spss.txt unitigs.txt
   if [[ DEBUG -eq 0 ]];  then
     rm -f sorted_spss.txt
     rm -f sorted_unitigs.txt
