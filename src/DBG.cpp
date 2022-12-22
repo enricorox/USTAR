@@ -27,6 +27,10 @@ void DBG::parse_bcalm_file() {
     // start parsing two line at a time
     string line;
     while(getline(bcalm_file, line)){
+        // escape comments
+        if(line[0] == '#')
+            continue;
+
         size_t serial; // BCALM2 serial
         char dyn_line[MAX_LINE_LEN]; // line after id and length
 
@@ -220,7 +224,7 @@ void DBG::to_bcalm_file(const string &file_name) {
 }
 
 bool DBG::validate(){
-    string fasta_dbg = "USTAR-validate.fasta";
+    string fasta_dbg = "unitigs.k"+ to_string(kmer_size) +".ustar.fa";
     to_bcalm_file(fasta_dbg);
 
     ifstream bcalm_dbg, this_dbg;
@@ -234,6 +238,23 @@ bool DBG::validate(){
             return false;
         }
     return true;
+}
+
+bool DBG::verify_input(){
+    bool good = true;
+    if (verify_overlaps())
+        cout << "YES! DBG is an overlapping graph!" << endl;
+    else {
+        cout << "OOPS! DBG is NOT an overlapping graph" << endl;
+        good = false;
+    }
+    if(validate())
+        cout << "YES! DBG is the same as BCALM2 one!" << endl;
+    else {
+        cout << "OOPS! DBG is NOT the same as BCALM2 one!" << endl;
+        good = false;
+    }
+    return good;
 }
 
 void DBG::get_nodes_from(uint32_t node, vector<bool> &forwards, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
@@ -302,12 +323,14 @@ void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwa
 }
 
 bool DBG::check_path_consistency(const vector<size_t> &path_nodes, const vector<bool> &forwards) {
+    // one orientation for each node
     if(path_nodes.size() != forwards.size())
         return false;
 
     for(size_t i = 0; i < path_nodes.size() - 1; i++){
         bool found = false;
-        for(auto arc : nodes.at(path_nodes.at(i)).arcs)
+        // is there an arc leading to a consistent node?
+        for(auto &arc : nodes.at(path_nodes.at(i)).arcs)
             // same node orientation and successor check
             if(arc.forward == forwards.at(i) && arc.successor == path_nodes.at(i + 1))
                 found = true;
@@ -325,4 +348,11 @@ uint32_t DBG::get_n_nodes() const {
     return nodes.size();
 }
 
+const node_t & DBG::get_node(size_t node){
+    return nodes.at(node);
+}
+
+uint32_t DBG::get_kmer_size() {
+    return kmer_size;
+}
 

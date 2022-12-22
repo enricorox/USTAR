@@ -136,6 +136,12 @@ public:
     uint32_t get_n_kmers() const;
 
     uint32_t get_n_nodes() const;
+
+    bool verify_input();
+
+    const node_t &get_node(size_t node);
+
+    uint32_t get_kmer_size();
 };
 
 #endif //USTAR_DBG_H
