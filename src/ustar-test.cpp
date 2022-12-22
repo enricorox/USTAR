@@ -12,7 +12,11 @@ int main(){
             {"../unit-test/test1",
              "../unit-test/test2",
              "../unit-test/test3",
-             "../unit-test/test4"
+             "../unit-test/test4",
+             "../unit-test/test5",
+             "../unit-test/test6",
+             "../unit-test/test7",
+             "../unit-test/test8"
             };
 
     for(auto &file_name_base : file_names){
