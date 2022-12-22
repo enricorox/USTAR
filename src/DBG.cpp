@@ -92,7 +92,10 @@ void DBG::parse_bcalm_file() {
 
         // ------ parse sequence line ------
         // TTGAAGGTAACGGATGTTCTAGTTTTTTCTCTTT}
-        getline(bcalm_file, line);
+        if(!getline(bcalm_file, line)){
+            cerr << "Bad input file!" << endl;
+            exit(EXIT_FAILURE);
+        }
 
         // get the sequence
         node.unitig = line;
@@ -296,17 +299,17 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
 
     string contig;
     // first node as a seed
-    if(forwards.at(0))
-        contig = nodes.at(path_nodes.at(0)).unitig;
+    if(forwards[0])
+        contig = nodes.at(path_nodes[0]).unitig;
     else
-        contig = reverse_complement(nodes.at(path_nodes.at(0)).unitig);
+        contig = reverse_complement(nodes.at(path_nodes[0]).unitig);
 
     // extend the seed
     for(size_t i = 1; i < path_nodes.size(); i++){
-        if(forwards.at(i))
-            contig += nodes.at(path_nodes.at(i)).unitig.substr(kmer_size - 1);
+        if(forwards[i])
+            contig += nodes.at(path_nodes[i]).unitig.substr(kmer_size - 1);
         else {
-            string unitig = nodes.at(path_nodes.at(i)).unitig;
+            string unitig = nodes.at(path_nodes[i]).unitig;
             size_t len = unitig.length() - (kmer_size - 1);
             contig += reverse_complement(unitig.substr(0, len));
         }
@@ -321,12 +324,12 @@ void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwa
     //          5 3
     // rev-com: A A G T
     for (size_t i = 0; i < path_nodes.size(); i++)
-        if (forwards.at(i)) // read forward
-            for(uint32_t abundance : nodes.at(path_nodes.at(i)).abundances)
+        if (forwards[i]) // read forward
+            for(uint32_t abundance : nodes.at(path_nodes[i]).abundances)
                 counts.push_back(abundance);
         else // read backward
-            for(int k = int (nodes.at(path_nodes.at(i)).abundances.size() - 1); k > -1; k--)
-                counts.push_back(nodes.at(path_nodes.at(i)).abundances.at(k));
+            for(int k = int (nodes.at(path_nodes[i]).abundances.size() - 1); k > -1; k--)
+                counts.push_back(nodes.at(path_nodes[i]).abundances[k]);
 }
 
 bool DBG::check_path_consistency(const vector<size_t> &path_nodes, const vector<bool> &forwards) {
@@ -337,9 +340,9 @@ bool DBG::check_path_consistency(const vector<size_t> &path_nodes, const vector<
     for(size_t i = 0; i < path_nodes.size() - 1; i++){
         bool found = false;
         // is there an arc leading to a consistent node?
-        for(auto &arc : nodes.at(path_nodes.at(i)).arcs)
+        for(auto &arc : nodes.at(path_nodes[i]).arcs)
             // same node orientation and successor check
-            if(arc.forward == forwards.at(i) && arc.successor == path_nodes.at(i + 1))
+            if(arc.forward == forwards[i] && arc.successor == path_nodes[i + 1])
                 found = true;
         if(!found)
             return false;
