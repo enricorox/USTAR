@@ -20,7 +20,7 @@ class Sorter{
 public:
     Sorter();
 
-    void init(const vector<node_t> *nodes, const vector<bool> *visited);
+    void init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited);
 
     bool has_seed();
 

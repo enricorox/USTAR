@@ -25,7 +25,7 @@ void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_f
     vector<size_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
     deque<size_t> path_nodes_d; deque<bool> path_forwards_d;
 
-    // forward extending
+    // ----- forward extending -----
     dbg->get_nodes_from(seed, forwards, to_nodes, to_forwards, visited);
     uint32_t node = seed;
 
@@ -51,7 +51,7 @@ void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_f
         path_forwards_d.push_back(forward);
     }
 
-    // backward extending
+    // ----- backward extending -----
     if(two_way) {
         node = seed;
         forward = (!seed_forward);
@@ -83,9 +83,8 @@ void SPSS::compute_path_cover(bool two_way) {
     path_cover_forwards.clear();
 
     vector<size_t> path_nodes; vector<bool> path_forwards;
-    for(size_t seed = 0; seed < n_nodes; seed++){
-        if(visited[seed]) continue;
-        extends(seed, path_nodes, path_forwards, two_way);
+    while(sorter->has_seed()){
+        extends(sorter->next_seed(), path_nodes, path_forwards, two_way);
         path_cover_nodes.push_back(path_nodes);
         path_cover_forwards.push_back(path_forwards);
     }
@@ -94,7 +93,7 @@ void SPSS::compute_path_cover(bool two_way) {
 void SPSS::extract_simplitigs_and_counts(){
     n_simplitigs = path_cover_nodes.size();
     if(n_simplitigs == 0){
-        cerr << "Need to compute a path cover first!" << endl;
+        cerr << "extract_simplitigs_and_counts(): Need to compute a path cover first!" << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -112,7 +111,7 @@ void SPSS::extract_simplitigs_and_counts(){
 
 void SPSS::to_fasta_file(const string &file_name) {
     if(n_simplitigs == 0){
-        cerr << "Need to extract simplitigs first!" << endl;
+        cerr << "to_fasta_file(): Need to extract simplitigs first!" << endl;
         exit(EXIT_FAILURE);
     }
     ofstream fasta;
@@ -137,14 +136,14 @@ void SPSS::to_counts_file(const string &file_name) {
 
 void SPSS::print_info(){
     if(n_simplitigs == 0){
-        cerr << "Need to extract simplitigs first!" << endl;
+        cerr << "print_info(): Need to compute a path cover first!" << endl;
         exit(EXIT_FAILURE);
     }
     size_t c_length = 0;
-    for(auto &simplitig : path_cover_nodes){
-        c_length += dbg->get_node(simplitig[0]).length;
-        for(size_t i = 1; i < simplitig.size(); i++)
-            c_length += dbg->get_node(simplitig[i]).length - (dbg->get_kmer_size() - 1);
+    for(auto &path : path_cover_nodes){
+        c_length += dbg->get_node(path[0]).length;
+        for(size_t i = 1; i < path.size(); i++)
+            c_length += dbg->get_node(path[i]).length - (dbg->get_kmer_size() - 1);
     }
 
     cout << "Simplitigs info:\n";

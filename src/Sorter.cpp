@@ -6,21 +6,23 @@
 #include "Sorter.h"
 
 Sorter::Sorter() {
-    seed_order.resize(nodes->size());
+
+}
+
+void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited){
+    this->visited = spss_visited;
+    this->nodes = dbg_nodes;
+
+    seed_order.resize(dbg_nodes->size());
     for(size_t i = 0; i < seed_order.size(); i++)
         seed_order[i] = i;
 
     seed_index = 0;
 }
 
-void Sorter::init(const vector<node_t> *nodes, const vector<bool> *visited){
-    this->visited = visited;
-    this->nodes = nodes;
-}
-
 size_t Sorter::next_seed() {
     if(!has_seed()){
-        cerr << "Must check if a seed exist first!" << endl;
+        cerr << "next_seed(): Must check if a seed exists first!" << endl;
         exit(EXIT_FAILURE);
     }
     return seed_order.at(seed_index);
