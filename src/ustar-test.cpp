@@ -29,13 +29,13 @@ int main(){
 
         DBG dbg(file_name, 3);
         dbg.verify_input();
-        dbg.print_info();
+        dbg.print_stat();
 
         Sorter sorter;
         SPSS spss(&dbg, &sorter, true);
         spss.compute_path_cover();
         spss.extract_simplitigs_and_counts();
-        spss.print_info();
+        spss.print_stat();
         Encoder encoder(spss.get_simplitigs(), spss.get_counts());
         encoder.to_fasta_file(file_name_base + ".ustar.fa");
         encoder.to_counts_file(file_name_base + ".ustar.counts");

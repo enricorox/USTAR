@@ -139,9 +139,9 @@ void SPSS::extract_simplitigs_and_counts(){
     }
 }
 
-void SPSS::print_info(){
+void SPSS::print_stat(){
     if(n_simplitigs == 0){
-        cerr << "print_info(): Need to extract simplitigs first!" << endl;
+        cerr << "print_stat(): Need to extract simplitigs first!" << endl;
         exit(EXIT_FAILURE);
     }
     size_t c_length = 0;

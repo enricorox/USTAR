@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
     // make a dBG
     cout << "Reading the input file..." << endl;
     DBG dbg(params.input_file, params.kmer_size);
-    dbg.print_info();
+    dbg.print_stat();
 
     // verify input
     if(params.debug)
@@ -107,13 +107,14 @@ int main(int argc, char **argv) {
     cout << "Extracting simplitigs and kmers counts..." << endl;
     spss.extract_simplitigs_and_counts();
 
-    spss.print_info();
+    spss.print_stat();
 
     // save to disk
     string fasta_file_name = params.output_file + ".ustar.fa";
     string counts_file_name = params.output_file + ".ustar.counts";
 
     Encoder encoder(spss.get_simplitigs(), spss.get_counts());
+    encoder.encode(RLE);
     encoder.to_fasta_file(fasta_file_name);
     cout << "Simplitigs written to disk: " << fasta_file_name << endl;
     encoder.to_counts_file(counts_file_name);

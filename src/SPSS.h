@@ -37,7 +37,7 @@ public:
 
     void compute_path_cover(bool two_way=true);
 
-    void print_info();
+    void print_stat();
 
     void extract_simplitigs_and_counts();
 

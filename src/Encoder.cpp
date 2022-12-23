@@ -6,7 +6,8 @@
 #include <iostream>
 #include "Encoder.h"
 
-Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts) {
+Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts, bool debug) {
+    this->debug = debug;
     this->simplitigs = simplitigs;
     this->counts = counts;
 }
@@ -27,19 +28,77 @@ void Encoder::to_fasta_file(const string &file_name) {
 }
 
 void Encoder::to_counts_file(const string &file_name) {
-    if(counts->empty()){
+    if (counts->empty()) {
         cerr << "to_counts_file(): There are no counts!" << endl;
         exit(EXIT_FAILURE);
     }
 
-    ofstream counts_file;
-    counts_file.open(file_name);
-    for(const auto &simplitig_counts : *counts){
-        for(auto c : simplitig_counts)
-            counts_file << c << (debug?" ":"\n");
-        if(debug) counts_file << "\n";
+    ofstream encoded;
+    switch(encoding) {
+        case RLE:
+            encoded.open(file_name + ".rle");
+            if(!encoded.good()){
+                cerr << "Can't open output file: " << file_name + ".rle" << endl;
+                exit(EXIT_FAILURE);
+            }
+
+            for(int i = 0; i < symbols.size(); i++){
+                encoded << symbols[i];
+                if(runs[i] != 1)
+                    encoded << " " << runs[i];
+                encoded << "\n";
+            }
+            encoded.close();
+            break;
+
+        case PLAIN:
+        default:
+            encoded.open(file_name);
+            if(!encoded.good()){
+                cerr << "Can't open output file:" << file_name << endl;
+                exit(EXIT_FAILURE);
+            }
+            for (const auto &simplitig_counts: *counts) {
+                for (auto c: simplitig_counts)
+                    encoded << c << (debug ? " " : "\n");
+                if (debug) encoded << "\n";
+            }
     }
-    counts_file.close();
+    encoded.close();
+}
+
+void Encoder::encode(encoding_t encoding_type) {
+    this->encoding = encoding_type;
+
+    switch(encoding) {
+        case RLE: {
+                uint32_t c = 0, prev;
+                bool first = true;
+
+                for (auto &s_counts: *counts) {
+                    for (auto curr: s_counts) {
+                        // stream of counts here
+                        if (first || curr == prev) {
+                            c++;
+                            first = false;
+                        } else {
+                            symbols.push_back(prev);
+                            runs.push_back(c);
+                            // reset
+                            c = 1;
+                        }
+                        prev = curr;
+                    }
+                }
+                // save last run
+                symbols.push_back(prev);
+                runs.push_back(c);
+            }
+            break;
+        case PLAIN:
+        default:
+            break;
+    }
 }
 
 

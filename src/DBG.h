@@ -12,8 +12,8 @@
 
 using namespace std;
 
-//typedef uint32_t node_idx_t;
-typedef size_t node_idx_t;
+typedef uint32_t node_idx_t;
+// typedef size_t node_idx_t;
 
 struct arc_t{
     node_idx_t successor;
@@ -66,7 +66,7 @@ public:
     /**
      * Print some dBG stats
      */
-    void print_info();
+    void print_stat();
 
     /**
      * Verify that if there is an arcs between two nodes then they share a k-1 substring

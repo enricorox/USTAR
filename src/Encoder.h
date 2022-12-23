@@ -9,13 +9,25 @@
 
 using namespace std;
 
+enum encoding_t{
+    PLAIN,
+    RLE
+};
+
 class Encoder{
+    bool debug = true;
+    encoding_t encoding{};
+
     const vector<string> *simplitigs;
     const vector<vector<uint32_t>> *counts;
-    bool debug = true;
+
+    vector<uint32_t> symbols;
+    vector<uint32_t> runs;
 
 public:
-    Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts);
+    Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts, bool debug=false);
+
+    void encode(encoding_t encoding_type);
 
     void to_fasta_file(const string &file_name);
 
