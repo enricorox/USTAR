@@ -111,7 +111,8 @@ void SPSS::to_counts_file(const string &file_name) {
         counts.clear();
         dbg->get_counts(simplitigs_path_nodes[i], simplitigs_path_forwards[i], counts);
         for(auto c : counts)
-            counts_file << c << "\n";
+            counts_file << c << (debug?" ":"\n");
+        if(debug) counts_file << "\n";
     }
     counts_file.close();
 }
