@@ -6,7 +6,7 @@
 #include <iostream>
 #include "Encoder.h"
 
-Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<size_t>> *counts) {
+Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts) {
     this->simplitigs = simplitigs;
     this->counts = counts;
 }

@@ -27,7 +27,7 @@ const vector<string> * SPSS::get_simplitigs(){
     return &simplitigs;
 }
 
-const vector<vector<size_t>> * SPSS::get_counts(){
+const vector<vector<uint32_t>> * SPSS::get_counts(){
     if(simplitigs.empty()){
         cerr << "There are no simplitigs!" << endl;
         exit(EXIT_FAILURE);
@@ -35,11 +35,11 @@ const vector<vector<size_t>> * SPSS::get_counts(){
     return &counts;
 }
 
-void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
+void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
     path_nodes.clear(); path_forwards.clear();
 
-    vector<size_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
-    deque<size_t> path_nodes_d; deque<bool> path_forwards_d;
+    vector<node_idx_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
+    deque<node_idx_t> path_nodes_d; deque<bool> path_forwards_d;
 
     // add the seed
     path_nodes_d.push_back(seed);
@@ -112,7 +112,7 @@ void SPSS::compute_path_cover(bool two_way) {
     path_cover_nodes.clear();
     path_cover_forwards.clear();
 
-    vector<size_t> path_nodes; vector<bool> path_forwards;
+    vector<node_idx_t> path_nodes; vector<bool> path_forwards;
     while(sorter->has_seed()){
         extends(sorter->next_seed(), path_nodes, path_forwards, two_way);
         path_cover_nodes.push_back(path_nodes);
@@ -127,7 +127,7 @@ void SPSS::extract_simplitigs_and_counts(){
         exit(EXIT_FAILURE);
     }
 
-    vector<size_t> simplitig_counts;
+    vector<uint32_t> simplitig_counts;
     for(size_t i = 0; i < n_simplitigs; i++){
         // extract simplitigs
         simplitigs.push_back(dbg->spell(path_cover_nodes[i], path_cover_forwards[i]));

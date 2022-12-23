@@ -261,7 +261,7 @@ bool DBG::verify_input(){
     return good;
 }
 
-void DBG::get_nodes_from(uint32_t node, vector<bool> &forwards, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
+void DBG::get_nodes_from(node_idx_t node, vector<bool> &forwards, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
     // vectors must be empty
     to_nodes.clear();
     to_forwards.clear();
@@ -274,7 +274,7 @@ void DBG::get_nodes_from(uint32_t node, vector<bool> &forwards, vector<size_t> &
     }
 }
 
-void DBG::get_consistent_nodes_from(uint32_t node, bool forward, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
+void DBG::get_consistent_nodes_from(node_idx_t node, bool forward, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask) {
     // vectors must be empty
     to_nodes.clear();
     to_forwards.clear();
@@ -288,7 +288,7 @@ void DBG::get_consistent_nodes_from(uint32_t node, bool forward, vector<size_t> 
     }
 }
 
-string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards) {
+string DBG::spell(const vector<node_idx_t> &path_nodes, const vector<bool> &forwards) {
     if(path_nodes.size() != forwards.size()){
         cerr << "spell(): Inconsistent path!" << endl;
         exit(EXIT_FAILURE);
@@ -319,7 +319,7 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
     return contig;
 }
 
-void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<size_t> &counts) {
+void DBG::get_counts(const vector<node_idx_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts) {
     //          3 5
     // forward: A C T T
     //          5 3
@@ -333,7 +333,7 @@ void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwa
                 counts.push_back(nodes.at(path_nodes[i]).abundances[k]);
 }
 
-bool DBG::check_path_consistency(const vector<size_t> &path_nodes, const vector<bool> &forwards) {
+bool DBG::check_path_consistency(const vector<node_idx_t> &path_nodes, const vector<bool> &forwards) {
     // one orientation for each node
     if(path_nodes.size() != forwards.size())
         return false;
@@ -359,11 +359,11 @@ uint32_t DBG::get_n_nodes() const {
     return nodes.size();
 }
 
-const node_t & DBG::get_node(size_t node){
+const node_t & DBG::get_node(node_idx_t node){
     return nodes.at(node);
 }
 
-uint32_t DBG::get_kmer_size() {
+uint32_t DBG::get_kmer_size() const {
     return kmer_size;
 }
 

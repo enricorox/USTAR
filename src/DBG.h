@@ -12,8 +12,11 @@
 
 using namespace std;
 
+//typedef uint32_t node_idx_t;
+typedef size_t node_idx_t;
+
 struct arc_t{
-    uint32_t successor;
+    node_idx_t successor;
     bool forward;
     bool to_forward;
 };
@@ -97,7 +100,7 @@ public:
      * @param to_forwards how a node must be read
      * @param mask nodes to filter
      */
-    void get_nodes_from(uint32_t node, vector<bool> &forwards, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask);
+    void get_nodes_from(node_idx_t node, vector<bool> &forwards, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask);
 
     /**
      * Like get_nodes_from() but nodes are path-consistent
@@ -107,7 +110,7 @@ public:
      * @param to_forwards how a node must be read
      * @param mask nodes to filter
      */
-    void get_consistent_nodes_from(uint32_t node, bool forward, vector<size_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask);
+    void get_consistent_nodes_from(node_idx_t node, bool forward, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, const vector<bool> &mask);
 
     /**
      * Compute the spell of this path, gluing node labels
@@ -115,7 +118,7 @@ public:
      * @param forwards how nodes must be read
      * @return the spell of the path
      */
-    string spell(const vector<size_t> &path_nodes, const vector<bool> &forwards);
+    string spell(const vector<node_idx_t> &path_nodes, const vector<bool> &forwards);
 
     /**
      * Check whether the path is path-consistent
@@ -123,7 +126,7 @@ public:
      * @param forwards how nodes must be read
      * @return true if the path is path-consistent
      */
-    bool check_path_consistency(const vector<size_t> &path_nodes, const vector<bool> &forwards);
+    bool check_path_consistency(const vector<node_idx_t> &path_nodes, const vector<bool> &forwards);
 
     /**
      * Get the kmers abundances in the given path
@@ -131,7 +134,7 @@ public:
      * @param forwards how nodes must be read
      * @param counts abundances are returned here
      */
-    void get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<size_t> &counts);
+    void get_counts(const vector<node_idx_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts);
 
     uint32_t get_n_kmers() const;
 
@@ -139,9 +142,9 @@ public:
 
     bool verify_input();
 
-    const node_t &get_node(size_t node);
+    const node_t &get_node(node_idx_t node);
 
-    uint32_t get_kmer_size();
+    uint32_t get_kmer_size() const;
 
     const vector<node_t> *get_nodes();
 };

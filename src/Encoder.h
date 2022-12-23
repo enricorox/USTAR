@@ -11,11 +11,11 @@ using namespace std;
 
 class Encoder{
     const vector<string> *simplitigs;
-    const vector<vector<size_t>> *counts;
+    const vector<vector<uint32_t>> *counts;
     bool debug = true;
 
 public:
-    Encoder(const vector<string> *simplitigs, const vector<vector<size_t>> *counts);
+    Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts);
 
     void to_fasta_file(const string &file_name);
 

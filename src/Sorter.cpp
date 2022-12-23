@@ -47,7 +47,7 @@ bool Sorter::has_seed() {
     return seed_index < seed_order.size();
 }
 
-size_t Sorter::seed_successor(size_t seed, vector<bool> forwards, vector<size_t> to_nodes, vector<bool> to_forwards,
+size_t Sorter::seed_successor(node_idx_t seed, vector<bool> forwards, vector<node_idx_t> to_nodes, vector<bool> to_forwards,
                               bool &forward, bool &to_forward) {
     size_t successor;
     forward = forwards[0];
@@ -66,7 +66,7 @@ size_t Sorter::seed_successor(size_t seed, vector<bool> forwards, vector<size_t>
     return successor;
 }
 
-size_t Sorter::next_successor(size_t node, vector<size_t> to_nodes, vector<bool> to_forwards, bool &to_forward) {
+size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vector<bool> to_forwards, bool &to_forward) {
     // scan all the sorting methods
     size_t successor;
     to_forward = to_forwards[0];

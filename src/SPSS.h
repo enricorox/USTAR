@@ -20,17 +20,17 @@ class SPSS{
     Sorter *sorter;
 
     // path cover
-    vector<vector<size_t>> path_cover_nodes;
+    vector<vector<node_idx_t>> path_cover_nodes;
     vector<vector<bool>> path_cover_forwards;
     // visited nodes
     vector<bool> visited;
 
     // simplitigs
     vector<string> simplitigs;
-    vector<vector<size_t>> counts;
+    vector<vector<uint32_t>> counts;
     size_t n_simplitigs = 0;
 
-    void extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way);
+    void extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool> &path_forwards, bool two_way);
 
 public:
     SPSS(DBG *dbg, Sorter *sorter, bool debug=false);
@@ -43,7 +43,7 @@ public:
 
     const vector<string> * get_simplitigs();
 
-    const vector<vector<size_t>> * get_counts();
+    const vector<vector<uint32_t>> * get_counts();
 };
 
 #endif //USTAR_SPSS_H
