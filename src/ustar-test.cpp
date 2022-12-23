@@ -31,10 +31,12 @@ int main(){
         dbg.verify_input();
         dbg.print_info();
 
-        SPSS spss(&dbg, true);
+        Sorter sorter;
+        SPSS spss(&dbg, &sorter, true);
         spss.compute_path_cover();
         spss.print_info();
         spss.to_fasta_file(file_name_base + ".ustar.fa");
+        spss.to_counts_file(file_name_base + ".ustar.counts");
 
         // verify output
         ifstream fasta;

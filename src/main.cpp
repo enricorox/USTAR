@@ -14,7 +14,7 @@ void print_help(){
     cout << "Compute the kmer counts vector.\n\n";
     cout << "Usage: ./USTAR -i <bcalm_file> -k <kmer_size>\n";
     cout << "Options:\n";
-    cout << "\t-o \toutput file\n";
+    cout << "\t-o \toutput file base name\n";
     cout << "\t-v \tprint version\n";
     cout << "\t-d \tdebug\n";
     cout << "\t-h \tprint this help\n" << endl;
@@ -39,7 +39,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 if(optarg)
                     params.input_file = string(optarg);
                 else {
-                    cerr << "Need an input file name!" << endl;
+                    cerr << "parse_cli(): Need an input file name!" << endl;
                     exit(EXIT_FAILURE);
                 }
                 break;
@@ -47,7 +47,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 if(optarg)
                     params.output_file = string(optarg);
                 else {
-                    cerr << "Need an output file name!" << endl;
+                    cerr << "parse_cli(): Need an output file name!" << endl;
                     exit(EXIT_FAILURE);
                 }
                 break;
@@ -55,7 +55,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 if(optarg)
                     params.kmer_size = atoi(optarg);
                 if(!optarg || params.kmer_size <= 0) {
-                    cerr << "Need a positive kmer size!" << endl;
+                    cerr << "parse_cli(): Need a positive kmer size!" << endl;
                     exit(EXIT_FAILURE);
                 }
                 break;
@@ -69,7 +69,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 print_help();
                 exit(EXIT_SUCCESS);
             default:
-                cerr << "WARNING: unknown parameter!" << endl;
+                cerr << "parse_cli(): unknown parameter -" << c << endl;
                 print_help();
                 exit(EXIT_FAILURE);
         }

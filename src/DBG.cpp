@@ -20,7 +20,7 @@ void DBG::parse_bcalm_file() {
     bcalm_file.open(bcalm_file_name);
 
     if(!bcalm_file.good()){
-        cerr << "Can't access file " << bcalm_file_name << endl;
+        cerr << "parse_bcalm_file(): Can't access file " << bcalm_file_name << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -39,7 +39,7 @@ void DBG::parse_bcalm_file() {
 
         // check if line fits in dyn_line
         if(line.size() > MAX_LINE_LEN){
-            cerr << "Lines must be smaller than " << MAX_LINE_LEN << " characters!" << endl;
+            cerr << "parse_bcalm_file(): Lines must be smaller than " << MAX_LINE_LEN << " characters!" << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -49,7 +49,7 @@ void DBG::parse_bcalm_file() {
         // check consistency:
         // must have a def-line
         if(line[0] != '>'){
-            cerr << "Bad formatted input file: no def-line found!" << endl;
+            cerr << "parse_bcalm_file(): Bad formatted input file: no def-line found!" << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -60,7 +60,7 @@ void DBG::parse_bcalm_file() {
         // check consistency:
         // must have progressive IDs
         if(serial != nodes.size()){
-            cerr << "Bad formatted input file: lines must have progressive IDs!" << endl;
+            cerr << "parse_bcalm_file(): Bad formatted input file: lines must have progressive IDs!" << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -93,7 +93,7 @@ void DBG::parse_bcalm_file() {
         // ------ parse sequence line ------
         // TTGAAGGTAACGGATGTTCTAGTTTTTTCTCTTT}
         if(!getline(bcalm_file, line)){
-            cerr << "Bad input file!" << endl;
+            cerr << "parse_bcalm_file(): expected a sequence here!" << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -103,8 +103,8 @@ void DBG::parse_bcalm_file() {
         // check consistency:
         // there must be one count for each kmer!
         if((node.unitig.size() - kmer_size + 1) != node.abundances.size()){
-            cerr << "Bad formatted input file: wrong number of abundances!" << endl;
-            cerr << "Also make sure that kmer_size=" << kmer_size << endl;
+            cerr << "parse_bcalm_file(): Bad formatted input file: wrong number of abundances!" << endl;
+            cerr << "parse_bcalm_file(): Also make sure that kmer_size=" << kmer_size << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -199,7 +199,7 @@ string DBG::reverse_complement(const string &s) {
                 c = 'C';
                 break;
             default:
-                cerr << "Unknown nucleotide!" << endl;
+                cerr << "reverse_complement(): Unknown nucleotide!" << endl;
                 exit(EXIT_FAILURE);
         }
         rc[s.length() - 1 - i] = c;
@@ -290,11 +290,11 @@ void DBG::get_consistent_nodes_from(uint32_t node, bool forward, vector<size_t> 
 
 string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards) {
     if(path_nodes.size() != forwards.size()){
-        cerr << "Inconsistent path!" << endl;
+        cerr << "spell(): Inconsistent path!" << endl;
         exit(EXIT_FAILURE);
     }
     if(path_nodes.empty()) {
-        cerr << "You're not allowed to spell an empty path!" << endl;
+        cerr << "spell(): You're not allowed to spell an empty path!" << endl;
         exit(EXIT_FAILURE);
     }
 
