@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
         dbg.verify_input();
 
     // make an SPSS
-    SPSS spss(&dbg);
+    SPSS spss(&dbg, params.debug);
 
     // compute simplitigs
     cout << "Extracting simplitigs..." << endl;
