@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "DBG.h"
 #include "SPSS.h"
+#include "Encoder.h"
 
 #define VERSION "0.1"
 
@@ -61,7 +62,6 @@ void parse_cli(int argc, char **argv, params_t &params){
             case 'v':
                 cout << "Version " << VERSION << endl;
                 exit(EXIT_SUCCESS);
-                break;
             case 'd':
                 params.debug = true;
                 break;
@@ -88,6 +88,7 @@ int main(int argc, char **argv) {
     print_params(params);
 
     // make a dBG
+    cout << "Reading the input file..." << endl;
     DBG dbg(params.input_file, params.kmer_size);
     dbg.print_info();
 
@@ -95,21 +96,28 @@ int main(int argc, char **argv) {
     if(params.debug)
         dbg.verify_input();
 
+    // choose SPSS sorter
+    Sorter sorter;
     // make an SPSS
-    SPSS spss(&dbg, params.debug);
+    SPSS spss(&dbg, &sorter, params.debug);
 
     // compute simplitigs
-    cout << "Extracting simplitigs..." << endl;
-    spss.extract_simplitigs();
+    cout << "Computing a path cover..." << endl;
+    spss.compute_path_cover();
+    cout << "Extracting simplitigs and kmers counts..." << endl;
+    spss.extract_simplitigs_and_counts();
 
     spss.print_info();
 
     // save to disk
     string fasta_file_name = params.output_file + ".ustar.fa";
     string counts_file_name = params.output_file + ".ustar.counts";
-    spss.to_fasta_file(fasta_file_name);
+
+    Encoder encoder(&spss);
+
+    encoder.to_fasta_file(fasta_file_name);
     cout << "Simplitigs written to disk: " << fasta_file_name << endl;
-    spss.to_counts_file(counts_file_name);
+    encoder.to_counts_file(counts_file_name);
     cout << "Counts written to disk: " << counts_file_name << endl;
 
     return EXIT_SUCCESS;

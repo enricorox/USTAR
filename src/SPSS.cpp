@@ -7,27 +7,30 @@
 #include <fstream>
 #include "SPSS.h"
 
-SPSS::SPSS(DBG *dbg, bool debug){
-    this->dbg = dbg;
+SPSS::SPSS(DBG *dbg, Sorter *sorter, bool debug){
     this->debug = debug;
 
+    this->dbg = dbg;
     n_nodes = dbg->get_n_nodes();
-    saturated.resize(n_nodes);
-    fill(saturated.begin(), saturated.end(), false);
+    visited.resize(n_nodes);
+    fill(visited.begin(), visited.end(), false);
+
+    this->sorter = sorter;
+    sorter->init(dbg->get_nodes(), &visited);
 }
 
-void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
+void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
     path_nodes.clear(); path_forwards.clear();
 
     vector<size_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
     deque<size_t> path_nodes_d; deque<bool> path_forwards_d;
 
     // forward extending
-    dbg->get_nodes_from(seed, forwards, to_nodes, to_forwards, saturated);
+    dbg->get_nodes_from(seed, forwards, to_nodes, to_forwards, visited);
     uint32_t node = seed;
 
     path_nodes_d.push_back(node);
-    saturated.at(node) = true;
+    visited.at(node) = true;
     if(to_nodes.empty()){
         path_nodes.push_back(seed);
         path_forwards.push_back(true);
@@ -38,12 +41,12 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
     bool forward = seed_forward;
     path_forwards_d.push_back(forward);
     while(true){
-        dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, saturated);
+        dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
         if(to_nodes.empty())
             break;
         node = to_nodes[0];
         forward = to_forwards[0];
-        saturated.at(node) = true;
+        visited.at(node) = true;
         path_nodes_d.push_back(node);
         path_forwards_d.push_back(forward);
     }
@@ -53,12 +56,12 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
         node = seed;
         forward = (!seed_forward);
         while (true) {
-            dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, saturated);
+            dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
             if (to_nodes.empty())
                 break;
             node = to_nodes[0];
             forward = to_forwards[0];
-            saturated.at(node) = true;
+            visited.at(node) = true;
             path_nodes_d.push_front(node);
             path_forwards_d.push_front(!forward);
         }
@@ -74,19 +77,37 @@ void SPSS::extends(uint32_t seed, vector<size_t> &path_nodes, vector<bool> &path
         cerr << "Inconsistent path!\n";
 }
 
-void SPSS::extract_simplitigs(bool two_way) {
-    // reset simplitigs if already computed
-    simplitigs_path_nodes.clear();
-    simplitigs_path_forwards.clear();
+void SPSS::compute_path_cover(bool two_way) {
+    // reset path cover if already computed
+    path_cover_nodes.clear();
+    path_cover_forwards.clear();
 
     vector<size_t> path_nodes; vector<bool> path_forwards;
     for(size_t seed = 0; seed < n_nodes; seed++){
-        if(saturated[seed]) continue;
+        if(visited[seed]) continue;
         extends(seed, path_nodes, path_forwards, two_way);
-        simplitigs_path_nodes.push_back(path_nodes);
-        simplitigs_path_forwards.push_back(path_forwards);
+        path_cover_nodes.push_back(path_nodes);
+        path_cover_forwards.push_back(path_forwards);
     }
-    n_simplitigs = simplitigs_path_nodes.size();
+}
+
+void SPSS::extract_simplitigs_and_counts(){
+    n_simplitigs = path_cover_nodes.size();
+    if(n_simplitigs == 0){
+        cerr << "Need to compute a path cover first!" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    vector<size_t> simplitig_counts;
+    for(size_t i = 0; i < n_simplitigs; i++){
+        // extract simplitigs
+        simplitigs.push_back(dbg->spell(path_cover_nodes[i], path_cover_forwards[i]));
+
+        // extract counts
+        simplitig_counts.clear();
+        dbg->get_counts(path_cover_nodes[i], path_cover_forwards[i], simplitig_counts);
+        counts.push_back(simplitig_counts);
+    }
 }
 
 void SPSS::to_fasta_file(const string &file_name) {
@@ -96,9 +117,9 @@ void SPSS::to_fasta_file(const string &file_name) {
     }
     ofstream fasta;
     fasta.open(file_name);
-    for(size_t i = 0; i < n_simplitigs; i++){
+    for(auto &simplitig : simplitigs){
         fasta << ">\n";
-        fasta << dbg->spell(simplitigs_path_nodes[i], simplitigs_path_forwards[i]) << "\n";
+        fasta << simplitig << "\n";
     }
     fasta.close();
 }
@@ -106,11 +127,8 @@ void SPSS::to_fasta_file(const string &file_name) {
 void SPSS::to_counts_file(const string &file_name) {
     ofstream counts_file;
     counts_file.open(file_name);
-    vector<uint32_t> counts;
-    for(size_t i = 0; i < n_simplitigs; i++){
-        counts.clear();
-        dbg->get_counts(simplitigs_path_nodes[i], simplitigs_path_forwards[i], counts);
-        for(auto c : counts)
+    for(const auto &simplitig_counts : counts){
+        for(auto c : simplitig_counts)
             counts_file << c << (debug?" ":"\n");
         if(debug) counts_file << "\n";
     }
@@ -123,7 +141,7 @@ void SPSS::print_info(){
         exit(EXIT_FAILURE);
     }
     size_t c_length = 0;
-    for(auto &simplitig : simplitigs_path_nodes){
+    for(auto &simplitig : path_cover_nodes){
         c_length += dbg->get_node(simplitig[0]).length;
         for(size_t i = 1; i < simplitig.size(); i++)
             c_length += dbg->get_node(simplitig[i]).length - (dbg->get_kmer_size() - 1);

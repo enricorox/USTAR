@@ -6,6 +6,7 @@ set -e
 PATH="/home/enrico/bio-bin/dsk/bin/:$PATH"
 
 DEBUG=1
+counts=1
 
 help(){
    # Display Help
@@ -35,12 +36,14 @@ validate(){
   dsk2ascii -file spss.h5 -out spss.txt  -verbose 0
 
   # test only kmers
-  cut -d' ' -f1 < unitigs.txt | sort  -o sorted_unitigs.txt;
-  cut -d' ' -f1 < spss.txt | sort  -o sorted_spss.txt;
-
-  # test kmers and counts
-  # sort  -o sorted_unitigs.txt < unitigs.txt
-  # sort  -o sorted_spss.txt < spss.txt
+  if [[ $counts -eq 0 ]]; then
+    cut -d' ' -f1 < unitigs.txt | sort  -o sorted_unitigs.txt;
+    cut -d' ' -f1 < spss.txt | sort  -o sorted_spss.txt;
+  else
+    # test kmers and counts
+    sort  -o sorted_unitigs.txt < unitigs.txt
+    sort  -o sorted_spss.txt < spss.txt
+  fi
 
   if cmp sorted_unitigs.txt sorted_spss.txt; then
     echo '### SUCCESS: The two files contain same k-mers! ###'

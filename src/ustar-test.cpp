@@ -32,7 +32,7 @@ int main(){
         dbg.print_info();
 
         SPSS spss(&dbg, true);
-        spss.extract_simplitigs();
+        spss.compute_path_cover();
         spss.print_info();
         spss.to_fasta_file(file_name_base + ".ustar.fa");
 

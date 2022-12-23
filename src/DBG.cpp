@@ -319,7 +319,7 @@ string DBG::spell(const vector<size_t> &path_nodes, const vector<bool> &forwards
     return contig;
 }
 
-void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts) {
+void DBG::get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<size_t> &counts) {
     //          3 5
     // forward: A C T T
     //          5 3
@@ -365,5 +365,9 @@ const node_t & DBG::get_node(size_t node){
 
 uint32_t DBG::get_kmer_size() {
     return kmer_size;
+}
+
+const vector<node_t> * DBG::get_nodes() {
+    return &nodes;
 }
 

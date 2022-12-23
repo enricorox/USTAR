@@ -131,7 +131,7 @@ public:
      * @param forwards how nodes must be read
      * @param counts abundances are returned here
      */
-    void get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<uint32_t> &counts);
+    void get_counts(const vector<size_t> &path_nodes, const vector<bool> &forwards, vector<size_t> &counts);
 
     uint32_t get_n_kmers() const;
 
@@ -142,6 +142,8 @@ public:
     const node_t &get_node(size_t node);
 
     uint32_t get_kmer_size();
+
+    const vector<node_t> *get_nodes();
 };
 
 #endif //USTAR_DBG_H
