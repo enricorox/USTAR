@@ -17,15 +17,20 @@ int main(){
              "../unit-test/test5",
              "../unit-test/test6",
              "../unit-test/test7",
-             "../unit-test/test8"
+             "../unit-test/test8",
+             "../unit-test/test9",
+             "../unit-test/test10",
+             "../unit-test/test11"
             };
 
     for(auto &file_name_base : file_names){
         string file_name = file_name_base + ".unitigs.fa";
         cout << "Test file: " << file_name << endl;
+
         DBG dbg(file_name, 3);
         dbg.verify_input();
         dbg.print_info();
+
         SPSS spss(&dbg, true);
         spss.extract_simplitigs();
         spss.print_info();
@@ -36,8 +41,9 @@ int main(){
         fasta.open(file_name_base + ".ustar.fa");
         string in;
         fasta >> in >> in;
-        if(in != "ACTGG"){
-            cerr << "Output must be: ACTGG!" << endl;
+        string result = "ACTGG";
+        if(in != result && in != DBG::reverse_complement(result)){
+            cerr << "Output must be: ACTGG or " << DBG::reverse_complement(result) <<"!" << endl;
             cerr << "Found " << in << " instead." << endl;
             exit(EXIT_FAILURE);
         }else
