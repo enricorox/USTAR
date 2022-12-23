@@ -4,12 +4,17 @@
 
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "Encoder.h"
 
 Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts, bool debug) {
     this->debug = debug;
     this->simplitigs = simplitigs;
     this->counts = counts;
+
+    simplitigs_order.resize(simplitigs->size());
+    for(size_t i = 0; i < simplitigs->size(); i++)
+        simplitigs_order.push_back(i);
 }
 
 void Encoder::to_fasta_file(const string &file_name) {
@@ -20,7 +25,8 @@ void Encoder::to_fasta_file(const string &file_name) {
 
     ofstream fasta;
     fasta.open(file_name);
-    for(auto &simplitig : *simplitigs){
+    for(size_t i = 0; i < simplitigs->size(); i++){
+        auto &simplitig = (*simplitigs)[simplitigs_order[i]];
         fasta << ">\n";
         fasta << simplitig << "\n";
     }
@@ -35,6 +41,8 @@ void Encoder::to_counts_file(const string &file_name) {
 
     ofstream encoded;
     switch(encoding) {
+        case AVG_RLE:
+            // no break here
         case RLE:
             encoded.open(file_name + ".rle");
             if(!encoded.good()){
@@ -42,7 +50,7 @@ void Encoder::to_counts_file(const string &file_name) {
                 exit(EXIT_FAILURE);
             }
 
-            for(int i = 0; i < symbols.size(); i++){
+            for(size_t i = 0; i < symbols.size(); i++){
                 encoded << symbols[i];
                 if(runs[i] != 1)
                     encoded << " " << runs[i];
@@ -71,29 +79,15 @@ void Encoder::encode(encoding_t encoding_type) {
     this->encoding = encoding_type;
 
     switch(encoding) {
-        case RLE: {
-                uint32_t c = 0, prev;
-                bool first = true;
-
-                for (auto &s_counts: *counts) {
-                    for (auto curr: s_counts) {
-                        // stream of counts here
-                        if (first || curr == prev) {
-                            c++;
-                            first = false;
-                        } else {
-                            symbols.push_back(prev);
-                            runs.push_back(c);
-                            // reset
-                            c = 1;
-                        }
-                        prev = curr;
-                    }
-                }
-                // save last run
-                symbols.push_back(prev);
-                runs.push_back(c);
-            }
+        case RLE:
+            do_RLE();
+            break;
+        case AVG_RLE:
+            compute_avg();
+            sort(simplitigs_order.begin(), simplitigs_order.end(),
+                 [this](size_t a, size_t b){return avg_counts[a] < avg_counts[b];}
+                 );
+            do_RLE();
             break;
         case PLAIN:
         default:
@@ -101,4 +95,38 @@ void Encoder::encode(encoding_t encoding_type) {
     }
 }
 
+void Encoder::do_RLE(){
+    uint32_t c = 0, prev;
+    bool first = true;
+
+    for (size_t i = 0; i < counts->size(); i++) {
+        for (uint32_t curr: (*counts)[simplitigs_order[i]]) {
+            // stream of counts here
+            if (first || curr == prev) {
+                c++;
+                first = false;
+            } else {
+                symbols.push_back(prev);
+                runs.push_back(c);
+                // reset
+                c = 1;
+            }
+            prev = curr;
+        }
+    }
+    // save last run
+    symbols.push_back(prev);
+    runs.push_back(c);
+}
+
+void Encoder::compute_avg() {
+    avg_counts.resize(counts->size());
+
+    for(auto &simplitig_counts : *counts){
+        double sum = 0;
+        for(uint32_t c : simplitig_counts)
+            sum += c;
+        avg_counts.push_back(sum / (double) simplitig_counts.size());
+    }
+}
 

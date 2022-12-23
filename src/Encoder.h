@@ -11,18 +11,26 @@ using namespace std;
 
 enum encoding_t{
     PLAIN,
-    RLE
+    RLE,
+    AVG_RLE
 };
 
 class Encoder{
     bool debug = true;
     encoding_t encoding{};
 
+    vector<size_t> simplitigs_order;
+
     const vector<string> *simplitigs;
     const vector<vector<uint32_t>> *counts;
+    vector<double> avg_counts;
 
     vector<uint32_t> symbols;
     vector<uint32_t> runs;
+
+    void do_RLE();
+
+    void compute_avg();
 
 public:
     Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts, bool debug=false);
