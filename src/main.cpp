@@ -113,8 +113,7 @@ int main(int argc, char **argv) {
     string fasta_file_name = params.output_file + ".ustar.fa";
     string counts_file_name = params.output_file + ".ustar.counts";
 
-    Encoder encoder(&spss);
-
+    Encoder encoder(spss.get_simplitigs(), spss.get_counts());
     encoder.to_fasta_file(fasta_file_name);
     cout << "Simplitigs written to disk: " << fasta_file_name << endl;
     encoder.to_counts_file(counts_file_name);

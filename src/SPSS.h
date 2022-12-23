@@ -7,6 +7,7 @@
 
 #include "DBG.h"
 #include "Sorter.h"
+#include "Encoder.h"
 
 using namespace std;
 
@@ -36,13 +37,13 @@ public:
 
     void compute_path_cover(bool two_way=true);
 
-    void to_fasta_file(const string &file_name);
-
-    void to_counts_file(const string &file_name);
-
     void print_info();
 
     void extract_simplitigs_and_counts();
+
+    const vector<string> * get_simplitigs();
+
+    const vector<vector<size_t>> * get_counts();
 };
 
 #endif //USTAR_SPSS_H

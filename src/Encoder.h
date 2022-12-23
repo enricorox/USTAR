@@ -5,11 +5,17 @@
 #ifndef USTAR_ENCODER_H
 #define USTAR_ENCODER_H
 
-#include "SPSS.h"
+#include <vector>
+
+using namespace std;
 
 class Encoder{
+    const vector<string> *simplitigs;
+    const vector<vector<size_t>> *counts;
+    bool debug = true;
+
 public:
-    explicit Encoder(SPSS *spss);
+    Encoder(const vector<string> *simplitigs, const vector<vector<size_t>> *counts);
 
     void to_fasta_file(const string &file_name);
 

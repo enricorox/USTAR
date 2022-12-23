@@ -5,7 +5,8 @@
 #include <iostream>
 #include "Sorter.h"
 
-Sorter::Sorter() {
+Sorter::Sorter(const vector<sorting_method_t> &sorting_methods) {
+    this->sorting_methods = sorting_methods;
 
 }
 
@@ -18,6 +19,17 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
         seed_order[i] = i;
 
     seed_index = 0;
+
+    // sort!
+    for(auto &sorting_method : sorting_methods)
+        switch(sorting_method){
+        case DEFAULT:
+            // do nothing
+            break;
+        default:
+            cerr << "init(): unknown sorting method!" << endl;
+            exit(EXIT_FAILURE);
+    }
 }
 
 size_t Sorter::next_seed() {
@@ -25,12 +37,46 @@ size_t Sorter::next_seed() {
         cerr << "next_seed(): Must check if a seed exists first!" << endl;
         exit(EXIT_FAILURE);
     }
-    return seed_order.at(seed_index);
+    return seed_order[seed_index];
 }
 
 bool Sorter::has_seed() {
     for(; seed_index < seed_order.size(); seed_index++)
-        if(!visited->at(seed_index))
+        if(!(*visited)[seed_index])
             break;
     return seed_index < seed_order.size();
+}
+
+size_t Sorter::seed_successor(size_t seed, vector<bool> forwards, vector<size_t> to_nodes, vector<bool> to_forwards,
+                              bool &forward, bool &to_forward) {
+    size_t successor;
+    // scan all the sorting methods
+    for(auto &sorting_method : sorting_methods)
+        switch(sorting_method){
+            case DEFAULT: // choose always the first
+                forward = forwards[0];
+                to_forward = to_forwards[0];
+                successor = to_nodes[0];
+                break;
+            default:
+                // do nothing
+                break;
+        }
+    return successor;
+}
+
+size_t Sorter::next_successor(size_t node, vector<size_t> to_nodes, vector<bool> to_forwards, bool &to_forward) {
+    // scan all the sorting methods
+    size_t successor;
+    for(auto &sorting_method : sorting_methods)
+        switch(sorting_method){
+            case DEFAULT:
+                to_forward = to_forwards[0];
+                successor = to_nodes[0];
+                break;
+            default:
+                // do nothing
+                break;
+        }
+    return successor;
 }

@@ -19,6 +19,22 @@ SPSS::SPSS(DBG *dbg, Sorter *sorter, bool debug){
     sorter->init(dbg->get_nodes(), &visited);
 }
 
+const vector<string> * SPSS::get_simplitigs(){
+    if(simplitigs.empty()){
+        cerr << "There are no simplitigs!" << endl;
+        exit(EXIT_FAILURE);
+    }
+    return &simplitigs;
+}
+
+const vector<vector<size_t>> * SPSS::get_counts(){
+    if(simplitigs.empty()){
+        cerr << "There are no simplitigs!" << endl;
+        exit(EXIT_FAILURE);
+    }
+    return &counts;
+}
+
 void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
     path_nodes.clear(); path_forwards.clear();
 
@@ -26,20 +42,22 @@ void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_f
     deque<size_t> path_nodes_d; deque<bool> path_forwards_d;
 
     // ----- forward extending -----
+    // get all the unvisited nodes reachable from seed
     dbg->get_nodes_from(seed, forwards, to_nodes, to_forwards, visited);
-    uint32_t node = seed;
 
-    path_nodes_d.push_back(node);
-    visited.at(node) = true;
+    path_nodes_d.push_back(seed);
+    visited.at(seed) = true;
     if(to_nodes.empty()){
         path_nodes.push_back(seed);
         path_forwards.push_back(true);
         return;
     }
-    // choose arbitrarily the first arc (if any!)
+
+    // set the orientation of the seed according to the first arc
     bool seed_forward = forwards[0];
     bool forward = seed_forward;
     path_forwards_d.push_back(forward);
+    size_t node = seed;
     while(true){
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
         if(to_nodes.empty())
@@ -107,31 +125,6 @@ void SPSS::extract_simplitigs_and_counts(){
         dbg->get_counts(path_cover_nodes[i], path_cover_forwards[i], simplitig_counts);
         counts.push_back(simplitig_counts);
     }
-}
-
-void SPSS::to_fasta_file(const string &file_name) {
-    if(n_simplitigs == 0){
-        cerr << "to_fasta_file(): Need to extract simplitigs first!" << endl;
-        exit(EXIT_FAILURE);
-    }
-    ofstream fasta;
-    fasta.open(file_name);
-    for(auto &simplitig : simplitigs){
-        fasta << ">\n";
-        fasta << simplitig << "\n";
-    }
-    fasta.close();
-}
-
-void SPSS::to_counts_file(const string &file_name) {
-    ofstream counts_file;
-    counts_file.open(file_name);
-    for(const auto &simplitig_counts : counts){
-        for(auto c : simplitig_counts)
-            counts_file << c << (debug?" ":"\n");
-        if(debug) counts_file << "\n";
-    }
-    counts_file.close();
 }
 
 void SPSS::print_info(){
