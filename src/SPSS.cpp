@@ -41,47 +41,59 @@ void SPSS::extends(size_t seed, vector<size_t> &path_nodes, vector<bool> &path_f
     vector<size_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
     deque<size_t> path_nodes_d; deque<bool> path_forwards_d;
 
+    // add the seed
+    path_nodes_d.push_back(seed);
+    visited.at(seed) = true;
+
     // ----- forward extending -----
     // get all the unvisited nodes reachable from seed
     dbg->get_nodes_from(seed, forwards, to_nodes, to_forwards, visited);
 
-    path_nodes_d.push_back(seed);
-    visited.at(seed) = true;
     if(to_nodes.empty()){
         path_nodes.push_back(seed);
         path_forwards.push_back(true);
         return;
     }
 
-    // set the orientation of the seed according to the first arc
-    bool seed_forward = forwards[0];
-    bool forward = seed_forward;
-    path_forwards_d.push_back(forward);
-    size_t node = seed;
+    // set the orientation of the seed according to the sorter
+    bool seed_forward;
+    bool forward, to_forward;
+    size_t node;
+    size_t successor = sorter->seed_successor(seed, forwards, to_nodes, to_forwards, seed_forward, to_forward);
+    path_forwards_d.push_back(seed_forward);
+
     while(true){
+        // update
+        node = successor;
+        visited.at(node) = true;
+        forward = to_forward;
+        path_nodes_d.push_back(node);
+        path_forwards_d.push_back(forward);
+
+        // explore
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
         if(to_nodes.empty())
             break;
-        node = to_nodes[0];
-        forward = to_forwards[0];
-        visited.at(node) = true;
-        path_nodes_d.push_back(node);
-        path_forwards_d.push_back(forward);
+        successor = sorter->next_successor(node, to_nodes, to_forwards, to_forward);
     }
 
     // ----- backward extending -----
     if(two_way) {
         node = seed;
-        forward = (!seed_forward);
+        forward = (!seed_forward); // the other side
         while (true) {
+            // explore
             dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
             if (to_nodes.empty())
                 break;
-            node = to_nodes[0];
-            forward = to_forwards[0];
+            successor = sorter->next_successor(node, to_nodes, to_forwards, to_forward);
+
+            // update
+            node = successor;
+            forward = to_forward;
             visited.at(node) = true;
             path_nodes_d.push_front(node);
-            path_forwards_d.push_front(!forward);
+            path_forwards_d.push_front(!forward); // need to be visited backward!!!
         }
     }
 
@@ -129,7 +141,7 @@ void SPSS::extract_simplitigs_and_counts(){
 
 void SPSS::print_info(){
     if(n_simplitigs == 0){
-        cerr << "print_info(): Need to compute a path cover first!" << endl;
+        cerr << "print_info(): Need to extract simplitigs first!" << endl;
         exit(EXIT_FAILURE);
     }
     size_t c_length = 0;

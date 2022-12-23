@@ -50,13 +50,14 @@ bool Sorter::has_seed() {
 size_t Sorter::seed_successor(size_t seed, vector<bool> forwards, vector<size_t> to_nodes, vector<bool> to_forwards,
                               bool &forward, bool &to_forward) {
     size_t successor;
+    forward = forwards[0];
+    to_forward = to_forwards[0];
+    successor = to_nodes[0];
     // scan all the sorting methods
     for(auto &sorting_method : sorting_methods)
         switch(sorting_method){
             case DEFAULT: // choose always the first
-                forward = forwards[0];
-                to_forward = to_forwards[0];
-                successor = to_nodes[0];
+                // do nothing, it's before the cycle
                 break;
             default:
                 // do nothing
@@ -68,11 +69,13 @@ size_t Sorter::seed_successor(size_t seed, vector<bool> forwards, vector<size_t>
 size_t Sorter::next_successor(size_t node, vector<size_t> to_nodes, vector<bool> to_forwards, bool &to_forward) {
     // scan all the sorting methods
     size_t successor;
+    to_forward = to_forwards[0];
+    successor = to_nodes[0];
+
     for(auto &sorting_method : sorting_methods)
         switch(sorting_method){
             case DEFAULT:
-                to_forward = to_forwards[0];
-                successor = to_nodes[0];
+                // do nothing: it's before the cycle
                 break;
             default:
                 // do nothing
