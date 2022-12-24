@@ -58,6 +58,8 @@ void Encoder::to_counts_file(const string &file_name) {
     }
 
     switch(encoding) {
+        case encoding_t::AVG_FLIP_RLE:
+            // no break here
         case encoding_t::FLIP_RLE:
             // no break here
         case encoding_t::AVG_RLE:
@@ -90,6 +92,14 @@ void Encoder::encode(encoding_t encoding_type) {
     encoding_done = true;
 
     switch(encoding) {
+        case encoding_t::AVG_FLIP_RLE:
+            compute_avg();
+            sort(simplitigs_order.begin(), simplitigs_order.end(),
+                 [this](size_t a, size_t b){return avg_counts[a] < avg_counts[b];}
+            );
+            do_flip();
+            do_RLE();
+            break;
         case encoding_t::FLIP_RLE:
             do_flip();
             do_RLE();
@@ -185,6 +195,8 @@ void Encoder::print_stat(){
     }
     cout << "\nEncoding stats:\n";
     switch (encoding) {
+        case encoding_t::AVG_FLIP_RLE:
+            // no break here
         case encoding_t::FLIP_RLE:
             // no break here
         case encoding_t::AVG_RLE:
