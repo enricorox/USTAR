@@ -7,13 +7,7 @@
 #include <cstring>
 #include <algorithm>
 #include "DBG.h"
-
-uint32_t static median(vector<uint32_t> v){
-    size_t n = v.size() / 2;
-    // find the middle element
-    nth_element(v.begin(), v.begin()+n, v.end());
-    return v[n];
-}
+#include "algos.h"
 
 void DBG::parse_bcalm_file() {
     ifstream bcalm_file;

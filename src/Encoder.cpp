@@ -8,6 +8,7 @@
 
 #include "Encoder.h"
 #include "DBG.h"
+#include "algos.h"
 
 Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug) {
     if (simplitigs_counts->empty()) {
@@ -121,10 +122,6 @@ void Encoder::encode(encoding_t encoding_type) {
             cerr << "encode(): Unknown encoding" << endl;
             exit(EXIT_FAILURE);
     }
-}
-
-inline uint32_t d(uint32_t a, uint32_t b){
-    return abs((int)a - (int)b);
 }
 
 void Encoder::do_flip(){
