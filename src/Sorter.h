@@ -39,9 +39,9 @@ public:
 
     size_t next_seed();
 
-    size_t seed_successor(node_idx_t seed, vector<bool> forwards, vector<node_idx_t> to_nodes, vector<bool> to_forwards, bool &forward, bool &to_forward);
+    size_t seed_successor(node_idx_t seed, vector<bool> &forwards, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &forward, bool &to_forward);
 
-    size_t next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vector<bool> to_forwards, bool &to_forward);
+    size_t next_successor(node_idx_t node, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward);
 };
 
 #endif //USTAR_SORTER_H
