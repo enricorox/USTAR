@@ -48,41 +48,37 @@ bool Sorter::has_seed() {
     return seed_index < seed_order.size();
 }
 
-size_t Sorter::seed_successor(node_idx_t seed, vector<bool> forwards, vector<node_idx_t> to_nodes, vector<bool> to_forwards,
+size_t Sorter::seed_successor(node_idx_t seed, vector<bool> &forwards, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards,
                               bool &forward, bool &to_forward) {
+
+    vector<node_idx_t> order; order.reserve(to_nodes.size());
+    for(node_idx_t i = 0; i < to_nodes.size(); i++)
+        order.push_back(i); // default order
 
     switch(extending_method){
         case extending_method_t::FIRST: // choose always the first
             // do nothing, it's before the cycle
             break;
         case extending_method_t::SIMILAR_ABUNDANCE: {
-            auto lambda = [](node_idx_t a, node_idx_t b) {return true;};
-            sort(to_nodes.begin(), to_nodes.end(), lambda);
+            auto lambda = [this](node_idx_t a, node_idx_t b) {
+                return nodes->at(a).abundances.at(0) < nodes->at(b).abundances.at(0);
+            };
+            sort(order.begin(), order.end(), lambda);
             }
             break;
         default:
             cerr << "seed_successor(): unknown extending method!" << endl;
             exit(EXIT_FAILURE);
     }
-    forward = forwards[0];
-    to_forward = to_forwards[0];
-    size_t successor = to_nodes[0];
+    if(!forwards.empty()) // is there a "dummy" forward?
+        forward = forwards[order[0]];
+    to_forward = to_forwards[order[0]];
+    size_t successor = to_nodes[order[0]];
     return successor;
 }
 
-size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vector<bool> to_forwards, bool &to_forward) {
-    vector<bool> dummy_forwards = {true};
+size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward) {
+    vector<bool> dummy_forwards;
     bool dummy_forward;
     return seed_successor(node, dummy_forwards, to_nodes, to_forwards, dummy_forward, to_forward);
-    switch(extending_method){
-        case extending_method_t::FIRST:
-            // do nothing: it's before the cycle
-            break;
-        default:
-            cerr << "next_successor(): unknown extending method!" << endl;
-            exit(EXIT_FAILURE);
-    }
-    to_forward = to_forwards[0];
-    size_t successor = to_nodes[0];
-    return successor;
 }
