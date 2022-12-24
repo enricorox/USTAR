@@ -32,7 +32,7 @@ const map<encoding_t, string> encoding_suffixes = {
 const map<string, encoding_t> encoding_names = {
         {"d", encoding_t::PLAIN}, {"plain", encoding_t::PLAIN},
         {"rle", encoding_t::RLE},
-        {"avg+rle", encoding_t::AVG_RLE}
+        {"avg_rle", encoding_t::AVG_RLE}
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
@@ -108,6 +108,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 if(optarg) {
                     params.output_file = string(optarg);
                     params.fasta_file_name = params.output_file + ".ustar.fa";
+                    params.counts_file_name = params.output_file + ".ustar.count" + encoding_suffixes.at(params.encoding);
                 }
                 else {
                     cerr << "parse_cli(): Need an output file name!" << endl;
@@ -198,10 +199,6 @@ int main(int argc, char **argv) {
     spss.extract_simplitigs_and_counts();
 
     spss.print_stat();
-
-    // save to disk
-    string fasta_file_name = params.output_file + ".ustar.fa";
-    string counts_file_name = params.output_file + ".ustar.simplitigs_counts"  + ".avg.rle";
 
     Encoder encoder(spss.get_simplitigs(), spss.get_counts(), params.debug);
     encoder.encode(params.encoding);
