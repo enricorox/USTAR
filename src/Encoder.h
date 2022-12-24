@@ -22,11 +22,13 @@ class Encoder{
     encoding_t encoding{};
     bool encoding_done = false;
 
+    vector<bool> flips;
     vector<size_t> simplitigs_order;
+    vector<double> avg_counts;
 
     const vector<string> *simplitigs;
     const vector<vector<uint32_t>> *simplitigs_counts;
-    vector<double> avg_counts;
+    size_t n_kmers = 0;
 
     vector<uint32_t> symbols;
     vector<uint32_t> runs;
@@ -35,6 +37,8 @@ class Encoder{
     void do_RLE();
 
     void compute_avg();
+
+    void do_flip();
 
 public:
     Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug=false);

@@ -23,7 +23,7 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
 
     // sort!
     switch(seeding_method){
-        case seeding_method_t::DEFAULT:
+        case seeding_method_t::FIRST:
         // do nothing
         break;
     default:
@@ -56,7 +56,7 @@ size_t Sorter::seed_successor(node_idx_t seed, vector<bool> forwards, vector<nod
     // scan all the sorting methods
 
     switch(extending_method){
-        case extending_method_t::DEFAULT: // choose always the first
+        case extending_method_t::FIRST: // choose always the first
             // do nothing, it's before the cycle
             break;
         default:
@@ -73,7 +73,7 @@ size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vect
     successor = to_nodes[0];
 
     switch(extending_method){
-        case extending_method_t::DEFAULT:
+        case extending_method_t::FIRST:
             // do nothing: it's before the cycle
             break;
         default:

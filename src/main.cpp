@@ -19,8 +19,8 @@ struct params_t{
     bool debug = false;
 
     encoding_t encoding = encoding_t::PLAIN;
-    seeding_method_t seeding_method = seeding_method_t::DEFAULT;
-    extending_method_t extending_method = extending_method_t::DEFAULT;
+    seeding_method_t seeding_method = seeding_method_t::FIRST;
+    extending_method_t extending_method = extending_method_t::FIRST;
 };
 
 const map<encoding_t, string> encoding_suffixes = {
@@ -38,11 +38,13 @@ const map<string, encoding_t> encoding_names = {
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
-        {"d", seeding_method_t::DEFAULT},
+        {"f", seeding_method_t::FIRST},
+        {"=a", seeding_method_t::SIMILAR_ABUNDANCE}
 };
 
 const map<string, extending_method_t> extending_method_names = {
-        {"d", extending_method_t::DEFAULT}
+        {"f", extending_method_t::FIRST},
+        {"=a", extending_method_t::SIMILAR_ABUNDANCE}
 };
 
 template <typename T>
@@ -65,17 +67,20 @@ void print_help(const params_t &params){
     cout << "\t-o \toutput file base name [" << params.output_file << "]\n\n";
 
     cout << "\t-s \tseeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
-    cout << "\t\td\tchoose the first seed available\n";
+    cout << "\t\tf\tchoose the first seed available\n";
+    cout << "\t\t=a\tchoose the seed with most similar abundance to the last used node\t";
     cout << "\n";
 
     cout << "\t-x \textending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
-    cout << "\t\td\tchoose the first successor available\n";
+    cout << "\t\tf\tchoose the first successor available\n";
+    cout << "\t\t=a\tchoose the successor with most similar abundance to the last used node\t";
     cout << "\n";
 
     cout << "\t-e \tencoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
     cout << "\t\tplain\tdo not use any encoding\n";
     cout << "\t\trle\tuse special Run Length Encoding\n";
     cout << "\t\tavg_rle\tsort simplitigs by average counts and use RLE\n";
+    cout << "\t\tflip_rle\tmake contiguous runs by flipping simplitigs if necessary and use RLE\n";
     cout << "\n";
 
     cout << "\t-d \tdebug [" << (params.debug?"true":"false") << "]\n\n";

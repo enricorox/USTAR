@@ -5,7 +5,9 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+
 #include "Encoder.h"
+#include "DBG.h"
 
 Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug) {
     if (simplitigs_counts->empty()) {
@@ -24,6 +26,11 @@ Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>
     simplitigs_order.reserve(simplitigs->size());
     for(size_t i = 0; i < simplitigs->size(); i++)
         simplitigs_order.push_back(i);
+
+    flips.resize(simplitigs_counts->size(), false);
+
+    for(auto &counts : *simplitigs_counts)
+        n_kmers += counts.size();
 }
 
 void Encoder::to_fasta_file(const string &file_name) {
@@ -37,7 +44,7 @@ void Encoder::to_fasta_file(const string &file_name) {
     for(size_t i = 0; i < simplitigs->size(); i++){
         auto &simplitig = (*simplitigs)[simplitigs_order[i]];
         fasta << ">\n";
-        fasta << simplitig << "\n";
+        fasta << (flips[i]?DBG::reverse_complement(simplitig):simplitig) << "\n";
     }
     fasta.close();
 }
@@ -51,6 +58,8 @@ void Encoder::to_counts_file(const string &file_name) {
     }
 
     switch(encoding) {
+        case encoding_t::FLIP_RLE:
+            // no break here
         case encoding_t::AVG_RLE:
             // no break here
         case encoding_t::RLE:
@@ -81,6 +90,10 @@ void Encoder::encode(encoding_t encoding_type) {
     encoding_done = true;
 
     switch(encoding) {
+        case encoding_t::FLIP_RLE:
+            do_flip();
+            do_RLE();
+            break;
         case encoding_t::RLE:
             do_RLE();
             break;
@@ -100,6 +113,23 @@ void Encoder::encode(encoding_t encoding_type) {
     }
 }
 
+inline uint32_t d(uint32_t a, uint32_t b){
+    return abs((int)a - (int)b);
+}
+
+void Encoder::do_flip(){
+    flips[0] = false;
+    for(size_t i = 1; i < simplitigs_counts->size(); i++){
+        uint32_t prev_last = (*simplitigs_counts)[i - 1].back();
+        uint32_t curr_first = (*simplitigs_counts)[i].front();
+        uint32_t curr_last = (*simplitigs_counts)[i].back();
+        if(d(prev_last, curr_first) == 0) // that's ok
+            continue;
+        if(d(prev_last, curr_last) == 0) // we can do better!
+            flips[i] = true;
+    }
+}
+
 void Encoder::do_RLE(){
     uint32_t count = 0, prev;
     uint32_t sum_run = 0;
@@ -107,7 +137,13 @@ void Encoder::do_RLE(){
     bool first = true;
     for (size_t i = 0; i < simplitigs_counts->size(); i++) {
         // accessing simplitigs_counts based on computed order!
-        for (uint32_t curr: (*simplitigs_counts)[simplitigs_order[i]]) {
+        auto &counts = (*simplitigs_counts)[simplitigs_order[i]];
+        for (size_t k = 0; k < counts.size(); k++) {
+            uint32_t curr;
+            if(!flips[i]) // forward visiting
+                curr = counts[k];
+            else // backward visiting
+                curr = counts[counts.size() - 1 - k];
             // stream of simplitigs_counts here
             if (first || curr == prev) {
                 count++;
@@ -149,6 +185,8 @@ void Encoder::print_stat(){
     }
     cout << "\nEncoding stats:\n";
     switch (encoding) {
+        case encoding_t::FLIP_RLE:
+            // no break here
         case encoding_t::AVG_RLE:
             // no break here
         case encoding_t::RLE:
@@ -156,7 +194,7 @@ void Encoder::print_stat(){
             cout << "\tAverage run: " << avg_run << "\n";
             break;
         case encoding_t::PLAIN:
-            cout << "\tNo size reduction for plain counts\n";
+            cout << "\tNumber of counts: " << n_kmers << "\n";
             break;
         default:
             cerr << "to_counts_file(): Unknown encoding" << endl;
