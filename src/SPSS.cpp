@@ -127,6 +127,7 @@ void SPSS::extract_simplitigs_and_counts(){
     }
 
     vector<uint32_t> simplitig_counts;
+    counts.reserve(n_simplitigs);
     for(size_t i = 0; i < n_simplitigs; i++){
         // extract simplitigs
         simplitigs.push_back(dbg->spell(path_cover_nodes[i], path_cover_forwards[i]));
