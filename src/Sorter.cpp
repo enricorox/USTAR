@@ -5,8 +5,9 @@
 #include <iostream>
 #include "Sorter.h"
 
-Sorter::Sorter(const vector<sorting_method_t> &sorting_methods) {
-    this->sorting_methods = sorting_methods;
+Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_method) {
+    this->seeding_method = sorting_methods;
+    this->extending_method = extending_method;
 
 }
 
@@ -21,14 +22,13 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
     seed_index = 0;
 
     // sort!
-    for(auto &sorting_method : sorting_methods)
-        switch(sorting_method){
-        case DEFAULT:
-            // do nothing
-            break;
-        default:
-            cerr << "init(): unknown sorting method!" << endl;
-            exit(EXIT_FAILURE);
+    switch(seeding_method){
+        case seeding_method_t::DEFAULT_SEED:
+        // do nothing
+        break;
+    default:
+        cerr << "init(): unknown seeding method!" << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -54,15 +54,15 @@ size_t Sorter::seed_successor(node_idx_t seed, vector<bool> forwards, vector<nod
     to_forward = to_forwards[0];
     successor = to_nodes[0];
     // scan all the sorting methods
-    for(auto &sorting_method : sorting_methods)
-        switch(sorting_method){
-            case DEFAULT: // choose always the first
-                // do nothing, it's before the cycle
-                break;
-            default:
-                // do nothing
-                break;
-        }
+
+    switch(extending_method){
+        case extending_method_t::DEFAULT_EXTEND: // choose always the first
+            // do nothing, it's before the cycle
+            break;
+        default:
+            cerr << "seed_successor(): unknown extending method!" << endl;
+            exit(EXIT_FAILURE);
+    }
     return successor;
 }
 
@@ -72,14 +72,13 @@ size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vect
     to_forward = to_forwards[0];
     successor = to_nodes[0];
 
-    for(auto &sorting_method : sorting_methods)
-        switch(sorting_method){
-            case DEFAULT:
-                // do nothing: it's before the cycle
-                break;
-            default:
-                // do nothing
-                break;
-        }
+    switch(extending_method){
+        case extending_method_t::DEFAULT_EXTEND:
+            // do nothing: it's before the cycle
+            break;
+        default:
+            cerr << "next_successor(): unknown extending method!" << endl;
+            exit(EXIT_FAILURE);
+    }
     return successor;
 }

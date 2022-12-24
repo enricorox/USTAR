@@ -6,6 +6,7 @@
 #define USTAR_ENCODER_H
 
 #include <vector>
+#include <map>
 
 using namespace std;
 

@@ -10,12 +10,17 @@
 
 using namespace std;
 
-enum sorting_method_t{
-    DEFAULT
+enum class seeding_method_t{
+    DEFAULT_SEED
+};
+
+enum class extending_method_t{
+    DEFAULT_EXTEND
 };
 
 class Sorter{
-    vector<sorting_method_t> sorting_methods;
+    seeding_method_t seeding_method;
+    extending_method_t extending_method;
 
     const vector<bool> *visited{};
     const vector<node_t> *nodes{};
@@ -24,7 +29,7 @@ class Sorter{
     size_t seed_index = 0;
 
 public:
-    explicit Sorter(const vector<sorting_method_t> &sorting_methods={DEFAULT});
+    explicit Sorter(seeding_method_t seeding_method=seeding_method_t::DEFAULT_SEED, extending_method_t extending_method=extending_method_t::DEFAULT_EXTEND);
 
     void init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited);
 
