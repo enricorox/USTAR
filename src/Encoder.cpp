@@ -51,9 +51,9 @@ void Encoder::to_counts_file(const string &file_name) {
     }
 
     switch(encoding) {
-        case AVG_RLE:
+        case encoding_t::AVG_RLE:
             // no break here
-        case RLE:
+        case encoding_t::RLE:
             for(size_t i = 0; i < symbols.size(); i++){
                 encoded << symbols[i];
                 if(runs[i] != 1)
@@ -62,7 +62,7 @@ void Encoder::to_counts_file(const string &file_name) {
             }
             encoded.close();
             break;
-        case PLAIN:
+        case encoding_t::PLAIN:
         default:
             for (const auto &simplitig_counts: *simplitigs_counts) {
                 for (auto c: simplitig_counts)
@@ -78,17 +78,17 @@ void Encoder::encode(encoding_t encoding_type) {
     encoding_done = true;
 
     switch(encoding) {
-        case RLE:
+        case encoding_t::RLE:
             do_RLE();
             break;
-        case AVG_RLE:
+        case encoding_t::AVG_RLE:
             compute_avg();
             sort(simplitigs_order.begin(), simplitigs_order.end(),
                  [this](size_t a, size_t b){return avg_counts[a] < avg_counts[b];}
                  );
             do_RLE();
             break;
-        case PLAIN:
+        case encoding_t::PLAIN:
         default:
             break;
     }
@@ -146,13 +146,13 @@ void Encoder::print_stat(){
     }
     cout << "\nEncoding stats:\n";
     switch (encoding) {
-        case AVG_RLE:
+        case encoding_t::AVG_RLE:
             // no break here
-        case RLE:
+        case encoding_t::RLE:
             cout << "\tNumber of runs: " << runs.size() << "\n";
             cout << "\tAverage run: " << avg_run << "\n";
             break;
-        case PLAIN:
+        case encoding_t::PLAIN:
             // no break here
         default:
             cout << "\tNo size reduction for simplitigs_counts\n";

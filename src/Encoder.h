@@ -10,7 +10,7 @@
 
 using namespace std;
 
-enum encoding_t{
+enum class encoding_t{
     PLAIN,
     RLE,
     AVG_RLE
