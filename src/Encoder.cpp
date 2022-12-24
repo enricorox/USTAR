@@ -121,9 +121,6 @@ void Encoder::do_RLE(){
     runs.push_back(count);
     sum_run += count;
 
-    cout << "sum_run = " << sum_run << endl;
-    cout << "run.size() = " << runs.size() << endl;
-
     avg_run = (double) sum_run / (double) runs.size();
 }
 
