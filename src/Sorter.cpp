@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <algorithm>
 #include "Sorter.h"
 
 Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_method) {
@@ -49,29 +50,30 @@ bool Sorter::has_seed() {
 
 size_t Sorter::seed_successor(node_idx_t seed, vector<bool> forwards, vector<node_idx_t> to_nodes, vector<bool> to_forwards,
                               bool &forward, bool &to_forward) {
-    size_t successor;
-    forward = forwards[0];
-    to_forward = to_forwards[0];
-    successor = to_nodes[0];
-    // scan all the sorting methods
 
     switch(extending_method){
         case extending_method_t::FIRST: // choose always the first
             // do nothing, it's before the cycle
             break;
+        case extending_method_t::SIMILAR_ABUNDANCE: {
+            auto lambda = [](node_idx_t a, node_idx_t b) {return true;};
+            sort(to_nodes.begin(), to_nodes.end(), lambda);
+            }
+            break;
         default:
             cerr << "seed_successor(): unknown extending method!" << endl;
             exit(EXIT_FAILURE);
     }
+    forward = forwards[0];
+    to_forward = to_forwards[0];
+    size_t successor = to_nodes[0];
     return successor;
 }
 
 size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vector<bool> to_forwards, bool &to_forward) {
-    // scan all the sorting methods
-    size_t successor;
-    to_forward = to_forwards[0];
-    successor = to_nodes[0];
-
+    vector<bool> dummy_forwards = {true};
+    bool dummy_forward;
+    return seed_successor(node, dummy_forwards, to_nodes, to_forwards, dummy_forward, to_forward);
     switch(extending_method){
         case extending_method_t::FIRST:
             // do nothing: it's before the cycle
@@ -80,5 +82,7 @@ size_t Sorter::next_successor(node_idx_t node, vector<node_idx_t> to_nodes, vect
             cerr << "next_successor(): unknown extending method!" << endl;
             exit(EXIT_FAILURE);
     }
+    to_forward = to_forwards[0];
+    size_t successor = to_nodes[0];
     return successor;
 }
