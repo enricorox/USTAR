@@ -13,7 +13,8 @@ using namespace std;
 enum class encoding_t{
     PLAIN,
     RLE,
-    AVG_RLE
+    AVG_RLE,
+    FLIP_RLE
 };
 
 class Encoder{

@@ -19,28 +19,30 @@ struct params_t{
     bool debug = false;
 
     encoding_t encoding = encoding_t::PLAIN;
-    seeding_method_t seeding_method = seeding_method_t::DEFAULT_SEED;
-    extending_method_t extending_method = extending_method_t::DEFAULT_EXTEND;
+    seeding_method_t seeding_method = seeding_method_t::DEFAULT;
+    extending_method_t extending_method = extending_method_t::DEFAULT;
 };
 
 const map<encoding_t, string> encoding_suffixes = {
         {encoding_t::PLAIN, ""},
         {encoding_t::RLE, ".rle"},
-        {encoding_t::AVG_RLE, ".avg_rle"}
+        {encoding_t::AVG_RLE, ".avg_rle"},
+        {encoding_t::FLIP_RLE, ".flip_rle"}
 };
 
 const map<string, encoding_t> encoding_names = {
         {"plain", encoding_t::PLAIN},
         {"rle", encoding_t::RLE},
-        {"avg_rle", encoding_t::AVG_RLE}
+        {"avg_rle", encoding_t::AVG_RLE},
+        {"flip_rle", encoding_t::FLIP_RLE}
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
-        {"d", seeding_method_t::DEFAULT_SEED},
+        {"d", seeding_method_t::DEFAULT},
 };
 
 const map<string, extending_method_t> extending_method_names = {
-        {"d", extending_method_t::DEFAULT_EXTEND}
+        {"d", extending_method_t::DEFAULT}
 };
 
 template <typename T>

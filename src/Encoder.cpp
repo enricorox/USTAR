@@ -63,12 +63,15 @@ void Encoder::to_counts_file(const string &file_name) {
             encoded.close();
             break;
         case encoding_t::PLAIN:
-        default:
             for (const auto &simplitig_counts: *simplitigs_counts) {
                 for (auto c: simplitig_counts)
                     encoded << c << (debug ? " " : "\n");
                 if (debug) encoded << "\n";
             }
+            break;
+        default:
+            cerr << "to_counts_file(): Unknown encoding" << endl;
+            exit(EXIT_FAILURE);
     }
     encoded.close();
 }
@@ -89,8 +92,11 @@ void Encoder::encode(encoding_t encoding_type) {
             do_RLE();
             break;
         case encoding_t::PLAIN:
-        default:
+            // do nothing
             break;
+        default:
+            cerr << "encode(): Unknown encoding" << endl;
+            exit(EXIT_FAILURE);
     }
 }
 
@@ -150,9 +156,11 @@ void Encoder::print_stat(){
             cout << "\tAverage run: " << avg_run << "\n";
             break;
         case encoding_t::PLAIN:
-            // no break here
+            cout << "\tNo size reduction for plain counts\n";
+            break;
         default:
-            cout << "\tNo size reduction for simplitigs_counts\n";
+            cerr << "to_counts_file(): Unknown encoding" << endl;
+            exit(EXIT_FAILURE);
             break;
     }
     cout << endl;

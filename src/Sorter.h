@@ -11,11 +11,11 @@
 using namespace std;
 
 enum class seeding_method_t{
-    DEFAULT_SEED
+    DEFAULT
 };
 
 enum class extending_method_t{
-    DEFAULT_EXTEND
+    DEFAULT
 };
 
 class Sorter{
@@ -29,7 +29,7 @@ class Sorter{
     size_t seed_index = 0;
 
 public:
-    explicit Sorter(seeding_method_t seeding_method=seeding_method_t::DEFAULT_SEED, extending_method_t extending_method=extending_method_t::DEFAULT_EXTEND);
+    explicit Sorter(seeding_method_t seeding_method=seeding_method_t::DEFAULT, extending_method_t extending_method=extending_method_t::DEFAULT);
 
     void init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited);
 
