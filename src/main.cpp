@@ -18,21 +18,21 @@ struct params_t{
 
     bool debug = false;
 
-    encoding_t encoding = PLAIN;
+    encoding_t encoding = encoding_t::PLAIN;
     seeding_method_t seeding_method = seeding_method_t::DEFAULT_SEED;
     extending_method_t extending_method = extending_method_t::DEFAULT_EXTEND;
 };
 
 const map<encoding_t, string> encoding_suffixes = {
-        {PLAIN, ""},
-        {RLE, ".rle"},
-        {AVG_RLE, ".avg_rle"}
+        {encoding_t::PLAIN, ""},
+        {encoding_t::RLE, ".rle"},
+        {encoding_t::AVG_RLE, ".avg_rle"}
 };
 
 const map<string, encoding_t> encoding_names = {
-        {"d", PLAIN}, {"plain", PLAIN},
-        {"rle", RLE},
-        {"avg+rle", AVG_RLE}
+        {"d", encoding_t::PLAIN}, {"plain", encoding_t::PLAIN},
+        {"rle", encoding_t::RLE},
+        {"avg+rle", encoding_t::AVG_RLE}
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
