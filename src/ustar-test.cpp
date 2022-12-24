@@ -38,7 +38,7 @@ int main(){
         spss.print_stat();
         Encoder encoder(spss.get_simplitigs(), spss.get_counts());
         encoder.to_fasta_file(file_name_base + ".ustar.fa");
-        encoder.to_counts_file(file_name_base + ".ustar.counts");
+        encoder.to_counts_file(file_name_base + ".ustar.simplitigs_counts");
 
         // verify output
         ifstream fasta;

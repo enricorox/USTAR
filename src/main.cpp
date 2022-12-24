@@ -11,7 +11,7 @@ using namespace std;
 
 void print_help(){
     cout << "Find a Spectrum Preserving String Set (aka simplitigs) for the input file.\n";
-    cout << "Compute the kmer counts vector.\n\n";
+    cout << "Compute the kmer simplitigs_counts vector.\n\n";
     cout << "Usage: ./USTAR -i <bcalm_file> -k <kmer_size>\n";
     cout << "Options:\n";
     cout << "\t-o \toutput file base name\n";
@@ -104,17 +104,18 @@ int main(int argc, char **argv) {
     // compute simplitigs
     cout << "Computing a path cover..." << endl;
     spss.compute_path_cover();
-    cout << "Extracting simplitigs and kmers counts..." << endl;
+    cout << "Extracting simplitigs and kmers simplitigs_counts..." << endl;
     spss.extract_simplitigs_and_counts();
 
     spss.print_stat();
 
     // save to disk
     string fasta_file_name = params.output_file + ".ustar.fa";
-    string counts_file_name = params.output_file + ".ustar.counts";
+    string counts_file_name = params.output_file + ".ustar.simplitigs_counts"  + ".avg.rle";
 
-    Encoder encoder(spss.get_simplitigs(), spss.get_counts());
+    Encoder encoder(spss.get_simplitigs(), spss.get_counts(), params.debug);
     encoder.encode(AVG_RLE);
+    encoder.print_stat();
     encoder.to_fasta_file(fasta_file_name);
     cout << "Simplitigs written to disk: " << fasta_file_name << endl;
     encoder.to_counts_file(counts_file_name);

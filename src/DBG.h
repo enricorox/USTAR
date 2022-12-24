@@ -41,7 +41,7 @@ class DBG{
 
     /**
      * Parse the BCALM2 file
-     * @param bcalm_file_name Path of a file made by BCALM2 with '-all-abundance-counts'
+     * @param bcalm_file_name Path of a file made by BCALM2 with '-all-abundance-simplitigs_counts'
      */
     void parse_bcalm_file();
 

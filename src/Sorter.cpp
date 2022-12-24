@@ -14,7 +14,7 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
     this->visited = spss_visited;
     this->nodes = dbg_nodes;
 
-    seed_order.resize(dbg_nodes->size());
+    seed_order.resize(dbg_nodes->size(), 0);
     for(size_t i = 0; i < seed_order.size(); i++)
         seed_order[i] = i;
 

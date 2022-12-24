@@ -12,8 +12,7 @@ SPSS::SPSS(DBG *dbg, Sorter *sorter, bool debug){
 
     this->dbg = dbg;
     n_nodes = dbg->get_n_nodes();
-    visited.resize(n_nodes);
-    fill(visited.begin(), visited.end(), false);
+    visited.resize(n_nodes, false);
 
     this->sorter = sorter;
     sorter->init(dbg->get_nodes(), &visited);
@@ -132,7 +131,7 @@ void SPSS::extract_simplitigs_and_counts(){
         // extract simplitigs
         simplitigs.push_back(dbg->spell(path_cover_nodes[i], path_cover_forwards[i]));
 
-        // extract counts
+        // extract simplitigs_counts
         simplitig_counts.clear();
         dbg->get_counts(path_cover_nodes[i], path_cover_forwards[i], simplitig_counts);
         counts.push_back(simplitig_counts);
@@ -151,9 +150,10 @@ void SPSS::print_stat(){
             c_length += dbg->get_node(path[i]).length - (dbg->get_kmer_size() - 1);
     }
 
-    cout << "Simplitigs info:\n";
+    cout << "\nSimplitigs stats:\n";
     cout << "\tnumber of simplitigs: NS = " << n_simplitigs << "\n";
     cout << "\tcumulative length: CL = " << c_length << "\n";
     cout << "\taverage simplitigs length: " << (double) c_length / (double) n_simplitigs << "\n";
+    cout << "\taverage number of kmers per simplitig: " << (double) dbg->get_n_kmers() / (double) n_simplitigs << "\n";
     cout << endl;
 }

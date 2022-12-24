@@ -138,7 +138,7 @@ DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size){
 DBG::~DBG() = default;
 
 void DBG::print_stat() {
-    cout << "Info for " << bcalm_file_name << ":\n";
+    cout << "Stats for " << bcalm_file_name << ":\n";
     cout << "\tnumber of kmers: " << n_kmers << "\n";
     cout << "\tnumber of nodes: " << nodes.size() << "\n";
     cout << "\tnumber of arcs: " << n_arcs << "\n";

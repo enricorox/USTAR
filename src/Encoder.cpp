@@ -7,12 +7,21 @@
 #include <algorithm>
 #include "Encoder.h"
 
-Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *counts, bool debug) {
+Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug) {
+    if (simplitigs_counts->empty()) {
+        cerr << "to_counts_file(): There are no simplitigs_counts!" << endl;
+        exit(EXIT_FAILURE);
+    }
+    if(simplitigs->size() != simplitigs_counts->size()){
+        cerr << "Encoder(): Got an incorrect number of simplitigs_counts or simplitigs!" << endl;
+        exit(EXIT_FAILURE);
+    }
+
     this->debug = debug;
     this->simplitigs = simplitigs;
-    this->counts = counts;
+    this->simplitigs_counts = simplitigs_counts;
 
-    simplitigs_order.resize(simplitigs->size());
+    simplitigs_order.reserve(simplitigs->size());
     for(size_t i = 0; i < simplitigs->size(); i++)
         simplitigs_order.push_back(i);
 }
@@ -34,22 +43,17 @@ void Encoder::to_fasta_file(const string &file_name) {
 }
 
 void Encoder::to_counts_file(const string &file_name) {
-    if (counts->empty()) {
-        cerr << "to_counts_file(): There are no counts!" << endl;
+    ofstream encoded;
+    encoded.open(file_name);
+    if(!encoded.good()){
+        cerr << "Can't open output file: " << file_name + ".rle" << endl;
         exit(EXIT_FAILURE);
     }
 
-    ofstream encoded;
     switch(encoding) {
         case AVG_RLE:
             // no break here
         case RLE:
-            encoded.open(file_name + ".rle");
-            if(!encoded.good()){
-                cerr << "Can't open output file: " << file_name + ".rle" << endl;
-                exit(EXIT_FAILURE);
-            }
-
             for(size_t i = 0; i < symbols.size(); i++){
                 encoded << symbols[i];
                 if(runs[i] != 1)
@@ -58,15 +62,9 @@ void Encoder::to_counts_file(const string &file_name) {
             }
             encoded.close();
             break;
-
         case PLAIN:
         default:
-            encoded.open(file_name);
-            if(!encoded.good()){
-                cerr << "Can't open output file:" << file_name << endl;
-                exit(EXIT_FAILURE);
-            }
-            for (const auto &simplitig_counts: *counts) {
+            for (const auto &simplitig_counts: *simplitigs_counts) {
                 for (auto c: simplitig_counts)
                     encoded << c << (debug ? " " : "\n");
                 if (debug) encoded << "\n";
@@ -77,6 +75,7 @@ void Encoder::to_counts_file(const string &file_name) {
 
 void Encoder::encode(encoding_t encoding_type) {
     this->encoding = encoding_type;
+    encoding_done = true;
 
     switch(encoding) {
         case RLE:
@@ -96,33 +95,43 @@ void Encoder::encode(encoding_t encoding_type) {
 }
 
 void Encoder::do_RLE(){
-    uint32_t c = 0, prev;
-    bool first = true;
+    uint32_t count = 0, prev;
+    uint32_t sum_run = 0;
 
-    for (size_t i = 0; i < counts->size(); i++) {
-        for (uint32_t curr: (*counts)[simplitigs_order[i]]) {
-            // stream of counts here
+    bool first = true;
+    for (size_t i = 0; i < simplitigs_counts->size(); i++) {
+        // accessing simplitigs_counts based on computed order!
+        for (uint32_t curr: (*simplitigs_counts)[simplitigs_order[i]]) {
+            // stream of simplitigs_counts here
             if (first || curr == prev) {
-                c++;
+                count++;
                 first = false;
             } else {
                 symbols.push_back(prev);
-                runs.push_back(c);
+                runs.push_back(count);
+                sum_run += count;
                 // reset
-                c = 1;
+                count = 1;
             }
             prev = curr;
         }
     }
     // save last run
     symbols.push_back(prev);
-    runs.push_back(c);
+    runs.push_back(count);
+    sum_run += count;
+
+    cout << "sum_run = " << sum_run << endl;
+    cout << "run.size() = " << runs.size() << endl;
+
+    avg_run = (double) sum_run / (double) runs.size();
 }
 
 void Encoder::compute_avg() {
-    avg_counts.resize(counts->size());
+    // pre-allocate the vector
+    avg_counts.reserve(simplitigs_counts->size());
 
-    for(auto &simplitig_counts : *counts){
+    for(auto &simplitig_counts : *simplitigs_counts){
         double sum = 0;
         for(uint32_t c : simplitig_counts)
             sum += c;
@@ -130,3 +139,24 @@ void Encoder::compute_avg() {
     }
 }
 
+void Encoder::print_stat(){
+    if(!encoding_done){
+        cerr << "print_stat(): Need to encode() first!" << endl;
+        exit(EXIT_FAILURE);
+    }
+    cout << "\nEncoding stats:\n";
+    switch (encoding) {
+        case AVG_RLE:
+            // no break here
+        case RLE:
+            cout << "\tNumber of runs: " << runs.size() << "\n";
+            cout << "\tAverage run: " << avg_run << "\n";
+            break;
+        case PLAIN:
+            // no break here
+        default:
+            cout << "\tNo size reduction for simplitigs_counts\n";
+            break;
+    }
+    cout << endl;
+}
