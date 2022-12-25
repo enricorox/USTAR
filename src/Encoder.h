@@ -14,8 +14,10 @@ enum class encoding_t{
     PLAIN,
     RLE,
     AVG_RLE,
+    FLIP,
     FLIP_RLE,
-    AVG_FLIP_RLE
+    AVG_FLIP_RLE,
+    BINARY
 };
 
 class Encoder{

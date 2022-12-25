@@ -74,11 +74,35 @@ void Encoder::to_counts_file(const string &file_name) {
             }
             encoded.close();
             break;
+        case encoding_t::FLIP:
+            // no break here
         case encoding_t::PLAIN:
-            for (const auto &simplitig_counts: *simplitigs_counts) {
-                for (auto c: simplitig_counts)
-                    encoded << c << (debug ? " " : "\n");
+            for(auto i : simplitigs_order){
+                auto &simplitig = (*simplitigs_counts)[i];
+                for(size_t j = 0; j < simplitig.size(); j++){
+                    size_t curr = simplitig[j];
+                    if(flips[i])
+                        curr = simplitig[simplitig.size() - 1 - j];
+                    encoded << curr << (debug ? " " : "\n");
+                }
                 if (debug) encoded << "\n";
+            }
+            break;
+        case encoding_t::BINARY:
+            for(auto i : simplitigs_order){
+                auto &simplitig = (*simplitigs_counts)[i];
+                for(size_t j = 0; j < simplitig.size(); j++){
+                    size_t curr = simplitig[j];
+                    if(flips[i])
+                        curr = simplitig[simplitig.size() - 1 - j];
+                    if(curr > UINT32_MAX){
+                        cerr << "to_counts_file(): count is too large for UINT16: " << curr << " > " << UINT32_MAX << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    uint32_t c = curr;
+                    //encoded.write((char*) &curr, sizeof(curr));
+                    encoded.write((char*) &c, sizeof(c));
+                }
             }
             break;
         default:
@@ -93,6 +117,8 @@ void Encoder::encode(encoding_t encoding_type) {
     encoding_done = true;
 
     switch(encoding) {
+        case encoding_t::BINARY:
+            // no break here
         case encoding_t::AVG_FLIP_RLE:
             compute_avg();
             sort(simplitigs_order.begin(), simplitigs_order.end(),
@@ -114,6 +140,9 @@ void Encoder::encode(encoding_t encoding_type) {
                  [this](size_t a, size_t b){return avg_counts[a] < avg_counts[b];}
                  );
             do_RLE();
+            break;
+        case encoding_t::FLIP:
+            do_flip();
             break;
         case encoding_t::PLAIN:
             // do nothing
@@ -151,6 +180,7 @@ void Encoder::do_RLE(){
                 curr = counts[k];
             else // backward visiting
                 curr = counts[counts.size() - 1 - k];
+
             // stream of simplitigs_counts here
             if (first || curr == prev) {
                 count++;
@@ -171,6 +201,18 @@ void Encoder::do_RLE(){
     sum_run += count;
 
     avg_run = (double) sum_run / (double) runs.size();
+
+    if(debug){
+        // sum_run must be equal to n_kmers!!!
+        if(sum_run != n_kmers){
+            if(sum_run > n_kmers)
+                cerr << "OOPS! We have too many counts!" << endl;
+            else
+                cerr << "OOPS! We have too less counts!" << endl;
+            exit(EXIT_FAILURE);
+        }else
+            cout << "YES! Counts number is correct!\n";
+    }
 }
 
 void Encoder::compute_avg() {
@@ -179,10 +221,12 @@ void Encoder::compute_avg() {
 
     for(auto &simplitig_counts : *simplitigs_counts){
         double sum = 0;
-        for(uint32_t c : simplitig_counts)
-            sum += c;
-        avg_counts.push_back(sum / (double) simplitig_counts.size());
+        //for(uint32_t c : simplitig_counts)
+        //    sum += c;
+        avg_counts.push_back((double) (simplitig_counts.front() + simplitig_counts.back()) / 2);
+        //avg_counts.push_back(sum / (double) simplitig_counts.size());
     }
+
 }
 
 void Encoder::print_stat(){
@@ -192,6 +236,8 @@ void Encoder::print_stat(){
     }
     cout << "\nEncoding stats:\n";
     switch (encoding) {
+        case encoding_t::BINARY:
+            // no break here
         case encoding_t::AVG_FLIP_RLE:
             // no break here
         case encoding_t::FLIP_RLE:
@@ -202,13 +248,14 @@ void Encoder::print_stat(){
             cout << "\tNumber of runs: " << runs.size() << "\n";
             cout << "\tAverage run: " << avg_run << "\n";
             break;
+        case encoding_t::FLIP:
+            // no break here
         case encoding_t::PLAIN:
             cout << "\tNumber of counts: " << n_kmers << "\n";
             break;
         default:
             cerr << "to_counts_file(): Unknown encoding" << endl;
             exit(EXIT_FAILURE);
-            break;
     }
     cout << endl;
 }
