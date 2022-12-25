@@ -26,21 +26,26 @@ struct params_t{
 const map<encoding_t, string> encoding_suffixes = {
         {encoding_t::PLAIN, ""},
         {encoding_t::RLE, ".rle"},
+        {encoding_t::FLIP, ".flip"},
         {encoding_t::AVG_RLE, ".avg_rle"},
         {encoding_t::FLIP_RLE, ".flip_rle"},
-        {encoding_t::AVG_FLIP_RLE, ".avg_flip_rle"}
+        {encoding_t::AVG_FLIP_RLE, ".avg_flip_rle"},
+        {encoding_t::BINARY, ".bin"}
 };
 
 const map<string, encoding_t> encoding_names = {
         {"plain", encoding_t::PLAIN},
+        {"flip", encoding_t::FLIP},
         {"rle", encoding_t::RLE},
         {"avg_rle", encoding_t::AVG_RLE},
         {"flip_rle", encoding_t::FLIP_RLE},
-        {"avg_flip_rle", encoding_t::AVG_FLIP_RLE}
+        {"avg_flip_rle", encoding_t::AVG_FLIP_RLE},
+        {"bin", encoding_t::BINARY}
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
         {"f", seeding_method_t::FIRST},
+        {"-ma", seeding_method_t::LOWER_MEDIAN_ABUNDANCE},
         {"=a", seeding_method_t::SIMILAR_ABUNDANCE}
 };
 
@@ -70,6 +75,7 @@ void print_help(const params_t &params){
 
     cout << "\t-s \tseeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
     cout << "\t\tf\tchoose the first seed available\n";
+    cout << "\t\t-ma\tchoose the seed with lower median abundance\n";
     cout << "\t\t=a\tchoose the seed with most similar abundance to the last used node\t";
     cout << "\n";
 
@@ -125,7 +131,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 params.output_file = string(optarg);
                 params.fasta_file_name = params.output_file + ".ustar.fa";
                 params.counts_file_name =
-                        params.output_file + ".ustar.count" + encoding_suffixes.at(params.encoding);
+                        params.output_file + ".ustar.counts" + encoding_suffixes.at(params.encoding);
                 break;
             case 'k':
                 if(optarg)
@@ -147,9 +153,10 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): need a method for encoding!" << endl;
                     exit(EXIT_FAILURE);
                 }
+                // if(encoding_names.find(optarg) == encoding_names.end()){}
                 params.encoding = encoding_names.at(optarg);
                 params.counts_file_name = params.output_file
-                                          + ".counts" + encoding_suffixes.at(params.encoding);
+                                          + ".ustar.counts" + encoding_suffixes.at(params.encoding);
                 break;
             case 's': // seed method
                 if (!optarg) {
@@ -197,7 +204,7 @@ int main(int argc, char **argv) {
         dbg.verify_input();
 
     // choose SPSS sorter
-    Sorter sorter(params.seeding_method, params.extending_method);
+    Sorter sorter(params.seeding_method, params.extending_method, params.debug);
     // make an SPSS
     SPSS spss(&dbg, &sorter, params.debug);
 
