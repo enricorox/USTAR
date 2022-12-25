@@ -73,7 +73,7 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
         if(to_nodes.empty())
             break;
-        successor = sorter->next_successor(node, to_nodes, to_forwards, to_forward);
+        successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
     }
 
     // ----- backward extending -----
@@ -85,7 +85,7 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
             dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
             if (to_nodes.empty())
                 break;
-            successor = sorter->next_successor(node, to_nodes, to_forwards, to_forward);
+            successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
 
             // update
             node = successor;
