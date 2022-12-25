@@ -12,6 +12,7 @@ using namespace std;
 
 enum class seeding_method_t{
     FIRST,
+    LOWER_MEDIAN_ABUNDANCE,
     SIMILAR_ABUNDANCE
 };
 
@@ -21,6 +22,7 @@ enum class extending_method_t{
 };
 
 class Sorter{
+    bool debug;
     seeding_method_t seeding_method;
     extending_method_t extending_method;
 
@@ -31,7 +33,7 @@ class Sorter{
     size_t seed_index = 0;
 
 public:
-    explicit Sorter(seeding_method_t seeding_method=seeding_method_t::FIRST, extending_method_t extending_method=extending_method_t::FIRST);
+    explicit Sorter(seeding_method_t seeding_method=seeding_method_t::FIRST, extending_method_t extending_method=extending_method_t::FIRST, bool debug=false);
 
     void init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited);
 
@@ -41,7 +43,7 @@ public:
 
     size_t seed_successor(node_idx_t seed, vector<bool> &forwards, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &forward, bool &to_forward);
 
-    size_t next_successor(node_idx_t node, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward);
+    size_t next_successor(node_idx_t node, bool forward, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward);
 };
 
 #endif //USTAR_SORTER_H
