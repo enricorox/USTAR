@@ -24,7 +24,7 @@ struct arc_t{
 struct node_t{
     uint32_t length;
     uint32_t median_abundance;
-    double mean_abundance;
+    double average_abundance;
     string unitig;
     vector<uint32_t> abundances;
     vector<arc_t> arcs;
@@ -34,6 +34,7 @@ class DBG{
     string bcalm_file_name;
     uint32_t kmer_size = 0;
     vector<node_t> nodes;
+    size_t n_iso = 0;
     size_t n_arcs = 0;
     size_t n_kmers = 0;
     double avg_unitig_len = 0;

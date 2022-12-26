@@ -68,7 +68,7 @@ void DBG::parse_bcalm_file() {
             node.abundances.push_back(abundance);
             token = strtok(nullptr, " "); // next token
         }while(token != nullptr && token[0] != 'L');
-        node.mean_abundance = sum_abundance / (double) node.abundances.size();
+        node.average_abundance = sum_abundance / (double) node.abundances.size();
         node.median_abundance = median(node.abundances);
 
         // ------ parse arcs ------
@@ -123,7 +123,9 @@ DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size){
         n_arcs += node.arcs.size();
         n_kmers += node.abundances.size();
         sum_unitig_length += node.length;
-        sum_abundances += node.mean_abundance * (double) node.abundances.size();
+        sum_abundances += node.average_abundance * (double) node.abundances.size();
+
+        if(node.arcs.empty()) n_iso++;
     }
     avg_unitig_len = (double) sum_unitig_length / (double) nodes.size();
     avg_abundances = sum_abundances / (double) n_kmers;
@@ -132,9 +134,10 @@ DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size){
 DBG::~DBG() = default;
 
 void DBG::print_stat() {
-    cout << "\nStats for " << bcalm_file_name << ":\n";
+    cout << "\nDBG stats:\n";
     cout << "\tnumber of kmers: " << n_kmers << "\n";
     cout << "\tnumber of nodes: " << nodes.size() << "\n";
+    cout << "\tnumber of isolated nodes: " << n_iso << "\n";
     cout << "\tnumber of arcs: " << n_arcs << "\n";
     cout << "\taverage number of arcs: " << (double) n_arcs / (double) nodes.size() << "\n";
     cout << "\taverage unitig length: " << avg_unitig_len << "\n";
