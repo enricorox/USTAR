@@ -146,7 +146,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 params.output_file = string(optarg);
                 params.fasta_file_name = params.output_file + ".ustar.fa";
                 params.counts_file_name =
-                        params.output_file + ".ustar.counts" + encoding_suffixes.at(params.encoding);
+                        params.output_file + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 'k':
                 if(optarg)
@@ -175,7 +175,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 }
                 params.encoding = encoding_names.at(optarg);
                 params.counts_file_name = params.output_file
-                                          + ".ustar.counts" + encoding_suffixes.at(params.encoding);
+                                          + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 's': // seed method
                 if (!optarg) {
