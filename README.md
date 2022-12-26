@@ -22,7 +22,7 @@ in order to compute a compacted de Brujin graph (cdBG) of your multi-fasta file.
 
 See the help `./ustar -h` for details.
 
-## Cool! But it is correct?
+## Cool! But is it correct?
 Sure! 
 You can check that the output file contains the same kmers of
 your multi-fasta file with your preferred kmer counter (just ignore counts because they are in a different file).
