@@ -7,6 +7,8 @@
 #include "Sorter.h"
 #include "algos.h"
 
+const double EPSILON = 0.5;
+
 Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_method, bool debug) {
     this->seeding_method = sorting_methods;
     this->extending_method = extending_method;
@@ -62,6 +64,8 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
             sort(seed_order.begin(), seed_order.end(), lambda);
             }
             break;
+        case seeding_method_t::SIMILAR_ABUNDANCE:
+            // no break here
         case seeding_method_t::LOWER_AVERAGE_ABUNDANCE: {
             auto lambda = [this](size_t a, size_t b) {
                 return nodes->at(a).average_abundance < nodes->at(b).average_abundance;
@@ -70,9 +74,6 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
             }
             break;
         case seeding_method_t::FIRST:
-            // no break here
-        case seeding_method_t::SIMILAR_ABUNDANCE:
-            // do nothing
             break;
         default:
             cerr << "init(): unknown seeding method!" << endl;
@@ -85,7 +86,21 @@ size_t Sorter::next_seed() {
         cerr << "next_seed(): No seed available!" << endl;
         exit(EXIT_FAILURE);
     }
-    return seed_order[seed_index];
+    if(seeding_method == seeding_method_t::SIMILAR_ABUNDANCE){
+        size_t best = seed_index;
+        for(size_t i = seed_index; i < seed_order.size(); i++)
+            if(!(*visited)[seed_order[i]]){
+                auto d1 = d((*nodes)[last_node].median_abundance , (*nodes)[seed_order[best]].median_abundance);
+                auto d2 = d((*nodes)[last_node].median_abundance , (*nodes)[seed_order[i]].median_abundance);
+                if(d2 < d1)
+                    best = i;
+                if(d2 < EPSILON)
+                    break;
+            }
+        swap(seed_order[seed_index], seed_order[best]);
+    }
+    last_node = seed_order[seed_index];
+    return last_node;
 }
 
 bool Sorter::has_seed() {
@@ -188,8 +203,8 @@ size_t Sorter::seed_successor(node_idx_t seed, vector<bool> &forwards, vector<no
 
     forward = forwards[best];
     to_forward = to_forwards[best];
-    size_t successor = to_nodes[best];
-    return successor;
+    last_node = to_nodes[best];
+    return last_node;
 }
 
 size_t Sorter::next_successor(node_idx_t node, bool forward, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward) {

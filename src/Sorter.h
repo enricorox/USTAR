@@ -40,6 +40,7 @@ class Sorter{
 
     vector<size_t> seed_order;
     size_t seed_index = 0;
+    size_t last_node = 0;
 
 public:
     explicit Sorter(seeding_method_t seeding_method=seeding_method_t::FIRST, extending_method_t extending_method=extending_method_t::FIRST, bool debug=false);
