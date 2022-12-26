@@ -242,7 +242,7 @@ int main(int argc, char **argv) {
     // compute simplitigs
     cout << "Computing a path cover..." << endl;
     spss.compute_path_cover();
-    cout << "Extracting simplitigs and kmers simplitigs_counts..." << endl;
+    cout << "Extracting simplitigs and kmers counts..." << endl;
     spss.extract_simplitigs_and_counts();
     spss.print_stats();
 
