@@ -87,6 +87,10 @@ size_t Sorter::next_seed() {
         exit(EXIT_FAILURE);
     }
     if(seeding_method == seeding_method_t::SIMILAR_ABUNDANCE){
+        if(first_node){
+            last_node = seed_order[seed_index];
+            first_node = false;
+        }
         size_t best = seed_index;
         for(size_t i = seed_index; i < seed_order.size(); i++)
             if(!(*visited)[seed_order[i]]){
