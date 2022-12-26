@@ -9,7 +9,7 @@
 using namespace std;
 
 struct params_t{
-    string input_file = "../experiments/k31.a1.unitigs.fa";
+    string input_file{};
     string output_file = "out";
     string fasta_file_name = output_file + ".ustar.fa";
     string counts_file_name = output_file + ".ustar.counts";
@@ -78,39 +78,39 @@ void print_help(const params_t &params){
     cout << "Usage: ./USTAR -i <bcalm_file>\n\n";
     cout << "Options:\n";
 
-    cout << "\t-k \tkmer size, must be the same of BCALM2 [" << params.kmer_size << "]\n\n";
+    cout << "   -k  kmer size, must be the same of BCALM2 [" << params.kmer_size << "]\n\n";
 
-    cout << "\t-o \toutput file base name [" << params.output_file << "]\n\n";
+    cout << "   -o  output file base name [" << params.output_file << "]\n\n";
 
-    cout << "\t-s \tseeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
-    cout << "\t\tf\tchoose the first seed available\n";
-    cout << "\t\t-ma\tchoose the seed with lower median abundance\n";
-    cout << "\t\t-aa\tchoose the seed with lower average abundance\n";
-    cout << "\t\t=a\tchoose the seed with most similar abundance to the last used node\n";
-    cout << "\t\t-l\tchoose the seed with smaller length\n";
-    cout << "\t\t+l\tchoose the seed with bigger length\n";
+    cout << "   -s  seeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
+    cout << "       f       choose the first seed available\n";
+    cout << "       -ma     choose the seed with lower median abundance\n";
+    cout << "       -aa     choose the seed with lower average abundance\n";
+    cout << "       =a      choose the seed with most similar abundance to the last used node\n";
+    cout << "       -l      choose the seed with smaller length\n";
+    cout << "       +l      choose the seed with bigger length\n";
     cout << "\n";
 
-    cout << "\t-x \textending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
-    cout << "\t\tf\tchoose the first successor available\n";
-    cout << "\t\t=a\tchoose the successor with most similar abundance to the last used node\n";
-    cout << "\t\t-l\tchoose the successor with smaller length\n";
-    cout << "\t\t+l\tchoose the successor with bigger length\n";
+    cout << "   -x  textending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
+    cout << "       f   choose the first successor available\n";
+    cout << "       =a  choose the successor with most similar abundance to the last used node\n";
+    cout << "       -l  choose the successor with smaller length\n";
+    cout << "       +l  choose the successor with bigger length\n";
     cout << "\n";
 
-    cout << "\t-e \tencoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
-    cout << "\t\tplain\tdo not use any encoding\n";
-    cout << "\t\trle\tuse special Run Length Encoding\n";
-    cout << "\t\tavg_rle\tsort simplitigs by average counts and use RLE\n";
-    cout << "\t\tflip_rle\tmake contiguous runs by flipping simplitigs if necessary and use RLE\n";
-    cout << "\t\tavg_flip_rle\tmake contiguous runs by sorting by average, flipping simplitigs if necessary and use RLE\n";
+    cout << "   -e  encoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
+    cout << "       plain           do not use any encoding\n";
+    cout << "       rle             use special Run Length Encoding\n";
+    cout << "       avg_rle         sort simplitigs by average counts and use RLE\n";
+    cout << "       flip_rle        make contiguous runs by flipping simplitigs if necessary and use RLE\n";
+    cout << "       avg_flip_rle    make contiguous runs by sorting by average, flipping simplitigs if necessary and use RLE\n";
     cout << "\n";
 
-    cout << "\t-d \tdebug [" << (params.debug?"true":"false") << "]\n\n";
+    cout << "   -d  debug [" << (params.debug?"true":"false") << "]\n\n";
 
-    cout << "\t-v \tprint version and author\n\n";
+    cout << "   -v  print version and author\n\n";
 
-    cout << "\t-h \tprint this help\n\n" << endl;
+    cout << "   -h  print this help\n\n" << endl;
 }
 
 void print_params(const params_t &params){
@@ -168,7 +168,11 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): need a method for encoding!" << endl;
                     exit(EXIT_FAILURE);
                 }
-                // if(encoding_names.find(optarg) == encoding_names.end()){}
+                // is a valid encoding?
+                if(encoding_names.find(optarg) == encoding_names.end()){
+                    cerr << "parse_cli(): " << optarg << " is not a valid encoding" <<endl;
+                    exit(EXIT_FAILURE);
+                }
                 params.encoding = encoding_names.at(optarg);
                 params.counts_file_name = params.output_file
                                           + ".ustar.counts" + encoding_suffixes.at(params.encoding);
@@ -178,11 +182,19 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): need a method for seeding" << endl;
                     exit(EXIT_FAILURE);
                 }
+                if(seeding_method_names.find(optarg) == seeding_method_names.end()){
+                    cerr << "parse_cli(): " << optarg << " is not a valid seed method" <<endl;
+                    exit(EXIT_FAILURE);
+                }
                 params.seeding_method = seeding_method_names.at(optarg);
                 break;
             case 'x': // extension method
                 if (!optarg) {
                     cerr << "parse_cli(): need a method for extension" << endl;
+                    exit(EXIT_FAILURE);
+                }
+                if(extending_method_names.find(optarg) == extending_method_names.end()){
+                    cerr << "parse_cli(): " << optarg << " is not a valid extension method" <<endl;
                     exit(EXIT_FAILURE);
                 }
                 params.extending_method = extending_method_names.at(optarg);
@@ -191,7 +203,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 print_help(params);
                 exit(EXIT_SUCCESS);
             default:
-                cerr << "parse_cli(): unknown parameter -" << c << endl;
+                cerr << "parse_cli(): unknown parameter " << c << "\n\n";
                 print_help(params);
                 exit(EXIT_FAILURE);
         }
