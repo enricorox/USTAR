@@ -13,12 +13,21 @@ using namespace std;
 enum class seeding_method_t{
     FIRST,
     LOWER_MEDIAN_ABUNDANCE,
-    SIMILAR_ABUNDANCE
+    LOWER_AVERAGE_ABUNDANCE,
+    SIMILAR_ABUNDANCE,
+    BIGGER_LENGTH,
+    SMALLER_LENGTH,
+    MORE_CONNECTED,
+    LESS_CONNECTED
 };
 
 enum class extending_method_t{
     FIRST,
-    SIMILAR_ABUNDANCE
+    SIMILAR_ABUNDANCE,
+    BIGGER_LENGTH,
+    SMALLER_LENGTH,
+    MORE_CONNECTED,
+    LESS_CONNECTED
 };
 
 class Sorter{

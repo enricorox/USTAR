@@ -46,16 +46,25 @@ const map<string, encoding_t> encoding_names = {
 const map<string, seeding_method_t> seeding_method_names = {
         {"f", seeding_method_t::FIRST},
         {"-ma", seeding_method_t::LOWER_MEDIAN_ABUNDANCE},
-        {"=a", seeding_method_t::SIMILAR_ABUNDANCE}
+        {"-aa", seeding_method_t::LOWER_AVERAGE_ABUNDANCE},
+        {"=a", seeding_method_t::SIMILAR_ABUNDANCE},
+        {"-l", seeding_method_t::SMALLER_LENGTH},
+        {"+l", seeding_method_t::BIGGER_LENGTH},
+        {"-c", seeding_method_t::LESS_CONNECTED},
+        {"+c", seeding_method_t::MORE_CONNECTED}
 };
 
 const map<string, extending_method_t> extending_method_names = {
         {"f", extending_method_t::FIRST},
-        {"=a", extending_method_t::SIMILAR_ABUNDANCE}
+        {"=a", extending_method_t::SIMILAR_ABUNDANCE},
+        {"-l", extending_method_t::SMALLER_LENGTH},
+        {"+l", extending_method_t::BIGGER_LENGTH},
+        {"-c", extending_method_t::LESS_CONNECTED},
+        {"+c", extending_method_t::MORE_CONNECTED}
 };
 
-template <typename T>
-string inv_map(const map<string, T> m, T name){
+template<typename T>
+string inv_map(const map<string, T> &m, const T &name){
     for(auto &p : m)
         if(p.second == name)
             return p.first;
@@ -76,12 +85,17 @@ void print_help(const params_t &params){
     cout << "\t-s \tseeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
     cout << "\t\tf\tchoose the first seed available\n";
     cout << "\t\t-ma\tchoose the seed with lower median abundance\n";
+    cout << "\t\t-aa\tchoose the seed with lower average abundance\n";
     cout << "\t\t=a\tchoose the seed with most similar abundance to the last used node\t";
+    cout << "\t\t-l\tchoose the seed with smaller length\n";
+    cout << "\t\t+l\tchoose the seed with bigger length\n";
     cout << "\n";
 
     cout << "\t-x \textending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
     cout << "\t\tf\tchoose the first successor available\n";
     cout << "\t\t=a\tchoose the successor with most similar abundance to the last used node\t";
+    cout << "\t\t-l\tchoose the successor with smaller length\n";
+    cout << "\t\t+l\tchoose the successor with bigger length\n";
     cout << "\n";
 
     cout << "\t-e \tencoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
@@ -89,6 +103,7 @@ void print_help(const params_t &params){
     cout << "\t\trle\tuse special Run Length Encoding\n";
     cout << "\t\tavg_rle\tsort simplitigs by average counts and use RLE\n";
     cout << "\t\tflip_rle\tmake contiguous runs by flipping simplitigs if necessary and use RLE\n";
+    cout << "\t\tavg_flip_rle\tmake contiguous runs by sorting by average, flipping simplitigs if necessary and use RLE\n";
     cout << "\n";
 
     cout << "\t-d \tdebug [" << (params.debug?"true":"false") << "]\n\n";
@@ -213,7 +228,7 @@ int main(int argc, char **argv) {
     spss.compute_path_cover();
     cout << "Extracting simplitigs and kmers simplitigs_counts..." << endl;
     spss.extract_simplitigs_and_counts();
-    spss.print_stat();
+    spss.print_stats();
 
     Encoder encoder(spss.get_simplitigs(), spss.get_counts(), params.debug);
     encoder.encode(params.encoding);
