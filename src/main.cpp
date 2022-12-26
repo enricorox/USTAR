@@ -78,7 +78,7 @@ void print_help(const params_t &params){
     cout << "Usage: ./USTAR -i <bcalm_file>\n\n";
     cout << "Options:\n";
 
-    cout << "\t-k \tkmer size [" << params.kmer_size << "]\n\n";
+    cout << "\t-k \tkmer size, must be the same of BCALM2 [" << params.kmer_size << "]\n\n";
 
     cout << "\t-o \toutput file base name [" << params.output_file << "]\n\n";
 
@@ -86,14 +86,14 @@ void print_help(const params_t &params){
     cout << "\t\tf\tchoose the first seed available\n";
     cout << "\t\t-ma\tchoose the seed with lower median abundance\n";
     cout << "\t\t-aa\tchoose the seed with lower average abundance\n";
-    cout << "\t\t=a\tchoose the seed with most similar abundance to the last used node\t";
+    cout << "\t\t=a\tchoose the seed with most similar abundance to the last used node\n";
     cout << "\t\t-l\tchoose the seed with smaller length\n";
     cout << "\t\t+l\tchoose the seed with bigger length\n";
     cout << "\n";
 
     cout << "\t-x \textending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
     cout << "\t\tf\tchoose the first successor available\n";
-    cout << "\t\t=a\tchoose the successor with most similar abundance to the last used node\t";
+    cout << "\t\t=a\tchoose the successor with most similar abundance to the last used node\n";
     cout << "\t\t-l\tchoose the successor with smaller length\n";
     cout << "\t\t+l\tchoose the successor with bigger length\n";
     cout << "\n";
