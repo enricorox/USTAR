@@ -139,9 +139,9 @@ void SPSS::extract_simplitigs_and_counts(){
     }
 }
 
-void SPSS::print_stat(){
+void SPSS::print_stats(){
     if(n_simplitigs == 0){
-        cerr << "print_stat(): Need to extract simplitigs first!" << endl;
+        cerr << "print_stats(): Need to extract simplitigs first!" << endl;
         exit(EXIT_FAILURE);
     }
     size_t c_length = 0;
@@ -154,6 +154,7 @@ void SPSS::print_stat(){
     cout << "\nSimplitigs stats:\n";
     cout << "\tnumber of simplitigs: NS = " << n_simplitigs << "\n";
     cout << "\tcumulative length: CL = " << c_length << "\n";
+    cout << "\tnucleotide per kmer: " << (double) c_length / (double) dbg->get_n_kmers() << "\n";
     cout << "\taverage simplitigs length: " << (double) c_length / (double) n_simplitigs << "\n";
     cout << "\taverage number of kmers per simplitig: " << (double) dbg->get_n_kmers() / (double) n_simplitigs << "\n";
     cout << endl;
