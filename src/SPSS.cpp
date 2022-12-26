@@ -152,10 +152,10 @@ void SPSS::print_stats(){
     }
 
     cout << "\nSimplitigs stats:\n";
-    cout << "\tnumber of simplitigs: NS = " << n_simplitigs << "\n";
-    cout << "\tcumulative length: CL = " << c_length << "\n";
-    cout << "\tnucleotide per kmer: " << (double) c_length / (double) dbg->get_n_kmers() << "\n";
-    cout << "\taverage simplitigs length: " << (double) c_length / (double) n_simplitigs << "\n";
-    cout << "\taverage number of kmers per simplitig: " << (double) dbg->get_n_kmers() / (double) n_simplitigs << "\n";
+    cout << "   number of simplitigs (NS):              " << n_simplitigs << "\n";
+    cout << "   cumulative length (CL):                 " << c_length << "\n";
+    cout << "   nucleotide per kmer:                    " << (double) c_length / (double) dbg->get_n_kmers() << "\n";
+    cout << "   average simplitigs length:              " << (double) c_length / (double) n_simplitigs << "\n";
+    cout << "   average number of kmers per simplitig:  " << (double) dbg->get_n_kmers() / (double) n_simplitigs << "\n";
     cout << endl;
 }

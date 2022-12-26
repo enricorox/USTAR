@@ -83,19 +83,19 @@ void print_help(const params_t &params){
     cout << "   -o  output file base name [" << params.output_file << "]\n\n";
 
     cout << "   -s  seeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
-    cout << "       f       choose the first seed available\n";
-    cout << "       -ma     choose the seed with lower median abundance\n";
-    cout << "       -aa     choose the seed with lower average abundance\n";
-    cout << "       =a      choose the seed with most similar abundance to the last used node\n";
-    cout << "       -l      choose the seed with smaller length\n";
-    cout << "       +l      choose the seed with bigger length\n";
+    cout << "       f               choose the first seed available\n";
+    cout << "       -ma             choose the seed with lower median abundance\n";
+    cout << "       -aa             choose the seed with lower average abundance\n";
+    cout << "       =a              choose the seed with most similar abundance to the last used node\n";
+    cout << "       -l              choose the seed with smaller length\n";
+    cout << "       +l              choose the seed with bigger length\n";
     cout << "\n";
 
-    cout << "   -x  textending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
-    cout << "       f   choose the first successor available\n";
-    cout << "       =a  choose the successor with most similar abundance to the last used node\n";
-    cout << "       -l  choose the successor with smaller length\n";
-    cout << "       +l  choose the successor with bigger length\n";
+    cout << "   -x  extending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
+    cout << "       f               choose the first successor available\n";
+    cout << "       =a              choose the successor with most similar abundance to the last used node\n";
+    cout << "       -l              choose the successor with smaller length\n";
+    cout << "       +l              choose the successor with bigger length\n";
     cout << "\n";
 
     cout << "   -e  encoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
@@ -115,13 +115,13 @@ void print_help(const params_t &params){
 
 void print_params(const params_t &params){
     cout << "Params:\n";
-    cout << "\tinput file: " << params.input_file << "\n";
-    cout << "\tkmer size: " << params.kmer_size << "\n";
-    cout << "\toutput file base name: " << params.output_file << "\n";
-    cout << "\tseeding method: " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
-    cout << "\textending method: " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
-    cout << "\tencoding: " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
-    cout << "\tdebug: " << (params.debug?"true":"false") << "\n";
+    cout << "   input file:             " << params.input_file << "\n";
+    cout << "   kmer size:              " << params.kmer_size << "\n";
+    cout << "   output file base name:  " << params.output_file << "\n";
+    cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
+    cout << "   extending method:       " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
+    cout << "   encoding:               " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
+    cout << "   debug:                  " << (params.debug?"true":"false") << "\n";
     cout << endl;
 }
 

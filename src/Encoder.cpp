@@ -245,13 +245,13 @@ void Encoder::print_stat(){
         case encoding_t::AVG_RLE:
             // no break here
         case encoding_t::RLE:
-            cout << "\tNumber of runs: " << runs.size() << "\n";
-            cout << "\tAverage run: " << avg_run << "\n";
+            cout << "   Number of runs: " << runs.size() << "\n";
+            cout << "   Average run:    " << avg_run << "\n";
             break;
         case encoding_t::FLIP:
             // no break here
         case encoding_t::PLAIN:
-            cout << "\tNumber of counts: " << n_kmers << "\n";
+            cout << "   Number of counts: " << n_kmers << "\n";
             break;
         default:
             cerr << "to_counts_file(): Unknown encoding" << endl;
