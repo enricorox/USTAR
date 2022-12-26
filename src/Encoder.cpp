@@ -231,7 +231,7 @@ void Encoder::compute_avg() {
 
 void Encoder::print_stat(){
     if(!encoding_done){
-        cerr << "print_stat(): Need to encode() first!" << endl;
+        cerr << "print_stats(): Need to encode() first!" << endl;
         exit(EXIT_FAILURE);
     }
     cout << "\nEncoding stats:\n";
