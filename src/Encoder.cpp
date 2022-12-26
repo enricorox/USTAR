@@ -220,11 +220,13 @@ void Encoder::compute_avg() {
     avg_counts.reserve(simplitigs_counts->size());
 
     for(auto &simplitig_counts : *simplitigs_counts){
-        double sum = 0;
-        //for(uint32_t c : simplitig_counts)
-        //    sum += c;
+        if(encoding == encoding_t::AVG_RLE) {
+            double sum = 0;
+            for (uint32_t c: simplitig_counts)
+                sum += c;
+            avg_counts.push_back(sum / (double) simplitig_counts.size());
+        }
         avg_counts.push_back((double) (simplitig_counts.front() + simplitig_counts.back()) / 2);
-        //avg_counts.push_back(sum / (double) simplitig_counts.size());
     }
 
 }
