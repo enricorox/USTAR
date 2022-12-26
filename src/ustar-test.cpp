@@ -35,7 +35,7 @@ int main(){
         SPSS spss(&dbg, &sorter, true);
         spss.compute_path_cover();
         spss.extract_simplitigs_and_counts();
-        spss.print_stat();
+        spss.print_stats();
         Encoder encoder(spss.get_simplitigs(), spss.get_counts());
         encoder.to_fasta_file(file_name_base + ".ustar.fa");
         encoder.to_counts_file(file_name_base + ".ustar.simplitigs_counts");
