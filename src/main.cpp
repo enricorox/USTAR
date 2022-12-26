@@ -73,7 +73,7 @@ string inv_map(const map<string, T> &m, const T &name){
 
 void print_help(const params_t &params){
     cout << "Find a Spectrum Preserving String Set (aka simplitigs) for the input file.\n";
-    cout << "Compute the kmer simplitigs_counts vector.\n\n";
+    cout << "Compute the kmer counts vector.\n\n";
 
     cout << "Usage: ./USTAR -i <bcalm_file>\n\n";
     cout << "Options:\n";
@@ -202,8 +202,12 @@ void parse_cli(int argc, char **argv, params_t &params){
             case 'h':
                 print_help(params);
                 exit(EXIT_SUCCESS);
+            case '?':
+                cerr << "parse_cli(): missing argument\n\n";
+                print_help(params);
+                exit(EXIT_FAILURE);
             default:
-                cerr << "parse_cli(): unknown parameter " << c << "\n\n";
+                cerr << "parse_cli(): unknown parameter in optstring '" << c << "'\n\n";
                 print_help(params);
                 exit(EXIT_FAILURE);
         }
