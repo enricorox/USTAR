@@ -39,6 +39,7 @@ class DBG{
     size_t n_kmers = 0;
     double avg_unitig_len = 0;
     double avg_abundances = 0;
+    bool debug;
 
     /**
      * Parse the BCALM2 file
@@ -59,8 +60,9 @@ public:
      * Construct a de Bruijn Graph from a BCALM2 file
      * @param bcalm_file_name
      * @param kmer_size
+     * @param debug
      */
-    DBG(const string &bcalm_file_name, uint32_t kmer_size);
+    DBG(const string &bcalm_file_name, uint32_t kmer_size, bool debug=false);
 
     ~DBG();
 
@@ -148,6 +150,8 @@ public:
     uint32_t get_kmer_size() const;
 
     const vector<node_t> *get_nodes();
+
+    size_t estimate_n_nodes();
 };
 
 #endif //USTAR_DBG_H

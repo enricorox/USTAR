@@ -229,7 +229,7 @@ int main(int argc, char **argv) {
 
     // make a dBG
     cout << "Reading the input file..." << endl;
-    DBG dbg(params.input_file, params.kmer_size);
+    DBG dbg(params.input_file, params.kmer_size, params.debug);
     dbg.print_stat();
 
     // verify input

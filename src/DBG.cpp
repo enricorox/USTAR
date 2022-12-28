@@ -6,8 +6,17 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
+#include <filesystem>
 #include "DBG.h"
 #include "algos.h"
+
+size_t DBG::estimate_n_nodes(){
+    // minimum BCALM2 entry
+    // >0 LN:i:31 ab:Z:2
+    // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    const uintmax_t MINIMUM_ENTRY_SIZE = 18 + kmer_size + 2;
+    return std::filesystem::file_size(bcalm_file_name) / MINIMUM_ENTRY_SIZE;
+}
 
 void DBG::parse_bcalm_file() {
     ifstream bcalm_file;
@@ -17,6 +26,12 @@ void DBG::parse_bcalm_file() {
         cerr << "parse_bcalm_file(): Can't access file " << bcalm_file_name << endl;
         exit(EXIT_FAILURE);
     }
+
+    // improve vector push_back() time
+    nodes.reserve(estimate_n_nodes());
+    size_t nodes_cap = nodes.capacity();
+    if(debug)
+        cout << "estimated number of unitigs: " << estimate_n_nodes() << endl;
 
     // start parsing two line at a time
     string line;
@@ -104,14 +119,22 @@ void DBG::parse_bcalm_file() {
 
         // save the node
         nodes.push_back(node);
-    }
 
+        if(debug){
+            if(nodes_cap != nodes.capacity()){
+                cout << "parse_bcalm_file(): nodes capacity changed!\n";
+                nodes_cap = nodes.capacity();
+            }
+        }
+    }
+    nodes.shrink_to_fit();
     bcalm_file.close();
 }
 
-DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size){
+DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size, bool debug){
     this->bcalm_file_name = bcalm_file_name;
     this->kmer_size = kmer_size;
+    this->debug = debug;
 
     // build the graph
     parse_bcalm_file();
