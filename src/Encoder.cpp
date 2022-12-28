@@ -9,6 +9,7 @@
 #include "Encoder.h"
 #include "DBG.h"
 #include "algos.h"
+#include "bwt.h"
 
 Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug) {
     if (simplitigs_counts->empty()) {
@@ -105,6 +106,12 @@ void Encoder::to_counts_file(const string &file_name) {
                 }
             }
             break;
+        case encoding_t::BWT:
+            encoded << bwt_primary_index << "\n";
+            for(auto c : bwt_counts){
+                encoded << c << "\n";
+            }
+            break;
         default:
             cerr << "to_counts_file(): Unknown encoding" << endl;
             exit(EXIT_FAILURE);
@@ -117,6 +124,19 @@ void Encoder::encode(encoding_t encoding_type) {
     encoding_done = true;
 
     switch(encoding) {
+            case encoding_t::BWT: {
+                compute_avg();
+                sort(simplitigs_order.begin(), simplitigs_order.end(),
+                     [this](size_t a, size_t b) { return avg_counts[a] < avg_counts[b]; }
+                );
+                do_flip();
+                compact_counts();
+                bwt_counts.resize(compacted_counts.size());
+                if(debug)
+                    cout << "BWT transform a vector of size " << compacted_counts.size() << endl;
+                bwt_encode(compacted_counts.data(), bwt_counts.data(), compacted_counts.size(), &bwt_primary_index);
+            }
+            break;
         case encoding_t::BINARY:
             // no break here
         case encoding_t::AVG_FLIP_RLE:
@@ -250,6 +270,8 @@ void Encoder::print_stat(){
             cout << "   Number of runs: " << runs.size() << "\n";
             cout << "   Average run:    " << avg_run << "\n";
             break;
+        case encoding_t::BWT:
+            // no break here
         case encoding_t::FLIP:
             // no break here
         case encoding_t::PLAIN:
@@ -260,4 +282,17 @@ void Encoder::print_stat(){
             exit(EXIT_FAILURE);
     }
     cout << endl;
+}
+
+void Encoder::compact_counts() {
+    compacted_counts.reserve(n_kmers);
+    for(auto i : simplitigs_order){
+        auto &simplitig = (*simplitigs_counts)[i];
+        for(size_t j = 0; j < simplitig.size(); j++){
+            size_t curr = simplitig[j];
+            if(flips[i])
+                curr = simplitig[simplitig.size() - 1 - j];
+            compacted_counts.push_back(curr);
+        }
+    }
 }

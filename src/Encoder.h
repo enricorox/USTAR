@@ -17,7 +17,8 @@ enum class encoding_t{
     FLIP,
     FLIP_RLE,
     AVG_FLIP_RLE,
-    BINARY
+    BINARY,
+    BWT
 };
 
 class Encoder{
@@ -37,11 +38,17 @@ class Encoder{
     vector<uint32_t> runs;
     double avg_run = 0;
 
+    vector<uint32_t> compacted_counts;
+    vector<uint32_t> bwt_counts;
+    int bwt_primary_index = 0;
+
     void do_RLE();
 
     void compute_avg();
 
     void do_flip();
+
+    void compact_counts();
 
 public:
     Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug=false);

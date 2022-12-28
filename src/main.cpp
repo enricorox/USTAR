@@ -30,7 +30,8 @@ const map<encoding_t, string> encoding_suffixes = {
         {encoding_t::AVG_RLE, ".avg_rle"},
         {encoding_t::FLIP_RLE, ".flip_rle"},
         {encoding_t::AVG_FLIP_RLE, ".avg_flip_rle"},
-        {encoding_t::BINARY, ".bin"}
+        {encoding_t::BINARY, ".bin"},
+        {encoding_t::BWT, ".bwt"}
 };
 
 const map<string, encoding_t> encoding_names = {
@@ -40,7 +41,8 @@ const map<string, encoding_t> encoding_names = {
         {"avg_rle", encoding_t::AVG_RLE},
         {"flip_rle", encoding_t::FLIP_RLE},
         {"avg_flip_rle", encoding_t::AVG_FLIP_RLE},
-        {"bin", encoding_t::BINARY}
+        {"bin", encoding_t::BINARY},
+        {"bwt", encoding_t::BWT}
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
