@@ -9,9 +9,8 @@
 #include <cassert>
 #include <cstdint>
 
-typedef uint32_t byte;
 
-byte *rotlexcmp_buf = NULL;
+uint32_t *rotlexcmp_buf = NULL;
 int rottexcmp_bufsize = 0;
 
 int rotlexcmp(const void *l, const void *r)
@@ -33,9 +32,9 @@ int rotlexcmp(const void *l, const void *r)
         return -1;
 }
 
-void bwt_encode(byte *buf_in, byte *buf_out, int size, int *primary_index)
+void bwt_encode(uint32_t *buf_in, uint32_t *buf_out, unsigned long size, int *primary_index)
 {
-    int indices[size];
+    int *indices = (int*) malloc(size * sizeof(indices));
     int i;
 
     for(i=0; i<size; i++)
@@ -50,15 +49,16 @@ void bwt_encode(byte *buf_in, byte *buf_out, int size, int *primary_index)
     {
         if (indices[i] == 1) {
             *primary_index = i;
+            free(indices);
             return;
         }
     }
     assert (0);
 }
 
-void bwt_decode(const byte *buf_in, byte *buf_out, int size, int primary_index)
+void bwt_decode(const uint32_t *buf_in, uint32_t *buf_out, int size, int primary_index)
 {
-    byte F[size];
+    uint32_t F[size];
     int buckets[256];
     int i,j,k;
     int indices[size];
