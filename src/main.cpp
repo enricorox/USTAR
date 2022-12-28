@@ -80,7 +80,8 @@ void print_help(const params_t &params){
     cout << "Compute the kmer counts vector.\n\n";
 
     cout << "Usage: ./USTAR -i <input_file_name>\n\n";
-    cout << "Options:\n";
+
+    cout << "Basic options:\n\n";
 
     cout << "   -k  kmer size, must be the same of BCALM2 [" << params.kmer_size << "]\n\n";
 
@@ -91,6 +92,12 @@ void print_help(const params_t &params){
     cout << "       and counts file contains its associated counts\n\n";
 
     cout << "   -o  output file base name [" << params.output_file << "]\n\n";
+
+    cout << "   -v  print version and author\n\n";
+
+    cout << "   -h  print this help\n\n" << endl;
+
+    cout << "Advanced options:\n\n";
 
     cout << "   -s  seeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
     cout << "       f               choose the first seed available\n";
@@ -117,10 +124,6 @@ void print_help(const params_t &params){
     cout << "\n";
 
     cout << "   -d  debug [" << (params.debug?"true":"false") << "]\n\n";
-
-    cout << "   -v  print version and author\n\n";
-
-    cout << "   -h  print this help\n\n" << endl;
 }
 
 void print_params(const params_t &params){
@@ -128,6 +131,8 @@ void print_params(const params_t &params){
     cout << "   input file:             " << params.input_file << "\n";
     cout << "   kmer size:              " << params.kmer_size << "\n";
     cout << "   output file base name:  " << params.output_file << "\n";
+    cout << "   counts file name:       " << params.counts_file_name << "\n";
+    cout << "   decode:                 " << (params.decode?"true":"false") << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
     cout << "   extending method:       " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
     cout << "   encoding:               " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
@@ -247,7 +252,9 @@ int main(int argc, char **argv) {
 
     if(params.decode){
         Decoder decoder(params.input_file, params.counts_file_name, params.kmer_size, params.debug);
+        exit(EXIT_SUCCESS);
     }
+
     // make a dBG
     cout << "Reading the input file..." << endl;
     DBG dbg(params.input_file, params.kmer_size, params.debug);

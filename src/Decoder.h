@@ -11,5 +11,7 @@ using namespace std;
 class Decoder{
 public:
     Decoder(string fasta_file_name, string counts_file_name, int kmer_size, bool debug);
+
+    void decode();
 };
 #endif //USTAR_DECODER_H
