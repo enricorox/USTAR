@@ -3,6 +3,7 @@
 #include "DBG.h"
 #include "SPSS.h"
 #include "Encoder.h"
+#include "Decoder.h"
 
 #define VERSION "0.1"
 
@@ -21,6 +22,7 @@ struct params_t{
     encoding_t encoding = encoding_t::PLAIN;
     seeding_method_t seeding_method = seeding_method_t::FIRST;
     extending_method_t extending_method = extending_method_t::FIRST;
+    bool decode = false;
 };
 
 const map<encoding_t, string> encoding_suffixes = {
@@ -77,10 +79,16 @@ void print_help(const params_t &params){
     cout << "Find a Spectrum Preserving String Set (aka simplitigs) for the input file.\n";
     cout << "Compute the kmer counts vector.\n\n";
 
-    cout << "Usage: ./USTAR -i <bcalm_file>\n\n";
+    cout << "Usage: ./USTAR -i <input_file_name>\n\n";
     cout << "Options:\n";
 
     cout << "   -k  kmer size, must be the same of BCALM2 [" << params.kmer_size << "]\n\n";
+
+    cout << "   -c  counts file name [" << params.counts_file_name << "]\n\n";
+
+    cout << "   -D  decode counts file [" << (params.decode?"true":"false") << "]\n";
+    cout << "       If this options is specified, the input file must contains simplitigs\n";
+    cout << "       and counts file contains its associated counts\n\n";
 
     cout << "   -o  output file base name [" << params.output_file << "]\n\n";
 
@@ -130,7 +138,7 @@ void print_params(const params_t &params){
 void parse_cli(int argc, char **argv, params_t &params){
     bool done = false;
     int c;
-    while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:")) != -1){
+    while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:D")) != -1){
         switch(c){
             case 'i':
                 if (!optarg) {
@@ -150,6 +158,13 @@ void parse_cli(int argc, char **argv, params_t &params){
                 params.counts_file_name =
                         params.output_file + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
+            case 'c':
+                if (!optarg) {
+                    cerr << "parse_cli(): Need a counts file name!" << endl;
+                    exit(EXIT_FAILURE);
+                }
+                params.counts_file_name = string(optarg);
+                break;
             case 'k':
                 if(optarg)
                     params.kmer_size = atoi(optarg);
@@ -157,6 +172,9 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): Need a positive kmer size!" << endl;
                     exit(EXIT_FAILURE);
                 }
+                break;
+            case 'D':
+                params.decode = true;
                 break;
             case 'v':
                 cout << "Version: " << VERSION << "\n";
@@ -227,6 +245,9 @@ int main(int argc, char **argv) {
     parse_cli(argc, argv, params);
     print_params(params);
 
+    if(params.decode){
+        Decoder decoder(params.input_file, params.counts_file_name, params.kmer_size, params.debug);
+    }
     // make a dBG
     cout << "Reading the input file..." << endl;
     DBG dbg(params.input_file, params.kmer_size, params.debug);
