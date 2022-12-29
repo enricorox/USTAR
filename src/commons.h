@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <map>
+#include <vector>
 
 using namespace std;
 
