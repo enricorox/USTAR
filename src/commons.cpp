@@ -3,7 +3,7 @@
 //
 
 #include <valarray>
-#include "algos.h"
+#include "commons.h"
 
 template<typename T>
 string inv_map(const map<string, T> &m, const T &name){

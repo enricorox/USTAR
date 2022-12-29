@@ -8,7 +8,7 @@
 
 #include "Encoder.h"
 #include "DBG.h"
-#include "algos.h"
+#include "commons.h"
 #include "bwt.h"
 
 Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug) {

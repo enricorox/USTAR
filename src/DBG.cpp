@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <filesystem>
 #include "DBG.h"
-#include "algos.h"
+#include "commons.h"
 
 size_t DBG::estimate_n_nodes(){
     // minimum BCALM2 entry

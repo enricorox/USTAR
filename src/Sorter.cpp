@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include "Sorter.h"
-#include "algos.h"
+#include "commons.h"
 
 const double EPSILON = 0.5;
 

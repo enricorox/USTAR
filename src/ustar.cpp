@@ -7,7 +7,7 @@
 #include "Encoder.h"
 #include "Decoder.h"
 #include "consts.h"
-#include "algos.h"
+#include "commons.h"
 
 #define VERSION "0.1"
 
