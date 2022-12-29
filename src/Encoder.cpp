@@ -49,6 +49,20 @@ void Encoder::to_fasta_file(const string &file_name) {
         fasta << (flips[i]?DBG::reverse_complement(simplitig):simplitig) << "\n";
     }
     fasta.close();
+
+    ofstream kmers;
+    kmers.open("kmers.enc.txt");
+    for(size_t i = 0; i < simplitigs->size(); i++){
+        auto &simplitig = (*simplitigs)[simplitigs_order[i]];
+
+        auto true_simplitig = (flips[i]?DBG::reverse_complement(simplitig):simplitig);
+        for(size_t j = 0; j < true_simplitig.size() - 31 + 1; j++) {
+            string kmer = true_simplitig.substr(j, 31);
+            string kmer_rc = DBG::reverse_complement(kmer);
+            kmers << (kmer < kmer_rc ? kmer : kmer_rc) << "\n";
+        }
+    }
+    kmers.close();
 }
 
 void Encoder::to_counts_file(const string &file_name) {

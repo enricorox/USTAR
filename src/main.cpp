@@ -251,7 +251,8 @@ int main(int argc, char **argv) {
     print_params(params);
 
     if(params.decode){
-        Decoder decoder(params.input_file, params.counts_file_name, params.kmer_size, params.debug);
+        Decoder decoder(params.input_file, params.counts_file_name, params.output_file, params.kmer_size, params.debug);
+        decoder.decode();
         exit(EXIT_SUCCESS);
     }
 

@@ -18,7 +18,8 @@ enum class encoding_t{
     FLIP_RLE,
     AVG_FLIP_RLE,
     BINARY,
-    BWT
+    BWT,
+    KMERS
 };
 
 class Encoder{
