@@ -49,10 +49,6 @@ void print_help(const params_t &params){
 
     cout << "   -c  counts file name [" << params.counts_file_name << "]\n\n";
 
-    cout << "   -D  decode counts file [" << (params.decode?"true":"false") << "]\n";
-    cout << "       If this options is specified, the input file must contains simplitigs\n";
-    cout << "       and counts file contains its associated counts\n\n";
-
     cout << "   -o  output file base name [" << params.output_file << "]\n\n";
 
     cout << "   -v  print version and author\n\n";
@@ -105,7 +101,7 @@ void print_params(const params_t &params){
 void parse_cli(int argc, char **argv, params_t &params){
     bool done = false;
     int c;
-    while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:D")) != -1){
+    while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:")) != -1){
         switch(c){
             case 'i':
                 if (!optarg) {
@@ -139,9 +135,6 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): Need a positive kmer size!" << endl;
                     exit(EXIT_FAILURE);
                 }
-                break;
-            case 'D':
-                params.decode = true;
                 break;
             case 'v':
                 cout << "Version: " << VERSION << "\n";
@@ -211,12 +204,6 @@ int main(int argc, char **argv) {
     params_t params;
     parse_cli(argc, argv, params);
     print_params(params);
-
-    if(params.decode){
-        Decoder decoder(params.input_file, params.counts_file_name, params.output_file, params.kmer_size, params.debug);
-        decoder.decode();
-        exit(EXIT_SUCCESS);
-    }
 
     // make a dBG
     cout << "Reading the input file..." << endl;
