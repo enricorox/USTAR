@@ -37,8 +37,7 @@ enum class encoding_t{
     FLIP_RLE,
     AVG_FLIP_RLE,
     BINARY,
-    BWT,
-    KMERS
+    BWT
 };
 // ----------------------------------------
 const map<encoding_t, string> encoding_suffixes = {
