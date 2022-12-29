@@ -5,12 +5,14 @@
 #include <cstdlib>
 #include <iostream>
 #include <getopt.h>
+#include <chrono>
 
 #include "commons.h"
 #include "consts.h"
 #include "Decoder.h"
 
 using namespace std;
+using namespace std::chrono;
 
 struct params_t{
     string input_file_name = "out.ustar.fa";
@@ -122,7 +124,13 @@ int main(int argc, char **argv){
     print_params(params);
 
     Decoder decoder(params.input_file_name, params.counts_file_name, params.output_file_name, params.kmer_size, params.debug);
+
+    cout << "Extracting kmers...\n";
+    auto start_time = high_resolution_clock::now();
     decoder.decode();
+    auto stop_time = std::chrono::high_resolution_clock::now();
+    cout << "Done!\n" << endl;
+    cout << "Extraction time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
 
     exit(EXIT_SUCCESS);
 }
