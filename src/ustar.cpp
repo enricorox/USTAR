@@ -1,11 +1,13 @@
 #include <iostream>
 #include <getopt.h>
 #include <chrono>
+
 #include "DBG.h"
 #include "SPSS.h"
 #include "Encoder.h"
 #include "Decoder.h"
 #include "consts.h"
+#include "algos.h"
 
 #define VERSION "0.1"
 
@@ -28,14 +30,6 @@ struct params_t{
     bool decode = false;
 };
 
-
-template<typename T>
-string inv_map(const map<string, T> &m, const T &name){
-    for(auto &p : m)
-        if(p.second == name)
-            return p.first;
-    return "?";
-}
 
 void print_help(const params_t &params){
     cout << "Find a Spectrum Preserving String Set (aka simplitigs) for the input file.\n";

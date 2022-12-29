@@ -5,6 +5,14 @@
 #include <valarray>
 #include "algos.h"
 
+template<typename T>
+string inv_map(const map<string, T> &m, const T &name){
+    for(auto &p : m)
+        if(p.second == name)
+            return p.first;
+    return "?";
+}
+
 uint32_t d(uint32_t a, uint32_t b){
     return abs((int)a - (int)b);
 }
