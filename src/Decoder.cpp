@@ -6,6 +6,7 @@
 #include <iostream>
 #include "Decoder.h"
 #include "DBG.h"
+#include "consts.h"
 
 Decoder::Decoder(const string &fasta_file_name, const string &counts_file_name, const string &output_file_name, int kmer_size, bool debug) {
     this->fasta_file_name = fasta_file_name;

@@ -9,4 +9,4 @@ add_executable(ustar src/ustar.cpp src/DBG.cpp src/SPSS.cpp src/Sorter.cpp src/E
 
 add_executable(ustar-test src/ustar-test.cpp src/DBG.cpp src/SPSS.cpp src/Sorter.cpp src/Encoder.cpp src/commons.cpp src/bwt.cpp)
 
-add_executable(ustar-ke src/ustar-ke.cpp)
+add_executable(ustar-ke src/ustar-ke.cpp src/Decoder.cpp src/DBG.cpp src/commons.cpp)
