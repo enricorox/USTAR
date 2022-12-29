@@ -2,67 +2,62 @@
 
 set -e
 
-# path for dsk and dsk2ascii
-PATH="/home/enrico/bio-bin/dsk/bin/:$PATH"
+# path for jellyfish
+PATH="/home/enrico/bio-bin/:$PATH"
 
 DEBUG=1
-counts=1
 
 help(){
    # Display Help
-   echo
-   echo "Syntax: ./$(basename "$0") <kmer_size> <file1> <file2>"
-   echo "This scripts takes as input the value of k-mer size, and 2 fasta files."
-   echo "It outputs SUCCESS if they represent the same set of k-mers, and gives a WARNING otherwise."
-   echo "NOTE1: A k-mer and its reverse complement is treated as equal."
-   echo "NOTE2: Counts must not be in def-lines or in separated file. They are ignored anyways!"
+   echo "Verify equivalence between kmers (multi) sets"
+   echo "Syntax: ./$(basename "$0") <kmer_size> <original-sequence> <ustar.kmers>"
    echo
 }
 
 validate(){
-  if [ ! -f "$fasta1" ]; then
-    echo "The file '$fasta1' does not exist."
+  if [ ! -f "$orig_sequence" ]; then
+    echo "The file '$orig_sequence' does not exist."
     exit
   fi
-  if [ ! -f "$fasta2" ]; then
-    echo "The file '$fasta2' does not exist."
+  if [ ! -f "$ustar_kmers" ]; then
+    echo "The file '$ustar_kmers' does not exist."
     exit
   fi
 
-  echo "Checking whether file '$(basename "$fasta1")' and file '$(basename "$fasta2")' contain same $k-mers...";
-  dsk -file "$fasta1" -kmer-size "$k" -abundance-min 1  -verbose 0 -out unitigs.h5
-  dsk -file "$fasta2" -kmer-size "$k" -abundance-min 1  -verbose 0 -out spss.h5
-  dsk2ascii -file unitigs.h5 -out unitigs.txt  -verbose 0
-  dsk2ascii -file spss.h5 -out spss.txt  -verbose 0
+  bn_orig_sequence=$(basename "$orig_sequence")
+  orig_sequence_kmers="${bn_orig_sequence}.txt"
+  orig_sequence_kmers_sorted="${orig_sequence_kmers}.sorted"
 
-  # test only kmers
-  if [[ $counts -eq 0 ]]; then
-    cut -d' ' -f1 < unitigs.txt | sort  -o sorted_unitigs.txt;
-    cut -d' ' -f1 < spss.txt | sort  -o sorted_spss.txt;
+  bn_ustar_kmers=$(basename "$ustar_kmers")
+  ustar_kmers_sorted="${bn_ustar_kmers}.sorted"
+
+  echo "Computing kmers set of $bn_orig_sequence..."
+  jellyfish-linux count -m "$k" -C -s 100M -L 2 "$orig_sequence"
+  jellyfish-linux dump -c mer_counts.jf > "${orig_sequence_kmers}"
+
+  # test kmers and counts
+  echo "Sorting 1st kmers set..."
+  sort "${orig_sequence_kmers}" -o "${orig_sequence_kmers_sorted}"
+  echo "Sorting 2nd kmers set..."
+  sort  "$ustar_kmers" -o "${ustar_kmers_sorted}"
+
+  if cmp "${orig_sequence_kmers_sorted}" "${ustar_kmers_sorted}"; then
+    echo '### SUCCESS: The two files contain same k-mers and counts! ###'
   else
-    # test kmers and counts
-    sort  -o sorted_unitigs.txt < unitigs.txt
-    sort  -o sorted_spss.txt < spss.txt
+    echo '### WARNING: Files contain different k-mers or counts! ###'
   fi
 
-  if cmp sorted_unitigs.txt sorted_spss.txt; then
-    echo '### SUCCESS: The two files contain same k-mers! ###'
-  else
-    echo '### WARNING: Files contain different k-mers! ###'
-  fi
-
-  rm -f unitigs.h5 spss.h5
-  rm -f spss.txt unitigs.txt
+  rm -f mer_counts.jf
+  rm -f "${orig_sequence_kmers}"
   if [[ DEBUG -eq 0 ]];  then
-    rm -f sorted_spss.txt
-    rm -f sorted_unitigs.txt
+    rm -f "${orig_sequence_kmers_sorted}" "${ustar_kmers_sorted}"
   fi
 }
 
 help
 
 k=${1:-31}
-fasta1=${2:-"/home/enrico/CLionProjects/UST/SRR/SRR001665/SRR001665_1.a2.unitigs.fa"}
-fasta2=${3:-"/home/enrico/USTAR/cmake-build-debug/out.ustar.fa"}
+orig_sequence=${2:-"/home/enrico/CLionProjects/UST/SRR/SRR001665/SRR001665_1.fasta"}
+ustar_kmers=${3:-"/home/enrico/USTAR/cmake-build-debug/kmers.txt"}
 
 validate
