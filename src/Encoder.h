@@ -7,20 +7,8 @@
 
 #include <vector>
 #include <map>
-
+#include "consts.h"
 using namespace std;
-
-enum class encoding_t{
-    PLAIN,
-    RLE,
-    AVG_RLE,
-    FLIP,
-    FLIP_RLE,
-    AVG_FLIP_RLE,
-    BINARY,
-    BWT,
-    KMERS
-};
 
 class Encoder{
     bool debug = true;

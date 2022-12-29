@@ -16,7 +16,7 @@ class Decoder{
     bool debug;
 
 public:
-    Decoder(string fasta_file_name, string counts_file_name, string output_file_name, int kmer_size, bool debug);
+    Decoder(const string &fasta_file_name, const string &counts_file_name, const string &output_file_name, int kmer_size, bool debug);
 
     void decode();
 };

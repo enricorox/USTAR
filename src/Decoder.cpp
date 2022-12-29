@@ -7,7 +7,7 @@
 #include "Decoder.h"
 #include "DBG.h"
 
-Decoder::Decoder(string fasta_file_name, string counts_file_name, string output_file_name, int kmer_size, bool debug) {
+Decoder::Decoder(const string &fasta_file_name, const string &counts_file_name, const string &output_file_name, int kmer_size, bool debug) {
     this->fasta_file_name = fasta_file_name;
     this->counts_file_name = counts_file_name;
     this->output_file_name = output_file_name;
@@ -49,6 +49,7 @@ void Decoder::decode() {
             string kmer = simplitig.substr(i, kmer_size);
             string kmer_rc = DBG::reverse_complement(kmer);
             // output canonical kmer
+            // NOTE that DSK computes canonical kmers with A<C<T<G order! Then I use jellyfish for validation
             output << ((kmer < kmer_rc) ? kmer : kmer_rc);
             int count;
             counts >> count;
