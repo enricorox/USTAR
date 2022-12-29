@@ -9,8 +9,6 @@
 #include "consts.h"
 #include "commons.h"
 
-#define VERSION "0.1"
-
 using namespace std;
 using namespace std::chrono;
 

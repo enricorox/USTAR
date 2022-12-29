@@ -7,6 +7,8 @@
 
 #include <map>
 
+#define VERSION "0.1"
+
 using namespace std;
 
 enum class seeding_method_t{
