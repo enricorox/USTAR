@@ -96,34 +96,21 @@ void parse_cli(int argc, char **argv, params_t &params){
     while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:")) != -1){
         switch(c){
             case 'i':
-                if (!optarg) {
-                    cerr << "parse_cli(): Need an input file name!" << endl;
-                    exit(EXIT_FAILURE);
-                }
                 params.input_file = string(optarg);
                 done = true;
                 break;
             case 'o':
-                if (!optarg) {
-                    cerr << "parse_cli(): Need an output file name!" << endl;
-                    exit(EXIT_FAILURE);
-                }
                 params.output_file = string(optarg);
                 params.fasta_file_name = params.output_file + ".ustar.fa";
                 params.counts_file_name =
                         params.output_file + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 'c':
-                if (!optarg) {
-                    cerr << "parse_cli(): Need a counts file name!" << endl;
-                    exit(EXIT_FAILURE);
-                }
                 params.counts_file_name = string(optarg);
                 break;
             case 'k':
-                if(optarg)
-                    params.kmer_size = atoi(optarg);
-                if(!optarg || params.kmer_size <= 0) {
+                params.kmer_size = atoi(optarg);
+                if(params.kmer_size <= 0) {
                     cerr << "parse_cli(): Need a positive kmer size!" << endl;
                     exit(EXIT_FAILURE);
                 }
@@ -136,10 +123,6 @@ void parse_cli(int argc, char **argv, params_t &params){
                 params.debug = true;
                 break;
             case 'e': // encoding
-                if (!optarg) {
-                    cerr << "parse_cli(): need a method for encoding!" << endl;
-                    exit(EXIT_FAILURE);
-                }
                 // is a valid encoding?
                 if(encoding_names.find(optarg) == encoding_names.end()){
                     cerr << "parse_cli(): " << optarg << " is not a valid encoding" <<endl;
@@ -150,10 +133,6 @@ void parse_cli(int argc, char **argv, params_t &params){
                                           + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 's': // seed method
-                if (!optarg) {
-                    cerr << "parse_cli(): need a method for seeding" << endl;
-                    exit(EXIT_FAILURE);
-                }
                 if(seeding_method_names.find(optarg) == seeding_method_names.end()){
                     cerr << "parse_cli(): " << optarg << " is not a valid seed method" <<endl;
                     exit(EXIT_FAILURE);
@@ -161,10 +140,6 @@ void parse_cli(int argc, char **argv, params_t &params){
                 params.seeding_method = seeding_method_names.at(optarg);
                 break;
             case 'x': // extension method
-                if (!optarg) {
-                    cerr << "parse_cli(): need a method for extension" << endl;
-                    exit(EXIT_FAILURE);
-                }
                 if(extending_method_names.find(optarg) == extending_method_names.end()){
                     cerr << "parse_cli(): " << optarg << " is not a valid extension method" <<endl;
                     exit(EXIT_FAILURE);
