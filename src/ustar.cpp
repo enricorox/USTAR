@@ -13,10 +13,10 @@ using namespace std;
 using namespace std::chrono;
 
 struct params_t{
-    string input_file{};
-    string output_file = "out";
-    string fasta_file_name = output_file + ".ustar.fa";
-    string counts_file_name = output_file + ".ustar.counts";
+    string input_file_name{};
+    string output_file_name = "out";
+    string fasta_file_name = output_file_name + ".ustar.fa";
+    string counts_file_name = output_file_name + ".ustar.counts";
 
     int kmer_size = 31;
 
@@ -41,7 +41,7 @@ void print_help(const params_t &params){
 
     cout << "   -c  counts file name [" << params.counts_file_name << "]\n\n";
 
-    cout << "   -o  output file base name [" << params.output_file << "]\n\n";
+    cout << "   -o  output file base name [" << params.output_file_name << "]\n\n";
 
     cout << "   -v  print version and author\n\n";
 
@@ -78,9 +78,9 @@ void print_help(const params_t &params){
 
 void print_params(const params_t &params){
     cout << "Params:\n";
-    cout << "   input file:             " << params.input_file << "\n";
+    cout << "   input file:             " << params.input_file_name << "\n";
     cout << "   kmer size:              " << params.kmer_size << "\n";
-    cout << "   output file base name:  " << params.output_file << "\n";
+    cout << "   output file base name:  " << params.output_file_name << "\n";
     cout << "   counts file name:       " << params.counts_file_name << "\n";
     cout << "   decode:                 " << (params.decode?"true":"false") << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
@@ -96,14 +96,14 @@ void parse_cli(int argc, char **argv, params_t &params){
     while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:")) != -1){
         switch(c){
             case 'i':
-                params.input_file = string(optarg);
+                params.input_file_name = string(optarg);
                 done = true;
                 break;
             case 'o':
-                params.output_file = string(optarg);
-                params.fasta_file_name = params.output_file + ".ustar.fa";
+                params.output_file_name = string(optarg);
+                params.fasta_file_name = params.output_file_name + ".ustar.fa";
                 params.counts_file_name =
-                        params.output_file + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
+                        params.output_file_name + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 'c':
                 params.counts_file_name = string(optarg);
@@ -129,7 +129,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                     exit(EXIT_FAILURE);
                 }
                 params.encoding = encoding_names.at(optarg);
-                params.counts_file_name = params.output_file
+                params.counts_file_name = params.output_file_name
                                           + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 's': // seed method
@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
     // make a dBG
     cout << "Reading the input file..." << endl;
     auto start_time = std::chrono::high_resolution_clock::now();
-    DBG dbg(params.input_file, params.kmer_size, params.debug);
+    DBG dbg(params.input_file_name, params.kmer_size, params.debug);
     auto stop_time = std::chrono::high_resolution_clock::now();
     cout << "Reading time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
     dbg.print_stat();
