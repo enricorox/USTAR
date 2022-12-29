@@ -1,5 +1,6 @@
 #include <iostream>
 #include <getopt.h>
+#include <chrono>
 #include "DBG.h"
 #include "SPSS.h"
 #include "Encoder.h"
@@ -9,6 +10,7 @@
 #define VERSION "0.1"
 
 using namespace std;
+using namespace std::chrono;
 
 struct params_t{
     string input_file{};
@@ -218,7 +220,10 @@ int main(int argc, char **argv) {
 
     // make a dBG
     cout << "Reading the input file..." << endl;
+    auto start_time = std::chrono::high_resolution_clock::now();
     DBG dbg(params.input_file, params.kmer_size, params.debug);
+    auto stop_time = std::chrono::high_resolution_clock::now();
+    cout << "Reading time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
     dbg.print_stat();
 
     // verify input
@@ -232,7 +237,11 @@ int main(int argc, char **argv) {
 
     // compute simplitigs
     cout << "Computing a path cover..." << endl;
+    start_time = std::chrono::high_resolution_clock::now();
     spss.compute_path_cover();
+    stop_time = std::chrono::high_resolution_clock::now();
+    cout << "Computing time: " << duration_cast<milliseconds>(stop_time - start_time).count() << " ms\n";
+
     cout << "Extracting simplitigs and kmers counts..." << endl;
     spss.extract_simplitigs_and_counts();
     spss.print_stats();
