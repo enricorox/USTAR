@@ -22,9 +22,9 @@ in order to compute a compacted de Brujin graph (cdBG) of your multi-fasta file.
 
 See the help `./ustar -h` for details.
 
-## How to validate the output?
+## How to validate the output
 You can check that the output file contains the same kmers of
-your multi-fasta file with your preferred kmer counter (just ignore counts because they are in a different file).
+your bcalm file with your preferred kmer counter.
 
 You can even check that counts are correct with `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-output>` 
 where `<ustar-kmers-output>` is the output using `ustar` whit `-e kmers`.
