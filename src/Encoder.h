@@ -29,7 +29,7 @@ class Encoder{
 
     vector<uint32_t> compacted_counts;
     vector<uint32_t> bwt_counts;
-    int bwt_primary_index = 0;
+    size_t bwt_primary_index = 0;
 
     void do_RLE();
 

@@ -9,7 +9,7 @@
 #include "Encoder.h"
 #include "DBG.h"
 #include "commons.h"
-#include "bwt.h"
+#include "bwt.hpp"
 
 Encoder::Encoder(const vector<string> *simplitigs, const vector<vector<uint32_t>> *simplitigs_counts, bool debug) {
     if (simplitigs_counts->empty()) {
@@ -134,7 +134,8 @@ void Encoder::encode(encoding_t encoding_type) {
                 bwt_counts.resize(compacted_counts.size());
                 if(debug)
                     cout << "BWT transform a vector of size " << compacted_counts.size() << endl;
-                bwt_encode(compacted_counts.data(), bwt_counts.data(), compacted_counts.size(), &bwt_primary_index);
+                auto key = townsend::algorithm::bwtEncode(compacted_counts.begin(), compacted_counts.end());
+                bwt_primary_index = compacted_counts.begin() - key;
             }
             break;
         case encoding_t::BINARY:

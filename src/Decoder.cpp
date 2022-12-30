@@ -7,6 +7,7 @@
 #include "Decoder.h"
 #include "DBG.h"
 #include "consts.h"
+#include "bwt.hpp"
 
 Decoder::Decoder(const string &fasta_file_name, const string &counts_file_name, int kmer_size, bool debug) {
     this->fasta_file_name = fasta_file_name;
@@ -115,6 +116,20 @@ void Decoder::decode(encoding_t encoding) {
                             counts.push_back(symbol);
                     }
                 }
+            }
+            break;
+        case encoding_t::BWT: {
+                // primary index is the first number
+                int primary_index;
+                counts_file >> primary_index;
+
+                // read all the other counts
+                uint32_t c;
+                while(counts_file >> c)
+                    counts.push_back(c);
+
+                // do inverse BWT
+                townsend::algorithm::bwtDecode(counts.begin(), counts.end(), counts.begin() + primary_index);
             }
             break;
         default:

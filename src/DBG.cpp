@@ -57,7 +57,7 @@ void DBG::parse_bcalm_file() {
 
         // check consistency:
         // must have a def-line
-        if(line[0] != '>'){
+        if(line[0] != '>' || line.find("LN:i:") == string::npos || line.find("ab:Z:") == string::npos){
             cerr << "parse_bcalm_file(): Bad formatted input file: no def-line found!" << endl;
             exit(EXIT_FAILURE);
         }

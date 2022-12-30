@@ -40,6 +40,7 @@ void print_help(const params_t &params){
     cout << "   -e  encoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
     cout << "       plain           do not use any encoding\n";
     cout << "       rle             use special Run Length Encoding\n";
+    cout << "       bwt             use Burrow and Wheeler Transform\n";
     cout << "\n";
 
     cout << "   -d  debug [" << (params.debug ? "true" : "false") << "]\n\n";
