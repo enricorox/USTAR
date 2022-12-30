@@ -36,10 +36,7 @@ void print_help(const params_t &params){
 
     cout << "   -e  encoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
     cout << "       plain           do not use any encoding\n";
-    // cout << "       rle             use special Run Length Encoding\n";
-    // cout << "       avg_rle         sort simplitigs by average counts and use RLE\n";
-    // cout << "       flip_rle        make contiguous runs by flipping simplitigs if necessary and use RLE\n";
-    // cout << "       avg_flip_rle    make contiguous runs by sorting by average, flipping simplitigs if necessary and use RLE\n";
+    cout << "       rle             use special Run Length Encoding\n";
     cout << "\n";
 
     cout << "   -d  debug [" << (params.debug ? "true" : "false") << "]\n\n";
