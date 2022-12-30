@@ -38,4 +38,4 @@ If you want to check that __kmers and counts__ are correct, run
 * `./ustar-ke -k <kmer-size> -i <ustar-fasta> -c <ustar-counts>`
 * `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
 
-Note that you'll need to install [Jellyfish-2](https://github.com/zippav/Jellyfish-2) in order to use the `validate`.
+Note that you'll need to install [Jellyfish-2](https://github.com/zippav/Jellyfish-2) in order to use `validate`.
