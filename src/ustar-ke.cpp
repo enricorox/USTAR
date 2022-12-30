@@ -126,14 +126,18 @@ int main(int argc, char **argv){
     print_params(params);
 
     Decoder decoder(params.input_file_name, params.counts_file_name, params.kmer_size, params.debug);
+
+    cout << "Decoding counts...\n";
+    auto start_time = steady_clock::now();
     decoder.decode(params.encoding);
+    auto stop_time = std::chrono::steady_clock::now();
+    cout << "Done. Decoding time: " << duration_cast<milliseconds>(stop_time - start_time).count() << "ms\n";
 
     cout << "Extracting kmers...\n";
-    auto start_time = steady_clock::now();
+    start_time = steady_clock::now();
     decoder.extract_kmers_and_counts(params.output_file_name);
-    auto stop_time = std::chrono::steady_clock::now();
-    cout << "Done!\n";
-    cout << "Extraction time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
+    stop_time = std::chrono::steady_clock::now();
+    cout << "Done. Extraction time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
 
     exit(EXIT_SUCCESS);
 }
