@@ -24,7 +24,7 @@ struct params_t{
 };
 
 void print_help(const params_t &params){
-    cout << "Decode and extract kmers and counts from USTAR (or UST) output files.\n\n";
+    cout << "Decode and extract canonical kmers and counts from USTAR (or UST) output files.\n\n";
 
     cout << "Syntax: ./ustar -i <ustar-fasta> -c <ustar-counts>\n\n";
 
