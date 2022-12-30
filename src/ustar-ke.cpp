@@ -32,6 +32,8 @@ void print_help(const params_t &params){
 
     cout << "   -k  kmer size [" << params.kmer_size << "]\n\n";
 
+    cout << "   -o  output file name [" << params.output_file_name << "]\n\n";
+
     cout << "   -e  encoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
     cout << "       plain           do not use any encoding\n";
     // cout << "       rle             use special Run Length Encoding\n";
