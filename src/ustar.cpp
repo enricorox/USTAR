@@ -5,7 +5,6 @@
 #include "DBG.h"
 #include "SPSS.h"
 #include "Encoder.h"
-#include "Decoder.h"
 #include "consts.h"
 #include "commons.h"
 
@@ -25,7 +24,6 @@ struct params_t{
     encoding_t encoding = encoding_t::PLAIN;
     seeding_method_t seeding_method = seeding_method_t::FIRST;
     extending_method_t extending_method = extending_method_t::FIRST;
-    bool decode = false;
 };
 
 
@@ -82,7 +80,6 @@ void print_params(const params_t &params){
     cout << "   kmer size:              " << params.kmer_size << "\n";
     cout << "   output file base name:  " << params.output_file_name << "\n";
     cout << "   counts file name:       " << params.counts_file_name << "\n";
-    cout << "   decode:                 " << (params.decode?"true":"false") << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
     cout << "   extending method:       " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
     cout << "   encoding:               " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
