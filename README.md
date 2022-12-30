@@ -19,7 +19,7 @@ in order to compute a compacted de Brujin graph (cdBG) of your multi-fasta file.
 ## How to download and compile
 * `git clone https://github.com/enricorox/USTAR`.
 * `cd USTAR`
-* `cmake . && make`.
+* `cmake . && make -j 4`.
 
 ## How to run USTAR
 Run BCALM2 first: 
