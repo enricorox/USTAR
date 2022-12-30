@@ -47,17 +47,18 @@ void Decoder::extract_kmers_and_counts(const string &output_file_name) {
             // output canonical kmer
             // NOTE that DSK computes canonical kmers with A<C<T<G order! Then I use jellyfish for validation
             output << ((kmer < kmer_rc) ? kmer : kmer_rc);
-            output << " " << counts.at(n_kmers++) << "\n";
 
-            if(n_kmers > counts.size()){
-                cerr << "There are too few counts" << endl;
+            if(n_kmers >= counts.size()){
+                cerr << "extract_kmers_and_counts(): There are too few counts" << endl;
                 exit(EXIT_FAILURE);
             }
+
+            output << " " << counts.at(n_kmers++) << "\n";
         }
     }
 
     if(n_kmers < counts.size()){
-        cerr << "There are too much counts" << endl;
+        cerr << "extract_kmers_and_counts(): There are too much counts" << endl;
         exit(EXIT_FAILURE);
     }
     simplitigs.close();
