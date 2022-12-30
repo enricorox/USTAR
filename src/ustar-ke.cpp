@@ -17,7 +17,7 @@ using namespace std::chrono;
 struct params_t{
     string input_file_name = "out.ustar.fa";
     string counts_file_name = "out.ustar.counts";
-    string output_file_name = "kmers.txt";
+    string output_file_name = "ustar-kmers.txt";
     encoding_t encoding = encoding_t::PLAIN;
     int kmer_size = 31;
     bool debug = false;
