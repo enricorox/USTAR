@@ -120,7 +120,7 @@ void Decoder::decode(encoding_t encoding) {
             break;
         case encoding_t::BWT: {
                 // primary index is the first number
-                int primary_index;
+                long primary_index;
                 counts_file >> primary_index;
 
                 // read all the other counts

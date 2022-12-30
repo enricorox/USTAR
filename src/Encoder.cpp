@@ -75,6 +75,9 @@ void Encoder::to_counts_file(const string &file_name) {
             }
             encoded.close();
             break;
+        case encoding_t::BWT:
+            encoded << bwt_primary_index << "\n";
+            // no break here
         case encoding_t::FLIP:
             // no break here
         case encoding_t::PLAIN:
@@ -106,12 +109,6 @@ void Encoder::to_counts_file(const string &file_name) {
                 }
             }
             break;
-        case encoding_t::BWT:
-            encoded << bwt_primary_index << "\n";
-            for(auto c : bwt_counts){
-                encoded << c << "\n";
-            }
-            break;
         default:
             cerr << "to_counts_file(): Unknown encoding" << endl;
             exit(EXIT_FAILURE);
@@ -131,11 +128,10 @@ void Encoder::encode(encoding_t encoding_type) {
                 );
                 do_flip();
                 compact_counts();
-                bwt_counts.resize(compacted_counts.size());
                 if(debug)
                     cout << "BWT transform a vector of size " << compacted_counts.size() << endl;
                 auto key = townsend::algorithm::bwtEncode(compacted_counts.begin(), compacted_counts.end());
-                bwt_primary_index = compacted_counts.begin() - key;
+                bwt_primary_index = key - compacted_counts.begin();
             }
             break;
         case encoding_t::BINARY:
