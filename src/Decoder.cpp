@@ -86,11 +86,17 @@ void Decoder::decode(encoding_t encoding) {
                 while(getline(counts_file, line)){
                     size_t pos = line.find(RLE_SEPARATOR);
                     if(pos == string::npos){ // no ":" in the line
-                        counts.push_back(atoi(line.c_str()));
+                        int symbol = atoi(line.c_str());
+                        counts.push_back(symbol);
+                        if(debug && symbol < 2){
+                            cout << "Warning: found count = " << symbol << "\n";
+                        }
                     } else{
                         line[pos] = '\0';
                         int symbol = atoi(line.c_str());
                         int run = atoi(line.c_str() + pos + 1);
+                        if(debug && run < 2)
+                            cout << "Warning: found " << run << "-length run \n";
                         for(int i = 0; i < run; i++)
                             counts.push_back(symbol);
                     }
@@ -101,6 +107,7 @@ void Decoder::decode(encoding_t encoding) {
             cerr << "decode(): unknown encoding" << endl;
             exit(EXIT_FAILURE);
     }
-
+    if(debug)
+        cout <<"Found " << counts.size() << " counts\n";
     counts_file.close();
 }
