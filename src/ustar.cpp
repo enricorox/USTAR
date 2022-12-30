@@ -150,11 +150,11 @@ void parse_cli(int argc, char **argv, params_t &params){
                 print_help(params);
                 exit(EXIT_SUCCESS);
             case '?':
-                cerr << "parse_cli(): missing argument\n\n";
+                cerr << "parse_cli(): missing argument or invalid option\n\n";
                 print_help(params);
                 exit(EXIT_FAILURE);
-            default:
-                cerr << "parse_cli(): unknown parameter in optstring '" << c << "'\n\n";
+            default: // should never go here
+                cerr << "parse_cli(): unknown option in optstring '" << c << "'\n\n";
                 print_help(params);
                 exit(EXIT_FAILURE);
         }
