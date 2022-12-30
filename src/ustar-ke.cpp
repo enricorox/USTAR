@@ -128,10 +128,10 @@ int main(int argc, char **argv){
     Decoder decoder(params.input_file_name, params.counts_file_name, params.output_file_name, params.kmer_size, params.debug);
 
     cout << "Extracting kmers...\n";
-    auto start_time = high_resolution_clock::now();
+    auto start_time = steady_clock::now();
     decoder.decode();
-    auto stop_time = std::chrono::high_resolution_clock::now();
-    cout << "Done!\n" << endl;
+    auto stop_time = std::chrono::steady_clock::now();
+    cout << "Done!\n";
     cout << "Extraction time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
 
     exit(EXIT_SUCCESS);
