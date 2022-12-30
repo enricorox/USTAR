@@ -166,7 +166,7 @@ void parse_cli(int argc, char **argv, params_t &params){
 }
 
 int main(int argc, char **argv) {
-    cout << "===== Unitig STitch STar (USTAR) v" VERSION " =====\n";
+    cout << "===== Unitig STitch STar (USTAR) v" << VERSION << " =====\n";
     // cli parameters
     params_t params;
     parse_cli(argc, argv, params);
