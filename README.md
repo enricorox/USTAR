@@ -34,6 +34,8 @@ See the help `./ustar -h` for details and advanced options.
 You can check that the output file contains the same kmers of
 your bcalm file with your preferred kmer counter.
 
-You can even check that counts are correct with `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
-where `<ustar-kmers-counts>` is the output of `ustar-ke -k <kmer-size> -i <ustar-fasta> -c <ustar-counts>`.
+If you want to check that __kmers and counts__ are correct run
+* `./ustar-ke -k <kmer-size> -i <ustar-fasta> -c <ustar-counts>`
+* `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
+
 Note that you'll need to install [Jellyfish-2](https://github.com/zippav/Jellyfish-2) in order to use the script.
