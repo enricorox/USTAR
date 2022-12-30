@@ -8,26 +8,20 @@
 #include "DBG.h"
 #include "consts.h"
 
-Decoder::Decoder(const string &fasta_file_name, const string &counts_file_name, const string &output_file_name, int kmer_size, bool debug) {
+Decoder::Decoder(const string &fasta_file_name, const string &counts_file_name, int kmer_size, bool debug) {
     this->fasta_file_name = fasta_file_name;
     this->counts_file_name = counts_file_name;
-    this->output_file_name = output_file_name;
+
     this->kmer_size = kmer_size;
     this->debug = debug;
 }
 
-void Decoder::decode() {
+void Decoder::extract_kmers_and_counts(const string &output_file_name) {
     ifstream simplitigs(fasta_file_name);
-    ifstream counts(counts_file_name);
     ofstream output(output_file_name);
 
     if(!simplitigs.good()){
         cerr << "Cannot open " << fasta_file_name << endl;
-        exit(EXIT_FAILURE);
-    }
-
-    if(!counts.good()){
-        cerr << "Cannot open " << counts_file_name << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -37,6 +31,7 @@ void Decoder::decode() {
     }
 
     string simplitig;
+    size_t n_kmers = 0;
     while(true){
         // break if end of file
         if(!getline(simplitigs, simplitig))
@@ -52,13 +47,43 @@ void Decoder::decode() {
             // output canonical kmer
             // NOTE that DSK computes canonical kmers with A<C<T<G order! Then I use jellyfish for validation
             output << ((kmer < kmer_rc) ? kmer : kmer_rc);
-            int count;
-            counts >> count;
-            output << " " << count << "\n";
+            output << " " << counts.at(n_kmers++) << "\n";
+
+            if(n_kmers > counts.size()){
+                cerr << "There are too few counts" << endl;
+                exit(EXIT_FAILURE);
+            }
         }
     }
 
+    if(n_kmers < counts.size()){
+        cerr << "There are too much counts" << endl;
+        exit(EXIT_FAILURE);
+    }
     simplitigs.close();
-    counts.close();
     output.close();
+}
+
+void Decoder::decode(encoding_t encoding) {
+    ifstream counts_file(counts_file_name);
+
+    if(!counts_file.good()){
+        cerr << "decode(): cannot open " << counts_file_name << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    switch(encoding){
+        case encoding_t::PLAIN: {
+                uint32_t c;
+                while (counts_file >> c){
+                    counts.push_back(c);
+                }
+            }
+            break;
+        default:
+            cerr << "decode(): unknown encoding" << endl;
+            exit(EXIT_FAILURE);
+    }
+
+    counts_file.close();
 }
