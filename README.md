@@ -1,10 +1,15 @@
 # USTAR (Unitig STitch STar)
-## What is that?
-Another kmers set compressor, with counting.
+## Overview
+USTAR is a kmers (multi-)set compressor, with counting.
 
 It is based on the ideas of [UST](https://github.com/medvedevgroup/UST) 
 and [prophAsm](https://github.com/prophyle/prophasm) 
 for computing an SPSS representation (aka simplitigs) for the given kmers set.
+
+You will find two executable and one bash script:
+* `ustar`: the main program
+* `ustar-ke`: a kmers extractor
+* `validate`: a validation script
 
 ## Dependencies
 There are no dependencies. 
@@ -17,15 +22,18 @@ in order to compute a compacted de Brujin graph (cdBG) of your multi-fasta file.
 * `cmake . && make`.
 
 ## How to run USTAR
-* Run BCALM2: `./bcalm -kmer-size 31 -in <your-multi-fasta> -all-abundance-counts` 
-* `./ustar -k 31 -i <bcalm_file> -e avg_flip_rle`
+Run BCALM2 first: 
+* `./bcalm -kmer-size <kmer-size> -in <your-multi-fasta> -all-abundance-counts`
 
-See the help `./ustar -h` for details.
+Then ustar:
+* `./ustar -k <kmer-size> -i <bcalm-output>`
+
+See the help `./ustar -h` for details and advanced options.
 
 ## How to validate the output
 You can check that the output file contains the same kmers of
 your bcalm file with your preferred kmer counter.
 
-You can even check that counts are correct with `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-output>` 
-where `<ustar-kmers-output>` is the output using `ustar` whit `-e kmers`.
+You can even check that counts are correct with `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
+where `<ustar-kmers-counts>` is the output of `ustar-ke -k <kmer-size> -i <ustar-fasta> -c <ustar-counts>`.
 Note that you'll need to install [Jellifish-2](https://github.com/zippav/Jellyfish-2) in order to use the script.
