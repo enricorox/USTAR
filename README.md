@@ -8,7 +8,7 @@ for computing an SPSS representation (aka simplitigs) for the given kmers set.
 
 You will find two executable and one bash script:
 * `ustar`: the main program
-* `ustar-ke`: a kmers extractor
+* `ustarx`: a kmers extractor
 * `validate`: a validation script
 
 ## Dependencies
@@ -35,7 +35,7 @@ You can check that the output file contains the same kmers of
 your bcalm file with your preferred kmer counter.
 
 If you want to check that __kmers and counts__ are correct, run
-* `./ustar-ke -k <kmer-size> -i <ustar-fasta> -c <ustar-counts>`
+* `./ustarx -k <kmer-size> -i <ustar-fasta> -c <ustar-counts>`
 * `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
 
 Note that you'll need to install [Jellyfish-2](https://github.com/zippav/Jellyfish-2) in order to use `validate`.
