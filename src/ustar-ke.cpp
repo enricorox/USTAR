@@ -131,7 +131,7 @@ int main(int argc, char **argv){
     auto start_time = steady_clock::now();
     decoder.decode(params.encoding);
     auto stop_time = std::chrono::steady_clock::now();
-    cout << "Done. Decoding time: " << duration_cast<milliseconds>(stop_time - start_time).count() << "ms\n";
+    cout << "Done. Decoding time: " << duration_cast<milliseconds>(stop_time - start_time).count() << " ms\n";
 
     cout << "Extracting kmers...\n";
     start_time = steady_clock::now();
