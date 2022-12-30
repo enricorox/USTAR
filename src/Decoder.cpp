@@ -81,6 +81,22 @@ void Decoder::decode(encoding_t encoding) {
                 }
             }
             break;
+        case encoding_t::RLE:{
+                string line;
+                while(getline(counts_file, line)){
+                    size_t pos = line.find(RLE_SEPARATOR);
+                    if(pos == string::npos){ // no ":" in the line
+                        counts.push_back(atoi(line.c_str()));
+                    } else{
+                        line[pos] = '\0';
+                        int symbol = atoi(line.c_str());
+                        int run = atoi(line.c_str() + pos + 1);
+                        for(int i = 0; i < run; i++)
+                            counts.push_back(symbol);
+                    }
+                }
+            }
+            break;
         default:
             cerr << "decode(): unknown encoding" << endl;
             exit(EXIT_FAILURE);
