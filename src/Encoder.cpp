@@ -70,7 +70,7 @@ void Encoder::to_counts_file(const string &file_name) {
             for(size_t i = 0; i < symbols.size(); i++){
                 encoded << symbols[i];
                 if(runs[i] != 1)
-                    encoded << " " << runs[i];
+                    encoded << RLE_SEPARATOR << runs[i];
                 encoded << "\n";
             }
             encoded.close();
