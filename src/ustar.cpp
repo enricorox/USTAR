@@ -174,9 +174,9 @@ int main(int argc, char **argv) {
 
     // make a dBG
     cout << "Reading the input file..." << endl;
-    auto start_time = std::chrono::high_resolution_clock::now();
+    auto start_time = steady_clock::now();
     DBG dbg(params.input_file_name, params.kmer_size, params.debug);
-    auto stop_time = std::chrono::high_resolution_clock::now();
+    auto stop_time = steady_clock::now();
     cout << "Reading time: " << duration_cast<seconds>(stop_time - start_time).count() << " s\n";
     dbg.print_stat();
 
@@ -191,9 +191,9 @@ int main(int argc, char **argv) {
 
     // compute simplitigs
     cout << "Computing a path cover..." << endl;
-    start_time = std::chrono::high_resolution_clock::now();
+    start_time = steady_clock::now();
     spss.compute_path_cover();
-    stop_time = std::chrono::high_resolution_clock::now();
+    stop_time = steady_clock::now();
     cout << "Computing time: " << duration_cast<milliseconds>(stop_time - start_time).count() << " ms\n";
 
     cout << "Extracting simplitigs and kmers counts..." << endl;
