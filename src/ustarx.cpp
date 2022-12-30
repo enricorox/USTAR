@@ -27,7 +27,7 @@ struct params_t{
 void print_help(const params_t &params){
     cout << "Decode and extract canonical kmers and counts from USTAR (or UST) output files.\n\n";
 
-    cout << "Syntax: ./ustar-ke -i <ustar-fasta> -c <ustar-counts>\n\n";
+    cout << "Syntax: ./ustarx -i <ustar-fasta> -c <ustar-counts>\n\n";
 
     cout << "Options:\n\n";
 
@@ -123,7 +123,7 @@ void parse_cli(int argc, char **argv, params_t &params){
 }
 
 int main(int argc, char **argv){
-    cout << "===== USTAR kmer extractor v" << VERSION << " =====\n";
+    cout << "===== USTAR kmer eXtractor (USTARX) v" << VERSION << " =====\n";
 
     params_t params;
     parse_cli(argc, argv, params);
