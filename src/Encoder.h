@@ -28,8 +28,8 @@ class Encoder{
     double avg_run = 0;
 
     vector<uint32_t> compacted_counts;
-    vector<uint32_t> bwt_counts;
-    size_t bwt_primary_index = 0;
+
+    long bwt_primary_index = 0;
 
     void do_RLE();
 
