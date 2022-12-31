@@ -119,17 +119,25 @@ void Decoder::decode(encoding_t encoding) {
             }
             break;
         case encoding_t::BWT: {
+                counts.clear();
                 // primary index is the first number
-                long primary_index;
-                counts_file >> primary_index;
+                long primary_key;
+                counts_file >> primary_key;
+
+                if(debug)
+                    cout << "Primary key = " << primary_key << endl;
 
                 // read all the other counts
                 uint32_t c;
                 while(counts_file >> c)
                     counts.push_back(c);
 
+                if(debug)
+                    cout << "Read " << counts.size() << " values" << endl;
+
                 // do inverse BWT
-                townsend::algorithm::bwtDecode(counts.begin(), counts.end(), counts.begin() + primary_index);
+                auto ikey = counts.begin() + primary_key;
+                townsend::algorithm::bwtDecode(counts.begin(), counts.end(), ikey);
             }
             break;
         default:
