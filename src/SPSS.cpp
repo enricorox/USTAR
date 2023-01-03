@@ -110,6 +110,7 @@ void SPSS::compute_path_cover(bool two_way) {
     // reset path cover if already computed
     path_cover_nodes.clear();
     path_cover_forwards.clear();
+    std::fill(visited.begin(), visited.end(), false);
 
     vector<node_idx_t> path_nodes; vector<bool> path_forwards;
     while(sorter->has_seed()){
@@ -158,4 +159,8 @@ void SPSS::print_stats(){
     cout << "   average simplitigs length:              " << (double) c_length / (double) n_simplitigs << "\n";
     cout << "   average number of kmers per simplitig:  " << (double) dbg->get_n_kmers() / (double) n_simplitigs << "\n";
     cout << endl;
+}
+
+size_t SPSS::get_score() {
+    return path_cover_nodes.size();
 }

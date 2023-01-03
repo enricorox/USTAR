@@ -44,6 +44,8 @@ public:
     const vector<string> * get_simplitigs();
 
     const vector<vector<uint32_t>> * get_counts();
+
+    size_t get_score();
 };
 
 #endif //USTAR_SPSS_H
