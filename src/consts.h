@@ -14,6 +14,7 @@ using namespace std;
 
 enum class seeding_method_t{
     FIRST,
+    RANDOM,
     LOWER_MEDIAN_ABUNDANCE,
     LOWER_AVERAGE_ABUNDANCE,
     SIMILAR_ABUNDANCE,
@@ -23,13 +24,36 @@ enum class seeding_method_t{
     LESS_CONNECTED
 };
 
+const map<string, seeding_method_t> seeding_method_names = {
+        {"f", seeding_method_t::FIRST},
+        {"r", seeding_method_t::RANDOM},
+        {"-ma", seeding_method_t::LOWER_MEDIAN_ABUNDANCE},
+        {"-aa", seeding_method_t::LOWER_AVERAGE_ABUNDANCE},
+        {"=a", seeding_method_t::SIMILAR_ABUNDANCE},
+        {"-l", seeding_method_t::SMALLER_LENGTH},
+        {"+l", seeding_method_t::BIGGER_LENGTH},
+        {"-c", seeding_method_t::LESS_CONNECTED},
+        {"+c", seeding_method_t::MORE_CONNECTED}
+};
+
 enum class extending_method_t{
     FIRST,
+    RANDOM,
     SIMILAR_ABUNDANCE,
     BIGGER_LENGTH,
     SMALLER_LENGTH,
     MORE_CONNECTED,
     LESS_CONNECTED
+};
+
+const map<string, extending_method_t> extending_method_names = {
+        {"f", extending_method_t::FIRST},
+        {"r", extending_method_t::RANDOM},
+        {"=a", extending_method_t::SIMILAR_ABUNDANCE},
+        {"-l", extending_method_t::SMALLER_LENGTH},
+        {"+l", extending_method_t::BIGGER_LENGTH},
+        {"-c", extending_method_t::LESS_CONNECTED},
+        {"+c", extending_method_t::MORE_CONNECTED}
 };
 
 enum class encoding_t{
@@ -65,24 +89,5 @@ const map<string, encoding_t> encoding_names = {
         {"bwt", encoding_t::BWT}
 };
 
-const map<string, seeding_method_t> seeding_method_names = {
-        {"f", seeding_method_t::FIRST},
-        {"-ma", seeding_method_t::LOWER_MEDIAN_ABUNDANCE},
-        {"-aa", seeding_method_t::LOWER_AVERAGE_ABUNDANCE},
-        {"=a", seeding_method_t::SIMILAR_ABUNDANCE},
-        {"-l", seeding_method_t::SMALLER_LENGTH},
-        {"+l", seeding_method_t::BIGGER_LENGTH},
-        {"-c", seeding_method_t::LESS_CONNECTED},
-        {"+c", seeding_method_t::MORE_CONNECTED}
-};
-
-const map<string, extending_method_t> extending_method_names = {
-        {"f", extending_method_t::FIRST},
-        {"=a", extending_method_t::SIMILAR_ABUNDANCE},
-        {"-l", extending_method_t::SMALLER_LENGTH},
-        {"+l", extending_method_t::BIGGER_LENGTH},
-        {"-c", extending_method_t::LESS_CONNECTED},
-        {"+c", extending_method_t::MORE_CONNECTED}
-};
 // -----------------------------------------------------
 #endif //USTAR_CONSTS_H

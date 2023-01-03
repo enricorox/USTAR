@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <random>
 #include "Sorter.h"
 #include "commons.h"
 
@@ -14,6 +15,8 @@ Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_me
     this->extending_method = extending_method;
     this->debug = debug;
 
+    random_device rd;
+    random_generator.seed(rd());
 }
 
 void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited){
@@ -74,6 +77,9 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
             }
             break;
         case seeding_method_t::FIRST:
+            break;
+        case seeding_method_t::RANDOM:
+            shuffle(seed_order.begin(), seed_order.end(), random_generator);
             break;
         default:
             cerr << "init(): unknown seeding method!" << endl;
@@ -199,6 +205,9 @@ size_t Sorter::seed_successor(node_idx_t seed, vector<bool> &forwards, vector<no
                     }
                 }
             }
+            break;
+        case extending_method_t::RANDOM:
+            best = get_rand(to_nodes.size() - 1);
             break;
         default:
             cerr << "seed_successor(): unknown extending method!" << endl;

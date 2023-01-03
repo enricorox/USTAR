@@ -6,12 +6,14 @@
 #define USTAR_SORTER_H
 
 #include <vector>
+#include <random>
 #include "DBG.h"
 #include "consts.h"
 
 using namespace std;
 
 class Sorter{
+    mt19937 random_generator;
     bool debug;
     seeding_method_t seeding_method;
     extending_method_t extending_method;
@@ -25,7 +27,7 @@ class Sorter{
     bool first_node = true;
 
 public:
-    explicit Sorter(seeding_method_t seeding_method=seeding_method_t::FIRST, extending_method_t extending_method=extending_method_t::FIRST, bool debug=false);
+    Sorter(seeding_method_t seeding_method, extending_method_t extending_method, bool debug=false);
 
     void init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited);
 
