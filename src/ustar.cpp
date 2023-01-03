@@ -24,6 +24,7 @@ struct params_t{
     encoding_t encoding = encoding_t::PLAIN;
     seeding_method_t seeding_method = seeding_method_t::FIRST;
     extending_method_t extending_method = extending_method_t::FIRST;
+    int iterations = 1;
 };
 
 
@@ -49,6 +50,7 @@ void print_help(const params_t &params){
 
     cout << "   -s  seeding method [" << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "]\n";
     cout << "       f               choose the first seed available\n";
+    cout << "       r               choose a random seed\n";
     cout << "       -ma             choose the seed with lower median abundance\n";
     cout << "       -aa             choose the seed with lower average abundance\n";
     cout << "       =a              choose the seed with most similar abundance to the last used node\n";
@@ -58,10 +60,14 @@ void print_help(const params_t &params){
 
     cout << "   -x  extending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
     cout << "       f               choose the first successor available\n";
+    cout << "       r               choose a random successor\n";
     cout << "       =a              choose the successor with most similar abundance to the last used node\n";
     cout << "       -l              choose the successor with smaller length\n";
     cout << "       +l              choose the successor with bigger length\n";
     cout << "\n";
+
+    cout << "   -I  number of iterations [" << params.iterations << "]\n";
+    cout << "       available only for random methods\n\n";
 
     cout << "   -e  encoding [" << inv_map<encoding_t>(encoding_names, params.encoding)<< "]\n";
     cout << "       plain           do not use any encoding\n";
@@ -82,6 +88,7 @@ void print_params(const params_t &params){
     cout << "   counts file name:       " << params.counts_file_name << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
     cout << "   extending method:       " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
+    cout << "   iterations:             " << params.iterations << "\n";
     cout << "   encoding:               " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
     cout << "   debug:                  " << (params.debug?"true":"false") << "\n";
     cout << endl;
@@ -90,7 +97,7 @@ void print_params(const params_t &params){
 void parse_cli(int argc, char **argv, params_t &params){
     bool done = false;
     int c;
-    while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:")) != -1){
+    while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:I:")) != -1){
         switch(c){
             case 'i':
                 params.input_file_name = string(optarg);
@@ -143,6 +150,13 @@ void parse_cli(int argc, char **argv, params_t &params){
                 }
                 params.extending_method = extending_method_names.at(optarg);
                 break;
+            case 'I':
+                params.iterations = atoi(optarg);
+                if(params.iterations <= 0) {
+                    cerr << "parse_cli(): Need a positive number of iterations!" << endl;
+                    exit(EXIT_FAILURE);
+                }
+                break;
             case 'h':
                 print_help(params);
                 exit(EXIT_SUCCESS);
@@ -181,12 +195,12 @@ int main(int argc, char **argv) {
     if(params.debug)
         dbg.verify_input();
 
+
     // choose SPSS sorter
     Sorter sorter(params.seeding_method, params.extending_method, params.debug);
     // make an SPSS
     SPSS spss(&dbg, &sorter, params.debug);
 
-    // compute simplitigs
     cout << "Computing a path cover..." << endl;
     start_time = steady_clock::now();
     spss.compute_path_cover();
