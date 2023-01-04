@@ -18,4 +18,4 @@ cd "/nfsd/bcb/bcbg/prog_9/USTAR"
 
 srun --cpus-per-task 1 cmake .
 
-srun make -j 4
+srun make ustar -j 4
