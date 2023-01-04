@@ -8,6 +8,7 @@
 #SBATCH
 #SBATCH --time 60:00
 #SBATCH --ntasks 1
+#SBATCH --cpu-per-task 4
 #SBATCH --partition allgroups
 #SBATCH --mem 16G
 
@@ -28,10 +29,12 @@ for s in ../SRR/*/*.fasta; do
   echo "*** Extracting kmers of $s_name..."
 
   [[ -f "${s_base}-kmers.txt" ]] \
-  || srun jellyfish-linux count -m "$K" -C -s 100M -L 2 "$s" \
+  || srun jellyfish-linux count -t 4 -m "$K" -C -s 100M -L 2 "$s" \
   && srun jellyfish-linux dump -c mer_counts.jf > "${s_base}-kmers-unsorted.txt"
 
   srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-kmers.txt"
+
+  rm "${s_base}-kmers-unsorted.txt"
 
   echo "*** kmers of $s_name extracted!"
 done
