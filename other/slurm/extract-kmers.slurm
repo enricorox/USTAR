@@ -1,4 +1,4 @@
-/bin/bash
+#!/bin/bash
 
 #SBATCH --job-name jellyfish
 #SBATCH --output out_jellyfish.txt
