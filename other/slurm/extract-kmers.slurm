@@ -8,7 +8,7 @@
 #SBATCH
 #SBATCH --time 60:00
 #SBATCH --ntasks 1
-#SBATCH --cpu-per-task 4
+#SBATCH --cpus-per-task 4
 #SBATCH --partition allgroups
 #SBATCH --mem 16G
 
