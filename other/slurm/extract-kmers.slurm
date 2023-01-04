@@ -34,7 +34,7 @@ for s in ../SRR/*/*.fasta; do
 
   srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-kmers.txt"
 
-  rm "${s_base}-kmers-unsorted.txt"
+  rm "${s_base}-kmers-unsorted.txt" "mer_counts.jf"
 
   echo "*** kmers of $s_name extracted!"
 done
