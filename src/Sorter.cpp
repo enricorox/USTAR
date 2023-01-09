@@ -94,17 +94,17 @@ size_t Sorter::next_seed() {
     }
     if(seeding_method == seeding_method_t::SIMILAR_ABUNDANCE){
         if(first_node){
-            last_node = seed_order[seed_index];
             first_node = false;
+            return seed_order[seed_index];
         }
         size_t best = seed_index;
+        auto d_best = d((*nodes)[last_node].median_abundance , (*nodes)[seed_order[best]].median_abundance);
         for(size_t i = seed_index; i < seed_order.size(); i++)
             if(!(*visited)[seed_order[i]]){
-                auto d1 = d((*nodes)[last_node].median_abundance , (*nodes)[seed_order[best]].median_abundance);
-                auto d2 = d((*nodes)[last_node].median_abundance , (*nodes)[seed_order[i]].median_abundance);
-                if(d2 < d1)
+                auto d_i = d((*nodes)[last_node].median_abundance , (*nodes)[seed_order[i]].median_abundance);
+                if(d_i < d_best)
                     best = i;
-                if(d2 < EPSILON)
+                if(d_i < EPSILON)
                     break;
             }
         swap(seed_order[seed_index], seed_order[best]);

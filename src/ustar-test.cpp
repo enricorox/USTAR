@@ -10,17 +10,17 @@ using namespace std;
 int main(){
     cout << "===== USTAR unit test =====" << endl;
     vector<string> file_names =
-            {"../unit-test/test1",
-             "../unit-test/test2",
-             "../unit-test/test3",
-             "../unit-test/test4",
-             "../unit-test/test5",
-             "../unit-test/test6",
-             "../unit-test/test7",
-             "../unit-test/test8",
-             "../unit-test/test9",
-             "../unit-test/test10",
-             "../unit-test/test11"
+            {"../tests/test1",
+             "../tests/test2",
+             "../tests/test3",
+             "../tests/test4",
+             "../tests/test5",
+             "../tests/test6",
+             "../tests/test7",
+             "../tests/test8",
+             "../tests/test9",
+             "../tests/test10",
+             "../tests/test11"
             };
 
     for(auto &file_name_base : file_names){
