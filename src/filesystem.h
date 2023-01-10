@@ -1,3 +1,29 @@
+// We haven't checked which filesystem to include yet
+#ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+
+// Check for feature test macro for <filesystem>
+#   if defined(__cpp_lib_filesystem)
+#       define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 0
+
+// Check for feature test macro for <experimental/filesystem>
+#   elif defined(__cpp_lib_experimental_filesystem)
+#       define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 1
+
+// We can't check if headers exist...
+// Let's assume experimental to be safe
+#   elif !defined(__has_include)
+#       define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 1
+
+// Check if the header "<filesystem>" exists
+#   elif __has_include(<filesystem>)
+
+// If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
+#       ifdef _MSC_VER
+
+// Check and include header that defines "_HAS_CXX17"
+#           if __has_include(<yvals_core.h>)
+#               include <yvals_core.h>
+
 // Check for enabled C++17 support
 #               if defined(_HAS_CXX17) && _HAS_CXX17
 // We're using C++17, so let's use the normal version
