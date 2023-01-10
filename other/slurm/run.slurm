@@ -81,7 +81,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
     echo "* Compressing ${outfile_fa}..."
     [ -f "$outfile_fa_zipped" ] || srun MFCompressC -o "$outfile_fa_zipped" -3 "$outfile_fa"
     echo "* Compressing ${outfile_counts}..."
-    [ -f "$outfile_counts_zipped" ] || srun bzip3 -k "$outfile_counts"
+    [ -f "$outfile_counts_zipped" ] || srun bzip3 "$outfile_counts"
 
     headers+="${param},"
     n_kmers+="$(grep "number of kmers" "$outfile_stat" | awk -F ':' '{print $2;}'),"
