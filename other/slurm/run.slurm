@@ -42,7 +42,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
   results_csv="${ROOT_DIR}/${seq_name}.csv"
-  rm -rf "$results_csv"
+  rm -f ./*.csv
 
   echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >> $results_csv"
 
