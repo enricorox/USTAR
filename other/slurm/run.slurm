@@ -30,7 +30,7 @@ PATH=${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH
 
 params=("-sf -xf" "-sf -xf -e flip_rle"\
         "-s-aa -x=a" "-s-aa -x=a -e flip_rle"\
-        ""
+        "-s-l x+l" "-s-l x+l -e flip_rle"
 )
 
 mkdir -p "results" && cd "results"
