@@ -76,7 +76,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
 
     # need to remove .ustar.fa in SRR001665_1.a2.unitigs.fa.ustar.fa.ustar.fa
     # shellcheck disable=SC2086
-    [ -f "$outfile_fa" ] || srun ustar -k 31 -i "$bcalm_unitigs_abs" -o "${outfile_fa:0:-8}" \
+    [ -f "$outfile_fa" ] || srun ustar -k 31 -i "$bcalm_unitigs_abs" -o "${outfile_fa:0:-9}" \
     -c "$outfile_counts" $param > $outfile_stat
     echo "* Compressing ${outfile_fa}..."
     [ -f "$outfile_fa_zipped" ] || srun MFCompressC -o "$outfile_fa_zipped" -3 "$outfile_fa"
