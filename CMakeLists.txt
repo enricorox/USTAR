@@ -14,7 +14,7 @@ add_executable(ustar
         src/commons.cpp
         src/bwt.hpp
         src/Postprocessor.cpp
-        )
+        src/filesystem.h)
 
 add_executable(ustar-test
         src/ustar-test.cpp
