@@ -77,7 +77,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
     # shellcheck disable=SC2086
     [ -f "$outfile_fa" ] || srun ustar -k 31 -i "$bcalm_unitigs_abs" -o "$outfile_fa" -c "$outfile_counts" $param > $outfile_stat
     echo "* Compressing ${outfile_fa}..."
-    [ -f "$outfile_fa_zipped" ] || srun MFCompressC -k -3 "$outfile_fa" -o "$outfile_fa_zipped"
+    [ -f "$outfile_fa_zipped" ] || srun MFCompressC -3 -o "$outfile_fa_zipped" "$outfile_fa"
     echo "* Compressing ${outfile_counts}..."
     [ -f "$outfile_counts_zipped" ] || srun bzip3 -k "$outfile_counts"
 
