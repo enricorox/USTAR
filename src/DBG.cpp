@@ -16,7 +16,9 @@ size_t DBG::estimate_n_nodes(){
     // >0 LN:i:31 ab:Z:2
     // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     const uintmax_t MINIMUM_ENTRY_SIZE = 18 + kmer_size + 2;
-    return std::filesystem::file_size(bcalm_file_name) / MINIMUM_ENTRY_SIZE;
+    // auto file_size = std::filesystem::file_size(bcalm_file_name);
+    auto file_size = 1000;
+    return file_size / MINIMUM_ENTRY_SIZE;
 }
 
 void DBG::parse_bcalm_file() {
