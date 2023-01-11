@@ -53,7 +53,7 @@ void print_help(const params_t &params){
     cout << "       r               choose a random seed\n";
     cout << "       -ma             choose the seed with lower median abundance\n";
     cout << "       -aa             choose the seed with lower average abundance\n";
-    cout << "       =a              choose the seed with most similar abundance to the last used node\n";
+    cout << "       =a              choose the seed with most similar abundance to the last seòected node\n";
     cout << "       -l              choose the seed with smaller length\n";
     cout << "       +l              choose the seed with bigger length\n";
     cout << "       -c              choose the seed with less arcs\n";
@@ -63,7 +63,7 @@ void print_help(const params_t &params){
     cout << "   -x  extending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
     cout << "       f               choose the first successor available\n";
     cout << "       r               choose a random successor\n";
-    cout << "       =a              choose the successor with most similar abundance to the last used node\n";
+    cout << "       =a              choose the successor with most similar abundance to the last selected node\n";
     cout << "       -l              choose the successor with smaller length\n";
     cout << "       +l              choose the successor with bigger length\n";
     cout << "       -c              choose the successor with less arcs\n";
