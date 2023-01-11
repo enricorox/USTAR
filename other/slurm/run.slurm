@@ -16,6 +16,32 @@ dim(){
   stat -c %s "${1}"
 }
 
+# run original UST
+run_ust(){
+  ## file names
+  outfile_stat="${bcalm_unitigs}.stats.txt"
+  outfile_fa="${bcalm_unitigs}.ust.fa"
+  outfile_fa_zipped="${outfile_fa}.mfc"
+  outfile_counts="${bcalm_unitigs}.ust.counts"
+  outfile_counts_zipped="${outfile_counts}.bz3"
+
+  [[ -f "$bcalm_unitigs" ]] || srun ust -k 31 -a 2 -i "$bcalm_unitigs_abs"
+  [[ -f "$outfile_fa_zipped" ]] || srun MFCompressC -3 -o "$outfile_fa_zipped" "$outfile_fa"
+  [[ -f "$outfile_counts_zipped" ]] || srun bzip3 "$outfile_counts"
+
+  # harvest file sizes
+  headers+="ust,"
+  n_kmers+="$(grep "N_KMER" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+  n_unitigs+="$(grep "V_BCALM" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+  n_arcs+="$(grep "E_BCALM" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+  ust_c_lb+="$(grep "C_LB" "$outfile_stat" | awk -F '=' '{print $2;}')," # to add in worksheet
+  ust_c+="$(grep "C_USTITCH_twoway" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+  outfile_fa_sizes+="$(dim "$outfile_fa"),"
+  outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
+  outfile_counts_sizes+="$(dim "$outfile_counts"),"
+  outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
+}
+
 # exit if errors occur
 set -e
 # expand globs
@@ -25,8 +51,8 @@ ROOT_DIR="/nfsd/bcb/bcbg/prog_9"
 
 cd "${ROOT_DIR}/USTAR"
 
-# ustar & MFCompressC
-PATH=${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH
+# ust & ustar & MFCompressC
+PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
 
 params=("-sf -xf" "-sf -xf -e flip_rle"\
         "-s-aa -x=a" "-s-aa -x=a -e flip_rle"\
@@ -41,10 +67,9 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   seq_name=${bcalm_unitigs:0:-14} # remove ".ax.unitigs.fa" from "SRR001665_2.unitigs.fa"
   seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
-  results_csv="${ROOT_DIR}/${seq_name}.csv"
-  rm -f ./*.csv
+  results_csv="${ROOT_DIR}/results/${seq_name}/${seq_name}.csv"
 
-  echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >> $results_csv"
+  echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >>> $results_csv"
 
   mkdir -p "$seq_name" && cd "$seq_name"
 
@@ -52,6 +77,8 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   # data
   headers="${seq_name},"
   n_kmers="n_kmers,"
+  n_unitigs="n_unitigs,"
+  n_arcs="n_arcs,"
   ust_c_lb="CL_LB,"
   ust_c="CL,"
   outfile_fa_sizes="fasta size,"
@@ -61,6 +88,9 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   # ratios (to compute in worksheet)
   gap="gap (lower is better),"
   ratio_counts_ust_out="ratio counts,"
+
+  # run ust here
+  run_ust
 
   ## file names
   outfile_stat="${bcalm_unitigs}.stats.txt"
@@ -77,16 +107,18 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
     # need to remove .ustar.fa in SRR001665_1.a2.unitigs.fa.ustar.fa.ustar.fa
     # shellcheck disable=SC2086
     [ -f "$outfile_fa" ] || srun ustar -k 31 -i "$bcalm_unitigs_abs" -o "${outfile_fa:0:-9}" \
-    $param -c "$outfile_counts" > $outfile_stat
+      $param -c "$outfile_counts" > $outfile_stat
     echo "* Compressing ${outfile_fa}..."
     [ -f "$outfile_fa_zipped" ] || srun MFCompressC -o "$outfile_fa_zipped" -3 "$outfile_fa"
     echo "* Compressing ${outfile_counts}..."
     [ -f "$outfile_counts_zipped" ] || srun bzip3 "$outfile_counts"
 
     headers+="${param},"
-    n_kmers+="$(grep "number of kmers:" "$outfile_stat" | awk -F ':' '{print $2;}'),"
+    n_kmers+="$(grep "number of kmers:" "$outfile_stat" | awk -F ':' '{print $2;}' | tr -d " "),"
+    n_unitigs+=","
+    n_arcs+=","
     ust_c_lb+="," # to add in worksheet
-    ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F ':' '{print $2;}'),"
+    ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F ':' '{print $2;}' | tr -d " "),"
     outfile_fa_sizes+="$(dim "$outfile_fa"),"
     outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
     outfile_counts_sizes+="$(dim "$outfile_counts"),"
@@ -94,15 +126,18 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
 
     cd ..
   done
+
   # save results_csv
-  printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
-  "$headers" "$n_kmers" "$ust_c_lb" "$ust_c" \
-  "$outfile_fa_sizes" "$outfile_fa_zipped_sizes" "$outfile_counts_sizes" "$outfile_counts_zipped_sizes" \
-  "$gap" "$ratio_counts_ust_out" >> "$results_csv"
+  printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
+    "$headers" "$n_kmers" "$n_unitigs" "$n_arcs" "$ust_c_lb" "$ust_c" \
+    "$outfile_fa_sizes" "$outfile_fa_zipped_sizes" "$outfile_counts_sizes" "$outfile_counts_zipped_sizes" \
+    "$gap" "$ratio_counts_ust_out" > "$results_csv"
   cd ..
 done
 
-cd ..
+cd "${ROOT_DIR}/results"
 
 # all results in one file
-cat ./*.csv > results_all.csv
+cat ./*/*.csv > results_all.csv
+
+echo "Done. Results are saved in $(realpath results_all.csv)"
