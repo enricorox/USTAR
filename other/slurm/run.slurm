@@ -25,8 +25,11 @@ run_ust(){
   outfile_counts="${bcalm_unitigs}.ust.counts"
   outfile_counts_zipped="${outfile_counts}.bz3"
 
-  [[ -f "$bcalm_unitigs" ]] || srun ust -k 31 -a 2 -i "$bcalm_unitigs_abs"
+  echo "* Running UST..."
+  [[ -f "$outfile_fa" ]] || srun ust -k 31 -a 2 -i "$bcalm_unitigs_abs"
+  echo "* Compressing ${outfile_fa}..."
   [[ -f "$outfile_fa_zipped" ]] || srun MFCompressC -3 -o "$outfile_fa_zipped" "$outfile_fa"
+  echo "* Compressing ${outfile_counts}..."
   [[ -f "$outfile_counts_zipped" ]] || srun bzip3 "$outfile_counts"
 
   # harvest file sizes
@@ -105,6 +108,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
     mkdir -p "m${param}" && cd "m${param}"
 
     # need to remove .ustar.fa in SRR001665_1.a2.unitigs.fa.ustar.fa.ustar.fa
+    echo "* Running USTAR..."
     # shellcheck disable=SC2086
     [ -f "$outfile_fa" ] || srun ustar -k 31 -i "$bcalm_unitigs_abs" -o "${outfile_fa:0:-9}" \
       $param -c "$outfile_counts" > $outfile_stat
