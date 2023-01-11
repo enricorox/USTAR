@@ -84,9 +84,9 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
     [ -f "$outfile_counts_zipped" ] || srun bzip3 "$outfile_counts"
 
     headers+="${param},"
-    n_kmers+="$(grep "number of kmers" "$outfile_stat" | awk -F ':' '{print $2;}'),"
+    n_kmers+="$(grep "number of kmers:" "$outfile_stat" | awk -F ':' '{print $2;}'),"
     ust_c_lb+="," # to add in worksheet
-    ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+    ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F ':' '{print $2;}'),"
     outfile_fa_sizes+="$(dim "$outfile_fa"),"
     outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
     outfile_counts_sizes+="$(dim "$outfile_counts"),"
