@@ -26,7 +26,7 @@ run_ust(){
   outfile_counts_zipped="${outfile_counts}.bz3"
 
   echo "* Running UST..."
-  [[ -f "$outfile_fa" ]] || srun ust -k 31 -a 2 -i "$bcalm_unitigs_abs"
+  [[ -f "$outfile_fa" ]] || srun ust -k 31 -a 1 -i "$bcalm_unitigs_abs"
   echo "* Compressing ${outfile_fa}..."
   [[ -f "$outfile_fa_zipped" ]] || srun MFCompressC -3 -o "$outfile_fa_zipped" "$outfile_fa"
   echo "* Compressing ${outfile_counts}..."
