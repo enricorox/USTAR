@@ -33,12 +33,16 @@ run_ust(){
   echo "* Compressing ${outfile_counts}..."
   [[ -f "$outfile_counts_zipped" ]] || srun bzip3 "$outfile_counts"
 
-  # harvest file sizes
+  # harvest graph properties
   headers+="ust,"
   n_kmers+="$(grep "N_KMER" "$outfile_stat" | awk -F '=' '{print $2;}'),"
   n_unitigs+="$(grep "V_BCALM" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+  n_iso+="$(grep "N_ISOLATED" "$outfile_stat" | awk -F '=' '{print $2;}'),"
   n_arcs+="$(grep "E_BCALM" "$outfile_stat" | awk -F '=' '{print $2;}'),"
   ust_c_lb+="$(grep "C_LB" "$outfile_stat" | awk -F '=' '{print $2;}')," # to add in worksheet
+
+
+  # harvest file sizes
   ust_c+="$(grep "C_USTITCH_twoway" "$outfile_stat" | awk -F '=' '{print $2;}'),"
   outfile_fa_sizes+="$(dim "$outfile_fa"),"
   outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
@@ -84,6 +88,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   headers="${seq_name},"
   n_kmers="n_kmers,"
   n_unitigs="n_unitigs,"
+  n_iso="n_iso,"
   n_arcs="n_arcs,"
   ust_c_lb="CL_LB,"
   ust_c="CL,"

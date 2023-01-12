@@ -15,7 +15,7 @@ Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_me
     this->extending_method = extending_method;
     this->debug = debug;
 
-    random_device rd;
+    random_device rd("/dev/urandom");
     random_generator.seed(rd());
 }
 
