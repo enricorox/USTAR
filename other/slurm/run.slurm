@@ -18,6 +18,7 @@ dim(){
 
 # run original UST
 run_ust(){
+  mkdir -p "ust" && cd "ust"
   ## file names
   outfile_stat="${bcalm_unitigs}.stats.txt"
   outfile_fa="${bcalm_unitigs}.ust.fa"
@@ -43,6 +44,8 @@ run_ust(){
   outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
   outfile_counts_sizes+="$(dim "$outfile_counts"),"
   outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
+
+  cd ..
 }
 
 # exit if errors occur
@@ -52,7 +55,7 @@ shopt -s nullglob
 
 ROOT_DIR="/nfsd/bcb/bcbg/prog_9"
 
-cd "${ROOT_DIR}/USTAR"
+cd "${ROOT_DIR}/"
 
 # ust & ustar & MFCompressC
 PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
