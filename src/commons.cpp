@@ -20,6 +20,10 @@ uint32_t d(uint32_t a, uint32_t b){
     return abs((int)a - (int)b);
 }
 
+double d(double a, double b){
+    return abs(a - b);
+}
+
 uint32_t median(vector<uint32_t> v){
     size_t n = v.size() / 2;
     // find the middle element
