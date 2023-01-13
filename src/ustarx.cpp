@@ -54,9 +54,9 @@ void print_help(const params_t &params){
 
 void print_params(const params_t &params){
     cout << "Params:\n";
+    cout << "   kmer size:              " << params.kmer_size << "\n";
     cout << "   input file:             " << params.input_file_name << "\n";
     cout << "   counts file name:       " << params.counts_file_name << "\n";
-    cout << "   kmer size:              " << params.kmer_size << "\n";
     cout << "   output file name:       " << params.output_file_name << "\n";
     cout << "   sort:                   " << (params.sort ? "true" : "false") << "\n";
     cout << "   encoding:               " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
