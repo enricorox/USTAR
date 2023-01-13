@@ -185,8 +185,12 @@ int main(int argc, char **argv) {
     dbg.print_stat();
 
     // verify input
-    if(params.debug)
-        dbg.verify_input();
+    if(params.debug) {
+        if(!dbg.verify_input()){
+            cerr << "Bad input file" << endl;
+            exit(EXIT_FAILURE);
+        }
+    }
 
 
     // choose SPSS sorter
