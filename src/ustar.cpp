@@ -95,22 +95,24 @@ void print_params(const params_t &params){
 }
 
 void parse_cli(int argc, char **argv, params_t &params){
-    bool done = false;
+    bool got_input = false;
+    bool new_counts_name = false;
+    bool new_fasta_name = false;
     int c;
     while((c = getopt(argc, argv, "i:k:vo:dhe:s:x:c:")) != -1){
         switch(c){
             case 'i':
                 params.input_file_name = string(optarg);
-                done = true;
+                got_input = true;
                 break;
             case 'o':
                 params.output_file_name = string(optarg);
                 params.fasta_file_name = params.output_file_name + ".ustar.fa";
-                params.counts_file_name =
-                        params.output_file_name + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
+                new_fasta_name = true;
                 break;
             case 'c':
                 params.counts_file_name = string(optarg);
+                new_counts_name = true;
                 break;
             case 'k':
                 params.kmer_size = atoi(optarg);
@@ -133,8 +135,6 @@ void parse_cli(int argc, char **argv, params_t &params){
                     exit(EXIT_FAILURE);
                 }
                 params.encoding = encoding_names.at(optarg);
-                params.counts_file_name = params.output_file_name
-                                          + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
                 break;
             case 's': // seed method
                 if(seeding_method_names.find(optarg) == seeding_method_names.end()){
@@ -163,10 +163,23 @@ void parse_cli(int argc, char **argv, params_t &params){
                 exit(EXIT_FAILURE);
         }
     }
-    if(!done){
+
+    // check for input file
+    if(!got_input){
         print_help(params);
         exit(EXIT_FAILURE);
     }
+
+    // --- derive names ---
+    // get a base name removing .fa (or .fasta)
+    auto pos = params.input_file_name.rfind(".fa");
+    auto base_name = params.input_file_name.substr(0, pos);
+
+    if(!new_fasta_name)
+        params.output_file_name = base_name + ".ustar.fa";
+    if(!new_counts_name)
+        params.counts_file_name = base_name + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
+
 }
 
 int main(int argc, char **argv) {
