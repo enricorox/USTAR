@@ -63,6 +63,7 @@ void print_help(const params_t &params){
     cout << "       f               choose the first successor available\n";
     cout << "       r               choose a random successor\n";
     cout << "       =a              choose the successor with most similar abundance to the last selected node\n";
+    cout << "       =ma             choose the successor with most similar median abundance to the last selected node\n";
     cout << "       -l              choose the successor with smaller length\n";
     cout << "       +l              choose the successor with bigger length\n";
     cout << "       -c              choose the successor with less arcs\n";

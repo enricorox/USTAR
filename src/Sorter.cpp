@@ -10,21 +10,21 @@
 
 const double EPSILON = 0.5;
 
-Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_method, bool debug) {
+Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_method, bool debug) { // NOLINT(cert-msc51-cpp)
     this->seeding_method = sorting_methods;
     this->extending_method = extending_method;
     this->debug = debug;
+}
+
+void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited){
+    this->visited = spss_visited;
+    this->nodes = dbg_nodes;
 
     random_device rd;
     auto seed = rd();
     random_generator.seed(seed);
     if(debug)
         cout << "Random seed: " << seed << "\n";
-}
-
-void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited){
-    this->visited = spss_visited;
-    this->nodes = dbg_nodes;
 
     seed_order.reserve(dbg_nodes->size());
     for(size_t i = 0; i < dbg_nodes->size(); i++)
@@ -186,7 +186,29 @@ size_t Sorter::seed_successor(node_idx_t seed, vector<bool> &forwards, vector<no
                 }
             }
             break;
-            case extending_method_t::BIGGER_LENGTH: {
+        case extending_method_t::SIMILAR_MEDIAN_ABUNDANCE:
+            {
+                auto best_value = UINT32_MAX;
+                for(size_t i = 0; i < to_nodes.size(); i++){
+                    auto ab_seed = nodes->at(seed).median_abundance;
+                    auto ab_succ = nodes->at(to_nodes.at(i)).median_abundance;
+
+                    // compute the distance
+                    auto diff = d(ab_seed, ab_succ);
+
+                    if(diff == 0){ // same abundance!
+                        best = i;
+                        break;
+                    }
+                    if(diff < best_value){
+                        best_value = diff;
+                        best = i;
+                    }
+                }
+            }
+            break;
+        case extending_method_t::BIGGER_LENGTH:
+            {
                 uint32_t max_len = 0;
                 for (size_t i = 0; i < to_nodes.size(); i++) {
                     auto len = (*nodes)[to_nodes[i]].length;
