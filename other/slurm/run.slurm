@@ -37,7 +37,7 @@ run_ust(){
   headers+="ust,"
   n_kmers+="$(grep "N_KMER" "$outfile_stat" | awk -F '=' '{print $2;}'),"
   n_unitigs+="$(grep "V_BCALM" "$outfile_stat" | awk -F '=' '{print $2;}'),"
-  n_iso+="$(grep "N_ISOLATED" "$outfile_stat" | awk -F '=' '{print $2;}'),"
+  n_iso+="$(grep -m 1 "N_ISOLATED" "$outfile_stat" | awk -F '=' '{print $2;}')," # match only first occurrence
   n_arcs+="$(grep "E_BCALM" "$outfile_stat" | awk -F '=' '{print $2;}'),"
   ust_c_lb+="$(grep "C_LB" "$outfile_stat" | awk -F '=' '{print $2;}')," # to add in worksheet
 
