@@ -55,6 +55,7 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
     }
 
     // set the orientation of the seed according to the sorter
+    // TODO this can be simplified since twoway ==> first extends forward then backward
     bool seed_forward;
     bool forward, to_forward;
     size_t node;
