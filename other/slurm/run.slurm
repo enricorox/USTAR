@@ -126,10 +126,6 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
     [ -f "$outfile_counts_zipped" ] || srun bzip3 "$outfile_counts"
 
     headers+="${param},"
-    n_kmers+="$(grep "number of kmers:" "$outfile_stat" | awk -F ':' '{print $2;}' | tr -d " "),"
-    n_unitigs+=","
-    n_arcs+=","
-    ust_c_lb+="," # to add in worksheet
     ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F ':' '{print $2;}' | tr -d " "),"
     outfile_fa_sizes+="$(dim "$outfile_fa"),"
     outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
@@ -140,8 +136,8 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   done
 
   # save results_csv
-  printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
-    "$headers" "$n_kmers" "$n_unitigs" "$n_arcs" "$ust_c_lb" "$ust_c" \
+  printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
+    "$headers" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" "$ust_c" \
     "$outfile_fa_sizes" "$outfile_fa_zipped_sizes" "$outfile_counts_sizes" "$outfile_counts_zipped_sizes" \
     "$gap" "$ratio_counts_ust_out" > "$results_csv"
   cd ..
@@ -150,6 +146,6 @@ done
 cd "${ROOT_DIR}/results"
 
 # all results in one file
-cat ./*/*.csv > results_all.csv
+cat "${ROOT_DIR}/results"/*/*.csv > results_all.csv
 
 echo "Done. Results are saved in $(realpath results_all.csv)"

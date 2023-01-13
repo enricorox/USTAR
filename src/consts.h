@@ -56,6 +56,14 @@ const map<string, extending_method_t> extending_method_names = {
         {"+c", extending_method_t::MORE_CONNECTED}
 };
 
+enum class postprocess_t{
+    NONE,           // do nothing
+    AVG,            // sort counts and sequences based on average counts
+    AVG_FLIP,       // do AVG and flip counts and rc sequences if necessary
+    AVG_FB,         // sort counts and sequences based on average of first and back of counts vector
+    AVG_FB_FLIP     // do AVG_FB and flip counts and rc sequences if necessary
+};
+
 enum class encoding_t{
     PLAIN,
     RLE,
