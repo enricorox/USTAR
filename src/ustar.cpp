@@ -118,6 +118,10 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): Need a positive kmer size!" << endl;
                     exit(EXIT_FAILURE);
                 }
+                if(params.kmer_size % 2 == 0){
+                    cerr << "parse_cli(): You should use an odd kmer size in order to avoid auto-loops in the DBG!" << endl;
+                    exit(EXIT_SUCCESS);
+                }
                 break;
             case 'v':
                 cout << "Version: " << VERSION << "\n";
