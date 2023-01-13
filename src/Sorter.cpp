@@ -16,7 +16,10 @@ Sorter::Sorter(seeding_method_t sorting_methods, extending_method_t extending_me
     this->debug = debug;
 
     random_device rd;
-    random_generator.seed(rd());
+    auto seed = rd();
+    random_generator.seed(seed);
+    if(debug)
+        cout << "Random seed: " << seed << "\n";
 }
 
 void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visited){
