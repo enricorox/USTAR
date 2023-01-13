@@ -153,13 +153,13 @@ void SPSS::print_stats(){
             c_length += dbg->get_node(path[i]).length - (dbg->get_kmer_size() - 1);
     }
 
-    cout << "\nSimplitigs stats:\n";
+    cout << "\n";
+    cout << "Simplitigs stats:\n";
     cout << "   number of simplitigs (NS):              " << n_simplitigs << "\n";
     cout << "   cumulative length (CL):                 " << c_length << "\n";
     cout << "   nucleotide per kmer:                    " << (double) c_length / (double) dbg->get_n_kmers() << "\n";
     cout << "   average simplitigs length:              " << (double) c_length / (double) n_simplitigs << "\n";
-    cout << "   average number of kmers per simplitig:  " << (double) dbg->get_n_kmers() / (double) n_simplitigs << "\n";
-    cout << endl;
+    cout << "\n";
 }
 
 size_t SPSS::get_score() {
