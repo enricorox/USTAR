@@ -40,6 +40,7 @@ enum class extending_method_t{
     FIRST,
     RANDOM,
     SIMILAR_ABUNDANCE,
+    SIMILAR_MEDIAN_ABUNDANCE,
     BIGGER_LENGTH,
     SMALLER_LENGTH,
     MORE_CONNECTED,
@@ -50,6 +51,7 @@ const map<string, extending_method_t> extending_method_names = {
         {"f", extending_method_t::FIRST},
         {"r", extending_method_t::RANDOM},
         {"=a", extending_method_t::SIMILAR_ABUNDANCE},
+        {"=ma", extending_method_t::SIMILAR_MEDIAN_ABUNDANCE},
         {"-l", extending_method_t::SMALLER_LENGTH},
         {"+l", extending_method_t::BIGGER_LENGTH},
         {"-c", extending_method_t::LESS_CONNECTED},
@@ -62,6 +64,14 @@ enum class postprocess_t{
     AVG_FLIP,       // do AVG and flip counts and rc sequences if necessary
     AVG_FB,         // sort counts and sequences based on average of first and back of counts vector
     AVG_FB_FLIP     // do AVG_FB and flip counts and rc sequences if necessary
+};
+
+const map<string, postprocess_t> postprocess_method_names = {
+        {"none", postprocess_t::NONE},
+        {"avg", postprocess_t::AVG},
+        {"avg_flip", postprocess_t::AVG_FLIP},
+        {"avg_fb", postprocess_t::AVG_FB},
+        {"avg_fb_flip", postprocess_t::AVG_FB_FLIP}
 };
 
 enum class encoding_t{
