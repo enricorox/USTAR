@@ -13,9 +13,8 @@ using namespace std::chrono;
 
 struct params_t{
     string input_file_name{};
-    string output_file_name = "out";
-    string fasta_file_name = output_file_name + ".ustar.fa";
-    string counts_file_name = output_file_name + ".ustar.counts";
+    string fasta_file_name{};
+    string counts_file_name{};
 
     int kmer_size = 31;
 
@@ -39,7 +38,7 @@ void print_help(const params_t &params){
 
     cout << "   -c  counts file name [" << params.counts_file_name << "]\n\n";
 
-    cout << "   -o  output file base name [" << params.output_file_name << "]\n\n";
+    cout << "   -o  fasta file name [" << params.fasta_file_name << "]\n\n";
 
     cout << "   -v  print version and author\n\n";
 
@@ -85,7 +84,7 @@ void print_params(const params_t &params){
     cout << "Params:\n";
     cout << "   input file:             " << params.input_file_name << "\n";
     cout << "   kmer size:              " << params.kmer_size << "\n";
-    cout << "   output file base name:  " << params.output_file_name << "\n";
+    cout << "   fasta file name:        " << params.fasta_file_name << "\n";
     cout << "   counts file name:       " << params.counts_file_name << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
     cout << "   extending method:       " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
@@ -106,8 +105,7 @@ void parse_cli(int argc, char **argv, params_t &params){
                 got_input = true;
                 break;
             case 'o':
-                params.output_file_name = string(optarg);
-                params.fasta_file_name = params.output_file_name + ".ustar.fa";
+                params.fasta_file_name = string(optarg);
                 new_fasta_name = true;
                 break;
             case 'c':
@@ -171,15 +169,17 @@ void parse_cli(int argc, char **argv, params_t &params){
     }
 
     // --- derive names ---
-    // get a base name removing .fa (or .fasta)
-    auto pos = params.input_file_name.rfind(".fa");
-    auto base_name = params.input_file_name.substr(0, pos);
+    // input = "../experiments/SRR001665_1.unitigs.fa"
+    // get a base name removing BCALM extension ".unitigs.fa"
+    auto ext_pos = params.input_file_name.rfind(".unitigs.fa");
+    auto slash_pos = params.input_file_name.rfind('/');
+    auto name_pos = (slash_pos == string::npos) ? 0 : slash_pos + 1; // if file is in PWD start from 0
+    auto base_name = params.input_file_name.substr(name_pos, ext_pos - name_pos);
 
     if(!new_fasta_name)
-        params.output_file_name = base_name + ".ustar.fa";
+        params.fasta_file_name = base_name + ".ustar.fa";
     if(!new_counts_name)
         params.counts_file_name = base_name + ".ustar" + encoding_suffixes.at(params.encoding) + ".counts";
-
 }
 
 int main(int argc, char **argv) {
