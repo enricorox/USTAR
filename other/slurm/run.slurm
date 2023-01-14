@@ -49,6 +49,8 @@ run_ust(){
   outfile_counts_sizes+="$(dim "$outfile_counts"),"
   outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
 
+  # print DBG info
+  printf "%s/n%s/n%s/n%s/n%s/n%s/n" "$seq_name" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" > "../profile.csv"
   cd ..
 }
 
@@ -64,9 +66,11 @@ cd "${ROOT_DIR}/"
 # ust & ustar & MFCompressC
 PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
 
-params=("-sf -xf" "-sf -xf -e flip_rle"\
-        "-s-aa -x=a" "-s-aa -x=a -e flip_rle"\
-        "-s-l x+l" "-s-l x+l -e flip_rle"
+params=("-sf -xf" "-sf -xf -e avg_flip_rle"\
+        "-s-ma -x=a" "-s-ma -x=a -e avg_flip_rle"\
+        "-s-aa -x=a" "-s-aa -x=a -e avg_flip_rle"\
+        "-s+l -x-l" "-s+l -x-l -e avg_flip_rle"\
+        "-s-l -x+l" "-s-l -x+l -e avg_flip_rle"
 )
 
 mkdir -p "results" && cd "results"
@@ -74,7 +78,7 @@ mkdir -p "results" && cd "results"
 for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   # derive strings
   bcalm_unitigs=$(basename "$bcalm_unitigs_abs")
-  seq_name=${bcalm_unitigs:0:-14} # remove ".ax.unitigs.fa" from "SRR001665_2.unitigs.fa"
+  seq_name=${bcalm_unitigs:0:-14} # remove ".ax.unitigs.fa" from "SRR001665_2.a2.unitigs.fa"
   seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
   results_csv="${ROOT_DIR}/results/${seq_name}/${seq_name}.csv"
@@ -92,13 +96,13 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   n_arcs="n_arcs,"
   ust_c_lb="CL_LB,"
   ust_c="CL,"
-  outfile_fa_sizes="fasta size,"
-  outfile_fa_zipped_sizes="fasta zipped size,"
+  outfile_fa_sizes="fasta_size,"
+  outfile_fa_zipped_sizes="fasta_zipped_size,"
   outfile_counts_sizes="counts size,"
-  outfile_counts_zipped_sizes="counts zipped size,"
+  outfile_counts_zipped_sizes="counts_zipped_size,"
   # ratios (to compute in worksheet)
   gap="gap (lower is better),"
-  ratio_counts_ust_out="ratio counts,"
+  ratio_counts_ust_out="ratio_counts,"
 
   # run ust here
   run_ust
@@ -135,8 +139,8 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   done
 
   # save results_csv
-  printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
-    "$headers" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" "$ust_c" \
+  printf "%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
+    "$headers" "$ust_c" \
     "$outfile_fa_sizes" "$outfile_fa_zipped_sizes" "$outfile_counts_sizes" "$outfile_counts_zipped_sizes" \
     "$gap" "$ratio_counts_ust_out" > "$results_csv"
   cd ..
