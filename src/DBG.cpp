@@ -164,9 +164,9 @@ void DBG::print_stat() {
     cout << "DBG stats:\n";
     cout << "   number of kmers:            " << n_kmers << "\n";
     cout << "   number of nodes:            " << nodes.size() << "\n";
-    cout << "   number of isolated nodes:   " << n_iso << "\n";
+    cout << "   number of isolated nodes:   " << n_iso << " (" << double (n_iso) / double (nodes.size()) * 100 << "%)\n";
     cout << "   number of arcs:             " << n_arcs << "\n";
-    cout << "   graph density:              " << double (n_arcs) / double (8 * nodes.size()) * 100 << " %\n";
+    cout << "   graph density:              " << double (n_arcs) / double (8 * nodes.size()) * 100 << "%\n";
     cout << "   average unitig length:      " << avg_unitig_len << "\n";
     cout << "   average abundances:         " << avg_abundances << "\n";
     cout << "\n";
