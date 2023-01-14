@@ -50,7 +50,7 @@ run_ust(){
   outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
 
   # print DBG info
-  printf "%s/n%s/n%s/n%s/n%s/n%s/n" "$seq_name" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" > "../profile.csv"
+  printf "%s\n%s\n%s\n%s\n%s\n%s\n" "$seq_name" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" > "../profile.csv"
   cd ..
 }
 
