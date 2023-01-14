@@ -42,45 +42,35 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
 
     // add the seed
     path_nodes_d.push_back(seed);
+    path_forwards_d.push_back(true);
     visited.at(seed) = true;
 
-    // ----- forward extending -----
-    // get all the unvisited nodes reachable from seed
-    dbg->get_nodes_from(seed, forwards, to_nodes, to_forwards, visited);
-
-    if(to_nodes.empty()){
-        path_nodes.push_back(seed);
-        path_forwards.push_back(true);
-        return;
-    }
-
-    // set the orientation of the seed according to the sorter
-    // TODO this can be simplified since twoway ==> first extends forward then backward
-    bool seed_forward;
+    // extension vars
     bool forward, to_forward;
-    size_t node;
-    size_t successor = sorter->seed_successor(seed, forwards, to_nodes, to_forwards, seed_forward, to_forward);
-    path_forwards_d.push_back(seed_forward);
+    size_t node, successor;
 
-    while(true){
-        // update
-        node = successor;
-        visited.at(node) = true;
-        forward = to_forward;
-        path_nodes_d.push_back(node);
-        path_forwards_d.push_back(forward);
-
+    // ----- forward extending -----
+    node = seed;
+    forward = true; // forward visiting
+    while (true) {
         // explore
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
-        if(to_nodes.empty())
+        if (to_nodes.empty())
             break;
         successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
+
+        // update
+        node = successor;
+        forward = to_forward;
+        visited.at(node) = true;
+        path_nodes_d.push_back(node);
+        path_forwards_d.push_back(forward);
     }
 
     // ----- backward extending -----
     if(two_way) {
         node = seed;
-        forward = (!seed_forward); // the other side
+        forward = false; // the other side
         while (true) {
             // explore
             dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
