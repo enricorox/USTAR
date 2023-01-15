@@ -25,7 +25,7 @@ PATH="${ROOT_DIR}/USTAR:$PATH"
 cd "${ROOT_DIR}/results"
 
 for s_name in SRR*; do
-  kmers_list=("${SRR}/${s_name}/"*".txt")
+  kmers_list=("${SRR}/"*"/${s_name}-kmers.txt")
   cd "$s_name"
   params_dir=("m"*)
   params_dir+=("ust")
