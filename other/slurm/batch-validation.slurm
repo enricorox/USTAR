@@ -43,7 +43,7 @@ for s_name in SRR*; do
     fi
 
     # shellcheck disable=SC2128
-    srun ustarx -k "$K" -i "$fasta" -c "$counts" -e "$encoding" -s
+    [[ -f "ustar-kmers.txt" ]] || srun ustarx -k "$K" -i "$fasta" -c "$counts" -e "$encoding" -s
 
     # shellcheck disable=SC2128
     if cmp "ustar-kmers.txt" "$kmers_list"; then
