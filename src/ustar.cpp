@@ -50,6 +50,7 @@ void print_help(const params_t &params){
     cout << "       f               choose the first seed available\n";
     cout << "       r               choose a random seed\n";
     cout << "       -ma             choose the seed with lower median abundance\n";
+    cout << "       +ma             choose the seed with higher median abundance\n";
     cout << "       -aa             choose the seed with lower average abundance\n";
     cout << "       =a              choose the seed with most similar abundance to the last selected node\n";
     cout << "       -l              choose the seed with smaller length\n";
@@ -63,6 +64,7 @@ void print_help(const params_t &params){
     cout << "       r               choose a random successor\n";
     cout << "       =a              choose the successor with most similar abundance to the last selected node\n";
     cout << "       =ma             choose the successor with most similar median abundance to the last selected node\n";
+    cout << "       -ma             choose the successor with lower abundance to the last selected node\n";
     cout << "       -l              choose the successor with smaller length\n";
     cout << "       +l              choose the successor with bigger length\n";
     cout << "       -c              choose the successor with less arcs\n";

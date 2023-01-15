@@ -73,10 +73,17 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
         case seeding_method_t::SIMILAR_ABUNDANCE:
             // no break here
         case seeding_method_t::LOWER_AVERAGE_ABUNDANCE: {
-            auto lambda = [this](size_t a, size_t b) {
-                return nodes->at(a).average_abundance < nodes->at(b).average_abundance;
-            };
-            sort(seed_order.begin(), seed_order.end(), lambda);
+                auto lambda = [this](size_t a, size_t b) {
+                    return nodes->at(a).average_abundance < nodes->at(b).average_abundance;
+                };
+                sort(seed_order.begin(), seed_order.end(), lambda);
+            }
+            break;
+        case seeding_method_t::HIGHER_AVERAGE_ABUNDANCE: {
+                auto lambda = [this](size_t a, size_t b) {
+                    return nodes->at(a).average_abundance > nodes->at(b).average_abundance;
+                };
+                sort(seed_order.begin(), seed_order.end(), lambda);
             }
             break;
         case seeding_method_t::FIRST:
