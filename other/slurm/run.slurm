@@ -70,7 +70,9 @@ params=("-sf -xf" "-sf -xf -e avg_flip_rle"\
         "-s-ma -x=a" "-s-ma -x=a -e avg_flip_rle"\
         "-s-aa -x=a" "-s-aa -x=a -e avg_flip_rle"\
         "-s+l -x-l" "-s+l -x-l -e avg_flip_rle"\
-        "-s-l -x+l" "-s-l -x+l -e avg_flip_rle"
+        "-s-l -x+l" "-s-l -x+l -e avg_flip_rle"\
+        "-s+aa -x=ma" "-s+aa -x=ma -e avg_flip_rle"\
+        "-s-ma -x-ma" "-s-ma -x-ma -e avg_flip_rle"
 )
 
 mkdir -p "results" && cd "results"
