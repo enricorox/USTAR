@@ -30,6 +30,7 @@ for s_name in *; do
   params_dir=(m*)
 
   for param_dir in "${params_dir[@]}"; do
+    echo "Doing validation for $s_name, $param_dir"
     cd param_dir
     fasta=(*.fa)
     counts=(*.counts)
@@ -41,7 +42,7 @@ for s_name in *; do
     fi
 
     # shellcheck disable=SC2128
-    srun ustarx -k "$K" -i "$fasta" -c "$counts" -e "$encoding"
+    srun ustarx -k "$K" -i "$fasta" -c "$counts" -e "$encoding" -s
 
     # shellcheck disable=SC2128
     if cmp "ustar-kmers.txt" "$kmers_list"; then
