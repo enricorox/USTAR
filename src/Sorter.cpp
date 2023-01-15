@@ -160,74 +160,85 @@ size_t Sorter::next_successor(node_idx_t seed, bool forward, vector<node_idx_t> 
             // do nothing, it's before the cycle
             break;
         case extending_method_t::SIMILAR_ABUNDANCE: {
-            uint32_t best_value = UINT32_MAX;
-            for(size_t i = 0; i < to_nodes.size(); i++){
-                uint32_t ab_seed = nodes->at(seed).abundances.back();
-                uint32_t ab_succ = nodes->at(to_nodes.at(i)).abundances.front();
+                uint32_t best_value = UINT32_MAX;
+                for(size_t i = 0; i < to_nodes.size(); i++){
+                    uint32_t ab_seed = nodes->at(seed).abundances.back();
+                    uint32_t ab_succ = nodes->at(to_nodes.at(i)).abundances.front();
 
-                if(!forward)
-                    ab_seed = nodes->at(seed).abundances.front();
-                if(!to_forwards.at(i))
-                    ab_succ = nodes->at(to_nodes.at(i)).abundances.back();
+                    if(!forward)
+                        ab_seed = nodes->at(seed).abundances.front();
+                    if(!to_forwards.at(i))
+                        ab_succ = nodes->at(to_nodes.at(i)).abundances.back();
 
-                // compute the distance
-                uint32_t diff = d(ab_seed, ab_succ);
+                    // compute the distance
+                    uint32_t diff = d(ab_seed, ab_succ);
 
-                if(diff == 0){ // same abundance!
-                    best = i;
-                    break;
-                }
-                if(diff < best_value){
-                    best_value = diff;
-                    best = i;
+                    if(diff == 0){ // same abundance!
+                        best = i;
+                        break;
+                    }
+                    if(diff < best_value){
+                        best_value = diff;
+                        best = i;
+                    }
                 }
             }
-        }
             break;
         case extending_method_t::SIMILAR_MEDIAN_ABUNDANCE:
-        {
-            auto best_value = UINT32_MAX;
-            for(size_t i = 0; i < to_nodes.size(); i++){
-                auto ab_seed = nodes->at(seed).median_abundance;
-                auto ab_succ = nodes->at(to_nodes.at(i)).median_abundance;
+            {
+                auto best_value = UINT32_MAX;
+                for(size_t i = 0; i < to_nodes.size(); i++){
+                    auto ab_seed = nodes->at(seed).median_abundance;
+                    auto ab_succ = nodes->at(to_nodes.at(i)).median_abundance;
 
-                // compute the distance
-                auto diff = d(ab_seed, ab_succ);
+                    // compute the distance
+                    auto diff = d(ab_seed, ab_succ);
 
-                if(diff == 0){ // same abundance!
-                    best = i;
-                    break;
-                }
-                if(diff < best_value){
-                    best_value = diff;
-                    best = i;
+                    if(diff == 0){ // same abundance!
+                        best = i;
+                        break;
+                    }
+                    if(diff < best_value){
+                        best_value = diff;
+                        best = i;
+                    }
                 }
             }
-        }
+            break;
+        case extending_method_t::LOWER_MEDIAN_ABUNDANCE:{
+                uint32_t min_ab = UINT32_MAX;
+                for (size_t i = 0; i < to_nodes.size(); i++) {
+                    auto ab = (*nodes)[to_nodes[i]].median_abundance;
+                    if (ab < min_ab) {
+                        min_ab = ab;
+                        best = i;
+                    }
+                }
+            }
             break;
         case extending_method_t::BIGGER_LENGTH:
-        {
-            uint32_t max_len = 0;
-            for (size_t i = 0; i < to_nodes.size(); i++) {
-                auto len = (*nodes)[to_nodes[i]].length;
-                if (len > max_len) {
-                    max_len = len;
-                    best = i;
+            {
+                uint32_t max_len = 0;
+                for (size_t i = 0; i < to_nodes.size(); i++) {
+                    auto len = (*nodes)[to_nodes[i]].length;
+                    if (len > max_len) {
+                        max_len = len;
+                        best = i;
+                    }
                 }
             }
-        }
             break;
         case extending_method_t::SMALLER_LENGTH:
-        {
-            uint32_t min_len = UINT32_MAX;
-            for (size_t i = 0; i < to_nodes.size(); i++) {
-                auto len = (*nodes)[to_nodes[i]].length;
-                if (len < min_len) {
-                    min_len = len;
-                    best = i;
+            {
+                uint32_t min_len = UINT32_MAX;
+                for (size_t i = 0; i < to_nodes.size(); i++) {
+                    auto len = (*nodes)[to_nodes[i]].length;
+                    if (len < min_len) {
+                        min_len = len;
+                        best = i;
+                    }
                 }
             }
-        }
             break;
         case extending_method_t::RANDOM:
             best = get_rand(to_nodes.size() - 1);

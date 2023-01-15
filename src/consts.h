@@ -41,6 +41,7 @@ enum class extending_method_t{
     RANDOM,
     SIMILAR_ABUNDANCE,
     SIMILAR_MEDIAN_ABUNDANCE,
+    LOWER_MEDIAN_ABUNDANCE,
     BIGGER_LENGTH,
     SMALLER_LENGTH,
     MORE_CONNECTED,
@@ -53,6 +54,7 @@ const map<string, extending_method_t> extending_method_names = {
         {"=a", extending_method_t::SIMILAR_ABUNDANCE},
         {"=ma", extending_method_t::SIMILAR_MEDIAN_ABUNDANCE},
         {"-l", extending_method_t::SMALLER_LENGTH},
+        {"-ma", extending_method_t::LOWER_MEDIAN_ABUNDANCE},
         {"+l", extending_method_t::BIGGER_LENGTH},
         {"-c", extending_method_t::LESS_CONNECTED},
         {"+c", extending_method_t::MORE_CONNECTED}
