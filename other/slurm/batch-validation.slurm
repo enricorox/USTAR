@@ -59,3 +59,6 @@ for s_name in SRR*; do
 
   cd ..
 done
+
+echo "All validation done!"
+echo "Check incorrect files with 'grep $ROOT_DIR/results/*/*/validity.txt Incorrect'"
