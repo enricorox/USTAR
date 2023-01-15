@@ -16,7 +16,7 @@ set -e
 
 K=31
 
-ROOT_DIR="/nfsd/bcb/bcbg/prog_9/"
+ROOT_DIR="/nfsd/bcb/bcbg/prog_9"
 SRR="${ROOT_DIR}/SRR"
 
 # ustarx
@@ -48,10 +48,10 @@ for s_name in SRR*; do
     # shellcheck disable=SC2128
     if cmp "ustar-kmers.txt" "$kmers_list"; then
       echo "SUCCESS: (${s_name}, ${param_dir}) is correct!"
-      echo "Correct!" > correct.txt
+      echo "Correct!" > validity.txt
     else
       echo "FAILURE: (${s_name}, ${param_dir}) is NOT correct!"
-      echo "Incorrect!" > incorrect.txt
+      echo "Incorrect!" > validity.txt
     fi
 
     cd ..
