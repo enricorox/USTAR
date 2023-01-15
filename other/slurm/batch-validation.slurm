@@ -27,11 +27,12 @@ cd "${ROOT_DIR}/results"
 for s_name in SRR*; do
   kmers_list=("${SRR}/${s_name}/"*".txt")
   cd "$s_name"
-  params_dir=(m*)
+  params_dir=("m"*)
+  params_dir+=("ust")
 
   for param_dir in "${params_dir[@]}"; do
     echo "Doing validation for $s_name, $param_dir"
-    cd param_dir
+    cd "$param_dir"
     fasta=(*.fa)
     counts=(*.counts)
 
