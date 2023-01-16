@@ -61,4 +61,4 @@ for s_name in SRR*; do
 done
 
 echo "All validation done!"
-echo "Check incorrect files with 'grep $ROOT_DIR/results/*/*/validity.txt Incorrect'"
+echo "Check incorrect files with 'grep Incorrect $ROOT_DIR/results/*/*/validity.txt'"
