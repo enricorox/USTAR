@@ -50,7 +50,7 @@ void print_help(const params_t &params){
     cout << "       f               choose the first seed available\n";
     cout << "       r               choose a random seed\n";
     cout << "       -ma             choose the seed with lower median abundance\n";
-    cout << "       +ma             choose the seed with higher median abundance\n";
+    cout << "       +aa             choose the seed with higher average abundance\n";
     cout << "       -aa             choose the seed with lower average abundance\n";
     cout << "       =a              choose the seed with most similar abundance to the last selected node\n";
     cout << "       -l              choose the seed with smaller length\n";
