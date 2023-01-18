@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name compile-bcalm
-#SBATCH --output compile-bcalm.txt
-#SBATCH --error compile-bcalm.txt
+#SBATCH --output out_compile-bcalm.txt
+#SBATCH --error err_compile-bcalm.txt
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
 #SBATCH --mail-type ALL
 #SBATCH

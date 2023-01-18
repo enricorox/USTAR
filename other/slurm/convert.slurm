@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name fasterq
-#SBATCH --output output_fasterq.txt
-#SBATCH --error errors_fasterq.txt
+#SBATCH --output out_fasterq.txt
+#SBATCH --error err_fasterq.txt
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
 #SBATCH --mail-type ALL
 #SBATCH

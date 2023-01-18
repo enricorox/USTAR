@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name run-ustar
-#SBATCH --output out_run-ustar.txt
-#SBATCH --error err_run-ust.txt
+#SBATCH --job-name run-ustar-nofilter
+#SBATCH --output out_run-ustar-nofilter.txt
+#SBATCH --error err_run-ustar-nofilter.txt
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
 #SBATCH --mail-type ALL
 #SBATCH
