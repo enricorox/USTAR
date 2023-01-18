@@ -66,7 +66,7 @@ cd "${ROOT_DIR}/"
 # ust & ustar & MFCompressC
 PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
 
-params=("-s+aa -x=ma"\
+params=("-s+aa -x=a"\
         "-s+aa -x-c"
 )
 
