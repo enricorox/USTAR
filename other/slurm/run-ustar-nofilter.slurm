@@ -70,7 +70,8 @@ params=("-s+aa -x=a"\
         "-s+aa -x-c"
 )
 
-mkdir -p "results-nofilter" && cd "results-nofilter"
+RESULTS_DIR="$ROOT_DIR/results-nofilter"
+mkdir -p $RESULTS_DIR && cd $RESULTS_DIR
 
 for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.unitigs.fa"; do
   # derive strings
@@ -78,7 +79,7 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.unitigs.fa"; do
   seq_name=${bcalm_unitigs:0:-14} # remove ".ax.unitigs.fa" from "SRR001665_2.a2.unitigs.fa"
   seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
-  results_csv="${ROOT_DIR}/results/${seq_name}/${seq_name}.csv"
+  results_csv="$RESULTS_DIR/${seq_name}/${seq_name}.csv"
 
   echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >>> $results_csv"
 
