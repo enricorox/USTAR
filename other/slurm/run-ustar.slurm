@@ -151,9 +151,9 @@ for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a2.unitigs.fa"; do
   cd ..
 done
 
-cd "${ROOT_DIR}/results"
+cd "${RESULTS_DIR}"
 
 # all results in one file
-cat "${ROOT_DIR}/results"/*/*.csv > results_all.csv
+cat ${RESULTS_DIR}/*/*.csv > results_all.csv
 
 echo "Done. Results are saved in $(realpath results_all.csv)"
