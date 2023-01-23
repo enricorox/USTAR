@@ -77,7 +77,9 @@ void Encoder::to_counts_file(const string &file_name) {
             break;
         case encoding_t::BWT:
             encoded << bwt_primary_index << "\n";
-            // no break here
+            for(auto c : compacted_counts)
+                encoded << c << "\n";
+            break;
         case encoding_t::FLIP:
             // no break here
         case encoding_t::PLAIN:
