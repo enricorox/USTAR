@@ -67,7 +67,10 @@ cd "${ROOT_DIR}/"
 PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
 
 params=("-s+aa -x=a"\
-        "-s+aa -x-c"
+        "-s+aa -x-c"\
+        "-s+aa -x=a -e avg_flip_rle"\
+        "-s+aa -x-c -e avg_flip_rle"\
+        "-s+aa -x=ma" "-s+aa -x=ma -e avg_flip_rle"
 )
 
 RESULTS_DIR="$ROOT_DIR/results-nofilter"
