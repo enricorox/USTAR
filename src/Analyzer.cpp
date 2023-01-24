@@ -65,7 +65,7 @@ void Analyzer::parse_file() {
 void Analyzer::print_stats() {
     cout << "kmers stats:\n";
     cout << "   variance:   " << variance << "\n";
-    cout << "   GC-content:" << double (F[C] + F[G]) / (F[A] + F[C] + F[T] + F[G]) << "\n";
+    cout << "   GC-content: " << double (F[C] + F[G]) / (F[A] + F[C] + F[T] + F[G]) << "\n";
     cout << endl;
 }
 

@@ -21,3 +21,5 @@ srun cmake .
 srun make ustar -j 4
 
 srun make ustarx -j 4
+
+srun make ustars -j 4
