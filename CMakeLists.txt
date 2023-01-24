@@ -15,7 +15,7 @@ add_executable(ustar
         src/commons.cpp
         src/bwt.hpp
         src/Postprocessor.cpp
-        src/filesystem.h)
+        )
 
 add_executable(ustar-test
         src/ustar-test.cpp
@@ -34,4 +34,9 @@ add_executable(ustarx
         src/DBG.cpp
         src/commons.cpp
         src/bwt.hpp
+        )
+
+add_executable(ustars
+        src/ustars.cpp
+        src/Analyzer.cpp
         )

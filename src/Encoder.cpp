@@ -214,7 +214,7 @@ void Encoder::do_RLE(){
             prev = curr;
         }
     }
-    // save last run
+    // save last parse_file
     symbols.push_back(prev);
     runs.push_back(count);
     sum_run += count;
@@ -267,7 +267,7 @@ void Encoder::print_stat(){
             // no break here
         case encoding_t::RLE:
             cout << "   Number of runs: " << runs.size() << "\n";
-            cout << "   Average run:    " << avg_run << "\n";
+            cout << "   Average parse_file:    " << avg_run << "\n";
             break;
         case encoding_t::BWT:
             // no break here

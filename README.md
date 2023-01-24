@@ -21,7 +21,7 @@ in order to compute a compacted de Brujin graph (cdBG) of your multi-fasta file.
 * `cd USTAR`
 * `cmake . && make -j 4`.
 
-## How to run USTAR
+## How to parse_file USTAR
 Run BCALM2 first: 
 * `./bcalm -kmer-size <kmer-size> -in <your-multi-fasta> -all-abundance-counts`
 
@@ -34,7 +34,7 @@ See the help `./ustar -h` for details and advanced options.
 You can check that the output file contains the same kmers of
 your bcalm file with your preferred kmer counter.
 
-If you want to check that __kmers and counts__ are correct, run
+If you want to check that __kmers and counts__ are correct, parse_file
 * `./ustarx -k <kmer-size> -i <ustar-fasta> -c <ustar-counts> -s`
 * `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
 

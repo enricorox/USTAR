@@ -93,23 +93,23 @@ void Decoder::decode(encoding_t encoding) {
                 while(getline(counts_file, line)){
                     // is this line a "S:R"?
                     size_t pos = line.find(RLE_SEPARATOR);
-                    if(pos == string::npos){ // no run
+                    if(pos == string::npos){ // no parse_file
                         int symbol = atoi(line.c_str());
                         counts.push_back(symbol);
 
                         if(debug && symbol < 2){
                             cout << "Warning: found count = " << symbol << "\n";
                         }
-                    } else{ // there is a run here
+                    } else{ // there is a parse_file here
                         // break line in two string where there is the separator
                         line[pos] = '\0';
 
-                        // read symbol and run length
+                        // read symbol and parse_file length
                         int symbol = atoi(line.c_str());
                         int run = atoi(line.c_str() + pos + 1);
 
                         if(debug && run < 2)
-                            cout << "Warning: found " << run << "-length run \n";
+                            cout << "Warning: found " << run << "-length parse_file \n";
 
                         // save multiple symbols
                         for(int i = 0; i < run; i++)
