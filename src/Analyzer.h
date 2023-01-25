@@ -12,7 +12,7 @@ using namespace std;
 
 class Analyzer{
     const int A = 0, C = 1, T = 2, G = 3;
-    int F[4];
+    long F[4];
 
     double variance;
 
