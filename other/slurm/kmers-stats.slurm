@@ -30,5 +30,5 @@ for s in ../SRR/*/*.fasta; do
   srun ustars -i "$kmers_list" -k $K > "${kmers_list%".txt"}-stats.txt"
 done
 
-cat ../SRR/*/*-stats.txt > SRR/stats.txt
+cat ../SRR/*/*-stats.txt > ../SRR/stats.txt
 echo "Done. Kmers stats are in SRR/stats.txt"
