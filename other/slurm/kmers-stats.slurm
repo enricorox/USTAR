@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name jellyfish
-#SBATCH --output out_jellyfish.txt
-#SBATCH --error err_jellyfish.txt
+#SBATCH --job-name kmers-stats
+#SBATCH --output out_kmers-stats.txt
+#SBATCH --error err_kmers-stats.txt
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
 #SBATCH --mail-type ALL
 #SBATCH
