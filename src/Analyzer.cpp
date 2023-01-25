@@ -57,6 +57,10 @@ void Analyzer::parse_file() {
 
         int ab;
         sscanf(line.c_str() + i + 1, "%d", &ab);
+        if(ab < min)
+            min = ab;
+        if(ab > max)
+            max = ab;
         counts.push_back(ab);
     }
 
@@ -64,8 +68,12 @@ void Analyzer::parse_file() {
 
 void Analyzer::print_stats() {
     cout << "kmers stats:\n";
-    cout << "   variance:   " << variance << "\n";
     cout << "   GC-content: " << double (F[C] + F[G]) / double (F[A] + F[C] + F[T] + F[G]) << "\n";
+    cout << "counts stats:\n";
+    cout << "   min:        " << min << "\n";
+    cout << "   mean:       " << mean << "\n";
+    cout << "   max:        " << max << "\n";
+    cout << "   variance:   " << variance << "\n";
     cout << endl;
 }
 
@@ -74,7 +82,7 @@ void Analyzer::compute_variance() {
     double sum = 0;
     for(auto c : counts)
         sum += c;
-    double mean = sum / double (counts.size());
+    mean = sum / double (counts.size());
 
     // then compute variance
     double variance_sum = 0;

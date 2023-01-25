@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <cfloat>
 
 using namespace std;
 
@@ -15,6 +16,9 @@ class Analyzer{
     long F[4];
 
     double variance;
+    double mean;
+    double min = DBL_MAX;
+    double max = 0;
 
     vector<int> counts;
 
