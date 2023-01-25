@@ -31,3 +31,4 @@ for s in ../SRR/*/*.fasta; do
 done
 
 cat ../SRR/*/*-stats.txt > SRR/stats.txt
+echo "Done. Kmers stats are in SRR/stats.txt"
