@@ -28,12 +28,12 @@ for s in ../SRR/*/*.fasta; do
   echo
   echo "*** Extracting kmers of $s_name..."
 
-  if [[ -f "${s_base}-${a}-kmers.txt" ]]; then
+  if [[ ! -f "${s_base}-a${a}-kmers.txt" ]]; then
     srun jellyfish-linux count -t 4 -m "$K" -C -s 100M -L "$a" "$s"
     srun jellyfish-linux dump -c mer_counts.jf > "${s_base}-kmers-unsorted.txt"
   fi
 
-  srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-$a-kmers.txt"
+  srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-a${a}-kmers.txt"
 
   rm -f "${s_base}-kmers-unsorted.txt" "mer_counts.jf"
 
