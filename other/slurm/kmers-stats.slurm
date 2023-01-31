@@ -15,6 +15,7 @@
 set -e
 
 K=31
+a=1
 
 # ustars path
 PATH="/nfsd/bcb/bcbg/prog_9/USTAR":$PATH
@@ -24,7 +25,7 @@ cd "/nfsd/bcb/bcbg/prog_9/USTAR"
 for s in ../SRR/*/*.fasta; do
   s_name=$(basename "$s" ".fasta")
   s_base=${s%".fasta"}
-  kmers_list="${s_base}-kmers.txt"
+  kmers_list="${s_base}-$a-kmers.txt"
 
   echo "Computing stats of $s_name ($kmers_list)"
   srun ustars -i "$kmers_list" -k $K > "${kmers_list%".txt"}-stats.txt"
