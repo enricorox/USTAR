@@ -56,7 +56,10 @@ void Analyzer::parse_file() {
         }
 
         int ab;
-        sscanf(line.c_str() + i + 1, "%d", &ab);
+        if(sscanf(line.c_str() + i + 1, "%d", &ab) != 1){
+            cerr << "parse_file(): cannot convert abundance" << endl;
+            exit(EXIT_FAILURE);
+        }
         if(ab < min)
             min = ab;
         if(ab > max)
@@ -67,7 +70,7 @@ void Analyzer::parse_file() {
 }
 
 void Analyzer::print_stats() {
-    cout << "kmers stats:\n";
+    cout << "\nkmers stats:\n";
     cout << "   GC-content: " << double (F[C] + F[G]) / double (F[A] + F[C] + F[T] + F[G]) << "\n";
     cout << "counts stats:\n";
     cout << "   min:        " << min << "\n";
