@@ -14,10 +14,10 @@ struct params_t{
     int kmer_size = 31;
 };
 
-void print_parameters(const params_t &params){
+void print_params(const params_t &params){
     cout << "Params:\n";
-    cout << "   file name:" << params.file_name << "\n";
-    cout << "   kmer size:" << params.kmer_size << "\n";
+    cout << "   file name:  " << params.file_name << "\n";
+    cout << "   kmer size:  " << params.kmer_size << "\n";
     cout << endl;
 }
 
@@ -64,7 +64,8 @@ int main(int argc, char **argv){
 
     params_t params;
     parse_cli(argc, argv, params);
-
-    Analyzer analizer(params.file_name, params.kmer_size);
-    analizer.print_stats();
+    print_params(params);
+    cout << "Reading file...\n";
+    Analyzer analyzer(params.file_name, params.kmer_size);
+    analyzer.print_stats();
 }
