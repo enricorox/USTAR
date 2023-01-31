@@ -15,7 +15,7 @@
 set -e
 
 K=31
-
+a=1
 # jellyfish path
 PATH="/nfsd/bcb/bcbg/prog_9/bin":$PATH
 
@@ -29,10 +29,10 @@ for s in ../SRR/*/*.fasta; do
   echo "*** Extracting kmers of $s_name..."
 
   [[ -f "${s_base}-kmers.txt" ]] \
-  || srun jellyfish-linux count -t 4 -m "$K" -C -s 100M -L 2 "$s" \
+  || srun jellyfish-linux count -t 4 -m "$K" -C -s 100M -L $a "$s" \
   && srun jellyfish-linux dump -c mer_counts.jf > "${s_base}-kmers-unsorted.txt"
 
-  srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-kmers.txt"
+  srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-$a-kmers.txt"
 
   rm "${s_base}-kmers-unsorted.txt" "mer_counts.jf"
 
