@@ -20,9 +20,9 @@ a=1
 # ustars path
 PATH="/nfsd/bcb/bcbg/prog_9/USTAR":$PATH
 
-cd "/nfsd/bcb/bcbg/prog_9/USTAR"
+cd "/nfsd/bcb/bcbg/prog_9"
 
-for s in ../SRR/*/*.fasta; do
+for s in SRR/*/*.fasta; do
   s_name=$(basename "$s" ".fasta")
   s_base=${s%".fasta"}
   kmers_list="${s_base}-a$a-kmers.txt"
@@ -31,5 +31,5 @@ for s in ../SRR/*/*.fasta; do
   srun ustars -i "$kmers_list" -k $K > "${kmers_list%".txt"}-stats.txt"
 done
 
-cat ../SRR/*/*-stats.txt > ../SRR/stats.txt
+cat SRR/*/*-stats.txt > SRR/stats.txt
 echo "Done. Kmers stats are in SRR/stats.txt"
