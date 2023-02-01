@@ -17,7 +17,7 @@ abundance_min=1
 K=(15 21 41)
 PATH="/nfsd/bcb/bcbg/prog_9/bin/bcalm":$PATH
 
-cd SRR
+cd "/nfsd/bcb/bcbg/prog_9/SRR"
 
 for k in "${K[@]}"; do
   for s in */*.fasta; do
@@ -29,7 +29,5 @@ for k in "${K[@]}"; do
     -in "$s" -all-abundance-counts -out "$outfile"
   done
 done
-
-cd ..
 
 echo "Computed unitigs for all sequences!"
