@@ -26,7 +26,7 @@ for k in "${K[@]}"; do
     echo "*** Running bcalm with NTHREAD=$NTHREAD, abundance_min=$abundance_min, s=$s..."
     [ ! -f "$outfile" ] || continue
     srun bcalm -max-memory 16000 -nb-cores $NTHREAD -kmer-size "$k" -abundance-min $abundance_min \
-    -in "$s" -all-abundance-counts -out "$outfile"
+    -in "$s" -all-abundance-counts -out "$outfile_base"
   done
 done
 
