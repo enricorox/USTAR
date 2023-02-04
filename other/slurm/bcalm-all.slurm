@@ -14,12 +14,12 @@
 set -e
 NTHREAD=8
 abundance_min=1
-K=(15 21 41)
+KMER_SIZES=(15 21 41)
 PATH="/nfsd/bcb/bcbg/prog_9/bin/bcalm":$PATH
 
 cd "/nfsd/bcb/bcbg/prog_9/SRR"
 
-for k in "${K[@]}"; do
+for k in "${KMER_SIZES[@]}"; do
   for s in */*.fasta; do
     outfile_base="${s:0:-6}.a${abundance_min}.k${k}"
     outfile="${outfile_base}.unitigs.fa"
@@ -28,7 +28,7 @@ for k in "${K[@]}"; do
 
     # skip edge case (no 41-mers)
     # shellcheck disable=SC2128
-    if [[ $K == 41 && $seq == "SRR001665" ]]; then
+    if [[ $k == 41 && $seq == "SRR001665" ]]; then
       echo "Skipping SRR001665..."
       continue;
     fi
