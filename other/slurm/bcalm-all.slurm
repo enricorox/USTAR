@@ -23,6 +23,16 @@ for k in "${K[@]}"; do
   for s in */*.fasta; do
     outfile_base="${s:0:-6}.a${abundance_min}.k${k}"
     outfile="${outfile_base}.unitigs.fa"
+    # SRR/SRR001665/SRR001665_1.fasta
+    seq=$(basename "${s:0:-8}")
+
+    # skip edge case (no 41-mers)
+    # shellcheck disable=SC2128
+    if [[ $K == 41 && $seq == "SRR001665" ]]; then
+      echo "Skipping SRR001665..."
+      continue;
+    fi
+
     echo "*** Running bcalm with NTHREAD=$NTHREAD, abundance_min=$abundance_min, s=$s..."
     [ ! -f "$outfile" ] || continue
     srun bcalm -max-memory 16000 -nb-cores $NTHREAD -kmer-size "$k" -abundance-min $abundance_min \
