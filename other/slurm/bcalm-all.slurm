@@ -37,6 +37,8 @@ for k in "${K[@]}"; do
     [ ! -f "$outfile" ] || continue
     srun bcalm -max-memory 16000 -nb-cores $NTHREAD -kmer-size "$k" -abundance-min $abundance_min \
     -in "$s" -all-abundance-counts -out "$outfile_base"
+
+    rm -f "${outfile}"*glue* "${outfile}"*h5
   done
 done
 
