@@ -73,13 +73,16 @@ params=("-s+aa -x=a"\
         "-s+aa -x=ma" "-s+aa -x=ma -e avg_flip_rle"
 )
 
+# only the best
+params=("-s+aa -x-c")
+
 RESULTS_DIR="$ROOT_DIR/results-nofilter"
 mkdir -p $RESULTS_DIR && cd $RESULTS_DIR
 
-for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.unitigs.fa"; do
+for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.k"*".unitigs.fa"; do
   # derive strings
   bcalm_unitigs=$(basename "$bcalm_unitigs_abs")
-  seq_name=${bcalm_unitigs:0:-14} # remove ".ax.unitigs.fa" from "SRR001665_2.a2.unitigs.fa"
+  seq_name=${bcalm_unitigs:0:-18} # remove ".ax.kyz.unitigs.fa" from "SRR001665_2.ax.kyz.unitigs.fa"
   seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
   results_csv="$RESULTS_DIR/${seq_name}/${seq_name}.csv"
