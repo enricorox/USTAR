@@ -27,7 +27,7 @@ run_ust(){
   outfile_counts_zipped="${outfile_counts}.bz3"
 
   echo "* Running UST..."
-  [[ -f "$outfile_fa" ]] || srun ust -k 31 -a 1 -i "$bcalm_unitigs_abs"
+  [[ -f "$outfile_fa" ]] || srun ust -k "$k" -a 1 -i "$bcalm_unitigs_abs"
   echo "* Compressing ${outfile_fa}..."
   [[ -f "$outfile_fa_zipped" ]] || srun MFCompressC -3 -o "$outfile_fa_zipped" "$outfile_fa"
   echo "* Compressing ${outfile_counts}..."
@@ -79,80 +79,81 @@ params=("-s+aa -x-c")
 RESULTS_DIR="$ROOT_DIR/results-nofilter"
 mkdir -p $RESULTS_DIR && cd $RESULTS_DIR
 
-for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.k"*".unitigs.fa"; do
-  # derive strings
-  bcalm_unitigs=$(basename "$bcalm_unitigs_abs")
-  seq_name=${bcalm_unitigs:0:-18} # remove ".ax.kyz.unitigs.fa" from "SRR001665_2.ax.kyz.unitigs.fa"
-  seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
+kmer_sizes=(15 21 41)
+for k in "${kmer_sizes[@]}"; do
+  for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.k${k}.unitigs.fa"; do
+    # derive strings
+    bcalm_unitigs=$(basename "$bcalm_unitigs_abs")
+    seq_name=${bcalm_unitigs:0:-18} # remove ".ax.kyz.unitigs.fa" from "SRR001665_2.ax.kyz.unitigs.fa"
+    seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
-  results_csv="$RESULTS_DIR/${seq_name}/${seq_name}.csv"
+    results_csv="$RESULTS_DIR/${seq_name}/${seq_name}.csv"
 
-  echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >>> $results_csv"
+    echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >>> $results_csv"
 
-  mkdir -p "$seq_name" && cd "$seq_name"
+    mkdir -p "$seq_name" && cd "$seq_name"
 
-  ## reset outputs vars
-  # data
-  headers="${seq_name},"
-  n_kmers="n_kmers,"
-  n_unitigs="n_unitigs,"
-  n_iso="n_iso,"
-  n_arcs="n_arcs,"
-  ust_c_lb="CL_LB,"
-  ust_c="CL,"
-  outfile_fa_sizes="fasta_size,"
-  outfile_fa_zipped_sizes="fasta_zipped_size,"
-  outfile_counts_sizes="counts size,"
-  outfile_counts_zipped_sizes="counts_zipped_size,"
-  # ratios (to compute in worksheet)
-  gap="gap (lower is better),"
-  ratio_counts_ust_out="ratio_counts,"
+    ## reset outputs vars
+    # data
+    headers="${seq_name},"
+    n_kmers="n_kmers,"
+    n_unitigs="n_unitigs,"
+    n_iso="n_iso,"
+    n_arcs="n_arcs,"
+    ust_c_lb="CL_LB,"
+    ust_c="CL,"
+    outfile_fa_sizes="fasta_size,"
+    outfile_fa_zipped_sizes="fasta_zipped_size,"
+    outfile_counts_sizes="counts size,"
+    outfile_counts_zipped_sizes="counts_zipped_size,"
+    # ratios (to compute in worksheet)
+    gap="gap (lower is better),"
+    ratio_counts_ust_out="ratio_counts,"
 
-  # run ust here
-  run_ust
+    # run ust here
+    run_ust
 
-  ## file names
-  outfile_stat="${bcalm_unitigs}.stats.txt"
-  outfile_fa="${bcalm_unitigs}.ustar.fa"
-  outfile_fa_zipped="${outfile_fa}.mfc"
-  outfile_counts="${bcalm_unitigs}.ustar.counts"
-  outfile_counts_zipped="${outfile_counts}.bz3"
+    ## file names
+    outfile_stat="${bcalm_unitigs}.stats.txt"
+    outfile_fa="${bcalm_unitigs}.ustar.fa"
+    outfile_fa_zipped="${outfile_fa}.mfc"
+    outfile_counts="${bcalm_unitigs}.ustar.counts"
+    outfile_counts_zipped="${outfile_counts}.bz3"
 
-  for param in "${params[@]}"; do
-    echo "** params: $param"
+    for param in "${params[@]}"; do
+      echo "** params: $param"
 
-    mkdir -p "m${param}" && cd "m${param}"
+      mkdir -p "m${param}" && cd "m${param}"
 
-    echo "* Running USTAR..."
-    # shellcheck disable=SC2086
-    [ -f "$outfile_fa" ] || srun ustar -k 31 -i "$bcalm_unitigs_abs" -o "${outfile_fa}" \
-      $param -c "$outfile_counts" > $outfile_stat
-    echo "* Compressing ${outfile_fa}..."
-    [ -f "$outfile_fa_zipped" ] || srun MFCompressC -o "$outfile_fa_zipped" -3 "$outfile_fa"
-    echo "* Compressing ${outfile_counts}..."
-    [ -f "$outfile_counts_zipped" ] || srun bzip3 "$outfile_counts"
+      echo "* Running USTAR..."
+      # shellcheck disable=SC2086
+      [ -f "$outfile_fa" ] || srun ustar -k "$k" -i "$bcalm_unitigs_abs" -o "${outfile_fa}" \
+        $param -c "$outfile_counts" > $outfile_stat
+      echo "* Compressing ${outfile_fa}..."
+      [ -f "$outfile_fa_zipped" ] || srun MFCompressC -o "$outfile_fa_zipped" -3 "$outfile_fa"
+      echo "* Compressing ${outfile_counts}..."
+      [ -f "$outfile_counts_zipped" ] || srun bzip3 "$outfile_counts"
 
-    headers+="${param},"
-    ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F ':' '{print $2;}' | tr -d " "),"
-    outfile_fa_sizes+="$(dim "$outfile_fa"),"
-    outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
-    outfile_counts_sizes+="$(dim "$outfile_counts"),"
-    outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
+      headers+="${param},"
+      ust_c+="$(grep "cumulative length (CL)" "$outfile_stat" | awk -F ':' '{print $2;}' | tr -d " "),"
+      outfile_fa_sizes+="$(dim "$outfile_fa"),"
+      outfile_fa_zipped_sizes+="$(dim "$outfile_fa_zipped"),"
+      outfile_counts_sizes+="$(dim "$outfile_counts"),"
+      outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
 
+      cd ..
+    done
+
+    # save results_csv
+    printf "%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
+      "$headers" "$ust_c" \
+      "$outfile_fa_sizes" "$outfile_fa_zipped_sizes" "$outfile_counts_sizes" "$outfile_counts_zipped_sizes" \
+      "$gap" "$ratio_counts_ust_out" > "$results_csv"
     cd ..
   done
 
-  # save results_csv
-  printf "%s\n%s\n%s\n%s\n%s\n%s\n,\n%s\n%s\n,\n,\n" \
-    "$headers" "$ust_c" \
-    "$outfile_fa_sizes" "$outfile_fa_zipped_sizes" "$outfile_counts_sizes" "$outfile_counts_zipped_sizes" \
-    "$gap" "$ratio_counts_ust_out" > "$results_csv"
-  cd ..
+  # all results in one file
+  cat ${RESULTS_DIR}/*/*.csv > "${RESULTS_DIR}/results_k${k}.csv"
 done
-
-cd "${RESULTS_DIR}"
-
-# all results in one file
-cat ${RESULTS_DIR}/*/*.csv > results_all.csv
 
 echo "Done. Results are saved in $(realpath results_all.csv)"
