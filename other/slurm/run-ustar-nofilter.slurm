@@ -9,7 +9,7 @@
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 1
 #SBATCH --partition allgroups
-#SBATCH --mem 64G
+#SBATCH --mem 200G
 
 # compute file size
 dim(){
