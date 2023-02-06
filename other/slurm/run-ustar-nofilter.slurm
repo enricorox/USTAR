@@ -50,7 +50,7 @@ run_ust(){
   outfile_counts_zipped_sizes+="$(dim "$outfile_counts_zipped"),"
 
   # print DBG info
-  printf "%s\n%s\n%s\n%s\n%s\n%s\n" "$seq_name" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" > "../profile.csv"
+  printf "%s\n%s\n%s\n%s\n%s\n%s\n" "$seq_name" "$n_kmers" "$n_unitigs" "$n_iso" "$n_arcs" "$ust_c_lb" > "../profile-k${k}.csv"
   cd ..
 }
 
@@ -87,7 +87,7 @@ for k in "${kmer_sizes[@]}"; do
     seq_name=${bcalm_unitigs:0:-18} # remove ".ax.kyz.unitigs.fa" from "SRR001665_2.ax.kyz.unitigs.fa"
     seq_dir=$(echo "$seq_name" | awk -F '_' '{printf $1};') # remove _1 or _2 if any
 
-    results_csv="$RESULTS_DIR/${seq_name}/${seq_name}.csv"
+    results_csv="$RESULTS_DIR/${seq_name}/${seq_name}-k${k}.csv"
 
     echo "*** Processing $bcalm_unitigs ($seq_dir:$seq_name) >>> $results_csv"
 
@@ -153,7 +153,7 @@ for k in "${kmer_sizes[@]}"; do
   done
 
   # all results in one file
-  cat ${RESULTS_DIR}/*/*.csv > "${RESULTS_DIR}/results_k${k}.csv"
+  cat ${RESULTS_DIR}/*/*"-k${k}.csv" > "${RESULTS_DIR}/results_k${k}.csv"
 done
 
 echo "Done. Results are saved in $(realpath results_all.csv)"
