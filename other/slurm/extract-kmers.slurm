@@ -26,10 +26,11 @@ for k in "${kmer_sizes[@]}"; do
     s_name=$(basename "$s" ".fasta")
     s_base=${s%".fasta"}
 
+    kmer_list="${s_base}-a${a}-k${k}-kmers.txt"
     echo
     echo "*** Extracting kmers of $s_name..."
 
-    if [[ -f "${s_base}-a${a}-kmers.txt" ]]; then
+    if [[ -f "${kmer_list}" ]]; then
       echo "Already processed!"
       continue
     fi
@@ -37,7 +38,7 @@ for k in "${kmer_sizes[@]}"; do
     srun jellyfish-linux count -t 4 -m "$k" -C -s 100M -L "$a" "$s"
     srun jellyfish-linux dump -c mer_counts.jf > "${s_base}-kmers-unsorted.txt"
 
-    srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-a${a}--k${k}-kmers.txt"
+    srun sort "${s_base}-kmers-unsorted.txt" -o "$kmer_list"
 
     rm -f "${s_base}-kmers-unsorted.txt" "mer_counts.jf"
 
