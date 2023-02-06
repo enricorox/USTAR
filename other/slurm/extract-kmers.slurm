@@ -14,31 +14,33 @@
 
 set -e
 
-K=31
+kmer_sizes=(15 21 41)
 a=1
 # jellyfish path
 PATH="/nfsd/bcb/bcbg/prog_9/bin":$PATH
 
 cd "/nfsd/bcb/bcbg/prog_9/USTAR"
 
-for s in ../SRR/*/*.fasta; do
-  s_name=$(basename "$s" ".fasta")
-  s_base=${s%".fasta"}
+for k in "${kmer_sizes[@]}"; do
+  for s in ../SRR/*/*.fasta; do
+    s_name=$(basename "$s" ".fasta")
+    s_base=${s%".fasta"}
 
-  echo
-  echo "*** Extracting kmers of $s_name..."
+    echo
+    echo "*** Extracting kmers of $s_name..."
 
-  if [[ -f "${s_base}-a${a}-kmers.txt" ]]; then
-    echo "Already processed!"
-    continue
-  fi
+    if [[ -f "${s_base}-a${a}-kmers.txt" ]]; then
+      echo "Already processed!"
+      continue
+    fi
 
-  srun jellyfish-linux count -t 4 -m "$K" -C -s 100M -L "$a" "$s"
-  srun jellyfish-linux dump -c mer_counts.jf > "${s_base}-kmers-unsorted.txt"
+    srun jellyfish-linux count -t 4 -m "$k" -C -s 100M -L "$a" "$s"
+    srun jellyfish-linux dump -c mer_counts.jf > "${s_base}-kmers-unsorted.txt"
 
-  srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-a${a}-kmers.txt"
+    srun sort "${s_base}-kmers-unsorted.txt" -o "${s_base}-a${a}--k${k}-kmers.txt"
 
-  rm -f "${s_base}-kmers-unsorted.txt" "mer_counts.jf"
+    rm -f "${s_base}-kmers-unsorted.txt" "mer_counts.jf"
 
-  echo "*** kmers of $s_name extracted!"
+    echo "*** kmers of $s_name extracted!"
+  done
 done
