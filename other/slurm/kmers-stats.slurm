@@ -14,7 +14,7 @@
 
 set -e
 
-K=31
+kmer_sizes=(15 21 41)
 a=1
 
 # ustars path
@@ -22,14 +22,15 @@ PATH="/nfsd/bcb/bcbg/prog_9/USTAR":$PATH
 
 cd "/nfsd/bcb/bcbg/prog_9"
 
-for s in SRR/*/*.fasta; do
-  s_name=$(basename "$s" ".fasta")
-  s_base=${s%".fasta"}
-  kmers_list="${s_base}-a$a-kmers.txt"
+for k in "${kmer_sizes[@]}"; do
+  for s in SRR/*/*.fasta; do
+    s_name=$(basename "$s" ".fasta")
+    s_base=${s%".fasta"}
+    kmers_list="${s_base}-a$a-k$k-kmers.txt"
 
-  echo "Computing stats of $s_name ($kmers_list)"
-  srun ustars -i "$kmers_list" -k $K > "${kmers_list%".txt"}-stats.txt"
+    echo "Computing stats of $s_name ($kmers_list)"
+    srun ustars -i "$kmers_list" -k "$k" > "${kmers_list%".txt"}-stats.txt"
+  done
 done
-
 cat SRR/*/*-stats.txt > SRR/stats.txt
 echo "Done. Kmers stats are in SRR/stats.txt"
