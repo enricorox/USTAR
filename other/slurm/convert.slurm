@@ -18,12 +18,12 @@ set -e
 NTHREAD=8
 PATH="/nfsd/bcb/bcbg/prog_9/bin/sratoolkit.3.0.1-ubuntu64/bin":$PATH
 
-for sra in */*.sra; do
+for sra in */*".sra"; do
   s=${sra%".sra"}
   echo
   echo "*** Converting $s..."
   [[ -f "${s}.fasta" || -f "${s}_1.fasta" || -f "${s}_2.fasta" ]] \
-  || srun fasterq-dump --threads $NTHREAD --progress --fasta --split-files "$s" --outdir "$s"
+  || srun fasterq-dump --threads $NTHREAD --progress --fasta --split-files --outdir "$s" "$s"
 done
 
 wait
