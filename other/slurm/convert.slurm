@@ -21,9 +21,9 @@ PATH="/nfsd/bcb/bcbg/prog_9/bin/sratoolkit.3.0.1-ubuntu64/bin":$PATH
 for sra in */*".sra"; do
   s=${sra%".sra"}
   echo
-  echo "*** Converting $s..."
+  echo "*** Converting $sra..."
   [[ -f "${s}.fasta" || -f "${s}_1.fasta" || -f "${s}_2.fasta" ]] \
-  || srun fasterq-dump --threads $NTHREAD --progress --fasta --split-files --outdir "$s" "$s"
+  || srun fasterq-dump --threads $NTHREAD --progress --fasta --split-files --outdir "$s" "$sra"
 done
 
 wait
