@@ -6,9 +6,11 @@ It is based on the ideas of [UST](https://github.com/medvedevgroup/UST)
 and [prophAsm](https://github.com/prophyle/prophasm) 
 for computing an SPSS representation (aka simplitigs) for the given kmers set.
 
-You will find two executable and one bash script:
+You will find four executable and one bash script:
 * `ustar`: the main program
 * `ustarx`: a kmers extractor
+* `ustars`: compute kmers statistics
+* `ustar-test`: used for debug
 * `validate`: a validation script
 
 ## Dependencies
