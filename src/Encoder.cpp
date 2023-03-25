@@ -244,8 +244,8 @@ void Encoder::compute_avg() {
             for (uint32_t c: simplitig_counts)
                 sum += c;
             avg_counts.push_back(sum / (double) simplitig_counts.size());
-        }
-        avg_counts.push_back((double) (simplitig_counts.front() + simplitig_counts.back()) / 2);
+        } else
+            avg_counts.push_back((double) (simplitig_counts.front() + simplitig_counts.back()) / 2);
     }
 
 }
