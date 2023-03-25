@@ -21,7 +21,7 @@ in order to compute a compacted de Brujin graph (cdBG) of your multi-fasta file.
 * `cd USTAR`
 * `cmake . && make -j 4`.
 
-## How to parse_file USTAR
+## How to run USTAR
 Run BCALM2 first: 
 * `./bcalm -kmer-size <kmer-size> -in <your-multi-fasta> -all-abundance-counts`
 
