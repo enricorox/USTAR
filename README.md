@@ -1,6 +1,6 @@
 # USTAR (Unitig STitch STar)
 ## Overview
-USTAR is a kmers (multi-)set compressor, with counting.
+USTAR is a kmers set compressor, with counting.
 
 It is based on the ideas of [UST](https://github.com/medvedevgroup/UST) 
 and [prophAsm](https://github.com/prophyle/prophasm) 
@@ -36,7 +36,7 @@ See the help `./ustar -h` for details and advanced options.
 You can check that the output file contains the same kmers of
 your bcalm file with your preferred kmer counter.
 
-If you want to check that __kmers and counts__ are correct, parse_file
+If you want to check that __kmers and counts__ are correct,
 * `./ustarx -k <kmer-size> -i <ustar-fasta> -c <ustar-counts> -s`
 * `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
 
