@@ -7,7 +7,7 @@
 
 #include <map>
 
-#define VERSION "0.1"
+#define VERSION "1.0"
 #define RLE_SEPARATOR ':'
 
 using namespace std;

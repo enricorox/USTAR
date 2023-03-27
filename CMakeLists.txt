@@ -14,7 +14,6 @@ add_executable(ustar
         src/Encoder.cpp
         src/commons.cpp
         src/bwt.hpp
-        src/Postprocessor.cpp
         )
 
 add_executable(ustar-test
@@ -25,7 +24,6 @@ add_executable(ustar-test
         src/Encoder.cpp
         src/commons.cpp
         src/bwt.hpp
-        src/Postprocessor.cpp
         )
 
 add_executable(ustarx
