@@ -30,6 +30,8 @@ Run BCALM2 first:
 Then ustar:
 * `./ustar -k <kmer-size> -i <bcalm-output>`
 
+To use the best heuristic, add `-s+aa -x-c`
+
 See the help `./ustar -h` for details and advanced options.
 
 ## How to validate the output
