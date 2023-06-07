@@ -1,4 +1,4 @@
-# USTAR (Unitig STitch stAR)
+# USTAR (Unitig STitch Advanced constRuction)
 ## Overview
 USTAR is a kmers set compressor, with counting.
 
