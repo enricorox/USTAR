@@ -302,7 +302,7 @@ void DBG::get_consistent_nodes_from(node_idx_t node, bool forward, vector<node_i
     to_forwards.clear();
 
     for(auto &arc : nodes.at(node).arcs){
-        if(mask.at(arc.successor)) continue;
+        if(!mask.empty() && mask.at(arc.successor)) continue;
         if(arc.forward == forward) { // consistent nodes only
             to_nodes.push_back(arc.successor);
             to_forwards.push_back(arc.to_forward);
