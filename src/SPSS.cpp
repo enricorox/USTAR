@@ -90,12 +90,14 @@ void SPSS::extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards) 
             if(!found)
                 break; // no non-visited node
             else{
-                // append to the path
-                path_nodes.push_back(best_node);
-                path_forwards.push_back(best_forward);
-                // update its neighbours
+                // current node and neighbours
+                node = best_node;
+                forward = best_forward;
                 to_nodes = best_to_nodes_e;
                 to_forwards = best_to_forwards_e;
+                // append to the path
+                path_nodes.push_back(node);
+                path_forwards.push_back(forward);
             }
         }
         successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
