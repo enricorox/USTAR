@@ -59,13 +59,11 @@ set -e
 # expand globs
 shopt -s nullglob
 
-ROOT_DIR="/nfsd/bcb/bcbg/prog_9"
+source ../configure
 
 cd "${ROOT_DIR}/"
 
-# ust & ustar & MFCompressC
-PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
-
+# default params
 params=("-s+aa -x=a"\
         "-s+aa -x-c"\
         "-s+aa -x=a -e avg_flip_rle"\
@@ -79,9 +77,9 @@ params=("-s+aa -x-c")
 RESULTS_DIR="$ROOT_DIR/results-nofilter"
 mkdir -p $RESULTS_DIR && cd $RESULTS_DIR
 
-kmer_sizes=(15 21 41)
+kmer_sizes=(13 17)
 for k in "${kmer_sizes[@]}"; do
-  for bcalm_unitigs_abs in "$ROOT_DIR"/SRR/SRR*/SRR*".a1.k${k}.unitigs.fa"; do
+  for bcalm_unitigs_abs in "$ROOT_DIR"/../SRR/SRR*/SRR*".a1.k${k}.unitigs.fa"; do
     # derive strings
     bcalm_unitigs=$(basename "$bcalm_unitigs_abs")
     seq_name=${bcalm_unitigs:0:-18} # remove ".ax.kyz.unitigs.fa" from "SRR001665_2.ax.kyz.unitigs.fa"

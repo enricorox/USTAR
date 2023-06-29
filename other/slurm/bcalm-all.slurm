@@ -12,12 +12,13 @@
 #SBATCH --mem 20G
 
 set -e
-NTHREAD=8
-abundance_min=1
-KMER_SIZES=(15 21 41)
-PATH="/nfsd/bcb/bcbg/prog_9/bin/bcalm":$PATH
 
-cd "/nfsd/bcb/bcbg/prog_9/SRR"
+source ../configure
+
+abundance_min=1
+KMER_SIZES=(13 17)
+
+cd $SRR_DIR
 
 for k in "${KMER_SIZES[@]}"; do
   for s in */*.fasta; do

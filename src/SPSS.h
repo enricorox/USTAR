@@ -13,6 +13,7 @@ using namespace std;
 
 class SPSS{
     bool debug;
+    bool duplicates;
 
     DBG *dbg;
     size_t n_nodes;
@@ -33,7 +34,7 @@ class SPSS{
     void extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool> &path_forwards, bool two_way);
 
 public:
-    SPSS(DBG *dbg, Sorter *sorter, bool debug=false);
+    SPSS(DBG *dbg, Sorter *sorter, bool duplicates=false, bool debug=false);
 
     void compute_path_cover(bool two_way=true);
 
@@ -46,6 +47,8 @@ public:
     const vector<vector<uint32_t>> * get_counts();
 
     size_t get_score();
+
+    void extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards);
 };
 
 #endif //USTAR_SPSS_H

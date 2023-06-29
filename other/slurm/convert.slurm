@@ -11,15 +11,14 @@
 #SBATCH --partition allgroups
 #SBATCH --mem 8G
 
-cd /nfsd/bcb/bcbg/prog_9/SRR
-
+source ../configure
 
 set -e
-NTHREAD=8
-PATH="/nfsd/bcb/bcbg/prog_9/bin/sratoolkit.3.0.1-ubuntu64/bin":$PATH
+
+cd $SRR_DIR
 
 for sra in */*".sra"; do
-  s=${sra%".sra"}
+  s=$(basename "${sra%".sra"}")
   echo
   echo "*** Converting $sra..."
   [[ -f "${s}.fasta" || -f "${s}_1.fasta" || -f "${s}_2.fasta" ]] \

@@ -131,6 +131,11 @@ bool Sorter::has_seed() {
 }
 
 size_t Sorter::next_successor(node_idx_t seed, bool forward, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward) {
+    int min_conn = 0;
+    return next_successor(seed, forward, to_nodes, to_forwards, to_forward, min_conn);
+}
+
+size_t Sorter::next_successor(node_idx_t seed, bool forward, vector<node_idx_t> &to_nodes, vector<bool> &to_forwards, bool &to_forward, int &min_conn) {
     auto remaining_nodes = [this](node_idx_t n, bool forward) {
         int count = 0;
         for(auto arc : (*nodes)[n].arcs)
@@ -142,7 +147,7 @@ size_t Sorter::next_successor(node_idx_t seed, bool forward, vector<node_idx_t> 
     size_t best = 0;
     switch(extending_method){
         case extending_method_t::LESS_CONNECTED: {
-            int min_conn = INT32_MAX;
+            min_conn = INT32_MAX;
             for(size_t i = 0; i < to_nodes.size(); i++){
                 int rn = remaining_nodes(to_nodes[i], to_forwards[i]);
                 if(rn < min_conn) {

@@ -31,7 +31,7 @@ int main(){
         dbg.verify_input();
         dbg.print_stat();
 
-        Sorter sorter;
+        Sorter sorter(seeding_method_t::HIGHER_AVERAGE_ABUNDANCE, extending_method_t::LESS_CONNECTED);
         SPSS spss(&dbg, &sorter, true);
         spss.compute_path_cover();
         spss.extract_simplitigs_and_counts();
@@ -47,7 +47,7 @@ int main(){
         fasta >> result >> result; // ignore ">"
         cout << "Result: " << result << endl;
         if(result != correct_result && result != DBG::reverse_complement(correct_result)){
-            cerr << "Output must be: ACTGG or " << DBG::reverse_complement(correct_result) << "!" << endl;
+            cerr << "Output must be: "<< correct_result <<" or " << DBG::reverse_complement(correct_result) << "!" << endl;
             cerr << "Found " << result << " instead." << endl;
             exit(EXIT_FAILURE);
         }else

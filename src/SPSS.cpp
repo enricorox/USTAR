@@ -5,10 +5,12 @@
 #include <iostream>
 #include <stack>
 #include <fstream>
+#include <algorithm>
 #include "SPSS.h"
 
-SPSS::SPSS(DBG *dbg, Sorter *sorter, bool debug){
+SPSS::SPSS(DBG *dbg, Sorter *sorter, bool duplicates ,bool debug){
     this->debug = debug;
+    this->duplicates = duplicates;
 
     this->dbg = dbg;
     n_nodes = dbg->get_n_nodes();
@@ -34,7 +36,87 @@ const vector<vector<uint32_t>> * SPSS::get_counts(){
     return &counts;
 }
 
+void SPSS::extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards) {
+    vector<bool> dummy;
+    vector<node_idx_t> to_nodes_e;
+    vector<bool> to_forwards_e;
+
+    vector<node_idx_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
+
+    // add the seed
+    node_idx_t seed = path_nodes.back();
+    bool forward = path_nodes.back();
+    visited.at(seed) = true;
+
+    // extension vars
+    bool to_forward;
+    size_t node, successor;
+
+    // ----- extending -----
+    node = seed;
+    while (true) {
+        // explore
+        dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
+
+        if (to_nodes.empty()) {
+            if(!duplicates) break;
+
+            // check visited nodes
+            dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, dummy);
+            if (to_nodes.empty()) break; // dead end
+
+            // is there a node with non-visited neighbours?
+            bool found = false;  bool dummy_f = false;
+            int best = INT32_MAX; int conn = 0;
+            node_idx_t best_node; bool best_forward;
+            vector<node_idx_t> best_to_nodes_e; vector<bool> best_to_forwards_e;
+            for(int i = 0; i < to_nodes.size(); i++){
+                node = to_nodes[i];
+                forward = to_forwards[i];
+
+                dbg->get_consistent_nodes_from(node, forward, to_nodes_e, to_forwards_e, visited);
+                if(!to_nodes_e.empty()){ // node found!
+                    found = true;
+                    sorter->next_successor(node, forward, to_nodes_e, to_forwards_e, dummy_f, conn);
+                    if(conn < best){
+                        best = conn;
+                        best_node = node;
+                        best_forward = forward;
+                        best_to_nodes_e = to_nodes_e;
+                        best_to_forwards_e = to_forwards_e;
+                    }
+                }
+            }
+            if(!found)
+                break; // no non-visited node
+            else{
+                // append to the path
+                path_nodes.push_back(best_node);
+                path_forwards.push_back(best_forward);
+                // update its neighbours
+                to_nodes = best_to_nodes_e;
+                to_forwards = best_to_forwards_e;
+            }
+        }
+        successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
+
+        // update
+        node = successor;
+        forward = to_forward;
+        visited.at(node) = true;
+        path_nodes.push_back(node);
+        path_forwards.push_back(forward);
+    }
+
+    if(debug && !dbg->check_path_consistency(path_nodes, path_forwards))
+        cerr << "Inconsistent path!\n";
+}
+
 void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool> &path_forwards, bool two_way) {
+    vector<bool> dummy;
+    vector<node_idx_t> to_nodes_e;
+    vector<bool> to_forwards_e;
+
     path_nodes.clear(); path_forwards.clear();
 
     vector<node_idx_t> to_nodes; vector<bool> to_forwards; vector<bool> forwards;
@@ -55,8 +137,47 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
     while (true) {
         // explore
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
-        if (to_nodes.empty())
-            break;
+
+        if (to_nodes.empty()) {
+            if(!duplicates) break;
+
+            // check visited nodes
+            dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, dummy);
+            if (to_nodes.empty()) break; // dead end
+
+            // is there a node with non-visited neighbours?
+            bool found = false;  bool dummy_f = false;
+            int best = INT32_MAX; int conn = 0;
+            node_idx_t best_node; bool best_forward;
+            vector<node_idx_t> best_to_nodes_e; vector<bool> best_to_forwards_e;
+            for(int i = 0; i < to_nodes.size(); i++){
+                node = to_nodes[i];
+                forward = to_forwards[i];
+
+                dbg->get_consistent_nodes_from(node, forward, to_nodes_e, to_forwards_e, visited);
+                if(!to_nodes_e.empty()){ // node found!
+                    found = true;
+                    sorter->next_successor(node, forward, to_nodes_e, to_forwards_e, dummy_f, conn);
+                    if(conn < best){
+                        best = conn;
+                        best_node = node;
+                        best_forward = forward;
+                        best_to_nodes_e = to_nodes_e;
+                        best_to_forwards_e = to_forwards_e;
+                    }
+                }
+            }
+            if(!found)
+                break; // no non-visited node
+            else{
+                // append to the path
+                path_nodes_d.push_back(best_node);
+                path_forwards_d.push_back(best_forward);
+                // update its neighbours
+                to_nodes = best_to_nodes_e;
+                to_forwards = best_to_forwards_e;
+            }
+        }
         successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
 
         // update
@@ -74,8 +195,52 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
         while (true) {
             // explore
             dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
-            if (to_nodes.empty())
-                break;
+            if (to_nodes.empty()) {
+                if(!duplicates) break;
+
+                // get visited nodes
+                dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, dummy);
+                // check dead end
+                if (to_nodes.empty()) break;
+
+                // is there a node with non-visited neighbours?
+                // find the one with minimum number of connections
+                bool found = false;  bool dummy_f = false;
+                int min_conn = INT32_MAX; int conn = 0;
+                node_idx_t best_node; bool best_forward;
+                vector<node_idx_t> best_to_nodes_e; vector<bool> best_to_forwards_e;
+                for(int i = 0; i < to_nodes.size(); i++){
+                    // pick a node in the neighbourhood
+                    node = to_nodes[i];
+                    forward = to_forwards[i];
+                    // get its neighbourhood
+                    dbg->get_consistent_nodes_from(node, forward, to_nodes_e, to_forwards_e, visited);
+                    // there are unvisited nodes?
+                    if(!to_nodes_e.empty()){ // node found!
+                        found = true;
+                        // find the one with minimum connections
+                        sorter->next_successor(node, forward, to_nodes_e, to_forwards_e, dummy_f, conn);
+                        if(conn < min_conn){
+                            // update the minimum
+                            min_conn = conn;
+                            best_node = node;
+                            best_forward = forward;
+                            best_to_nodes_e = to_nodes_e;
+                            best_to_forwards_e = to_forwards_e;
+                        }
+                    }
+                }
+                if(!found)
+                    break; // no unvisited node
+                else{
+                    // append to the path the node with a min-connection neighbour
+                    path_nodes_d.push_front(best_node);
+                    path_forwards_d.push_front(!best_forward);
+                    // update its neighbours
+                    to_nodes = best_to_nodes_e;
+                    to_forwards = best_to_forwards_e;
+                }
+            }
             successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
 
             // update
@@ -97,6 +262,14 @@ void SPSS::extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool>
         cerr << "Inconsistent path!\n";
 }
 
+void reverse_path(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards){
+    std::reverse(path_nodes.begin(), path_nodes.end());
+    std::reverse(path_forwards.begin(), path_forwards.end());
+    for(auto && forward : path_forwards)
+        forward = !forward;
+
+}
+
 void SPSS::compute_path_cover(bool two_way) {
     // reset path cover if already computed
     path_cover_nodes.clear();
@@ -105,7 +278,16 @@ void SPSS::compute_path_cover(bool two_way) {
 
     vector<node_idx_t> path_nodes; vector<bool> path_forwards;
     while(sorter->has_seed()){
-        extends(sorter->next_seed(), path_nodes, path_forwards, two_way);
+        path_nodes.clear(); path_forwards.clear();
+        path_nodes.push_back(sorter->next_seed());
+        path_forwards.push_back(true);
+
+        extends(path_nodes, path_forwards);
+        if(two_way) {
+            reverse_path(path_nodes, path_forwards);
+            extends(path_nodes, path_forwards);
+        }
+
         path_cover_nodes.push_back(path_nodes);
         path_cover_forwards.push_back(path_forwards);
     }

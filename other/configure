@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [ -d "/nfsd/bcb/bcbg/rossigno/" ]; then
+  echo "### We are on the cluster! ###"
+  NTHREAD=16
+  MAX_MEMORY=64
+
+  ROOT_DIR="/nfsd/bcb/bcbg/rossigno/USTAR"
+  SRR_DIR="/nfsd/bcb/bcbg/rossigno/SRR"
+
+  # prefetch & fasterq & bcalm
+  PATH="/nfsd/bcb/bcbg/rossigno/bin/sratoolkit.3.0.1-ubuntu64/bin:/nfsd/bcb/bcbg/rossigno/bin/bcalm:/nfsd/bcb/bcbg/rossigno/squeakr":$PATH
+  # ust & ustar & MFCompressC
+  PATH="${ROOT_DIR}/UST:${ROOT_DIR}/USTAR:${ROOT_DIR}/bin:$PATH"
+else
+  echo "### We are on the PC! ###"
+  NTHREAD=4
+
+  ROOT_DIR="$HOME/CLionProjects/USTAR"
+  SRR_DIR="$HOME/CLionProjects/SRR"
+
+  PATH="$HOME/bio-bin/sratoolkit.3.0.0-ubuntu64/bin/":$PATH
+  PATH="$HOME/bio-bin/UST/":$PATH
+  PATH="$HOME/bio-bin/MFCompress/":$PATH
+  PATH="$HOME/CLionProjects/USTAR/cmake-build-debug/":$PATH
+
+  shopt -s expand_aliases
+  # do nothing and run
+  # alias srun="echo -n &&"
+  srun(){ "$@"; }
+fi
