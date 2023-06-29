@@ -31,7 +31,7 @@ class SPSS{
     vector<vector<uint32_t>> counts;
     size_t n_simplitigs = 0;
 
-    void extends(node_idx_t seed, vector<node_idx_t> &path_nodes, vector<bool> &path_forwards, bool two_way);
+    void extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards);
 
 public:
     SPSS(DBG *dbg, Sorter *sorter, bool duplicates=false, bool debug=false);
@@ -47,8 +47,6 @@ public:
     const vector<vector<uint32_t>> * get_counts();
 
     size_t get_score();
-
-    void extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards);
 };
 
 #endif //USTAR_SPSS_H
