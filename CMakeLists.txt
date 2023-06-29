@@ -4,6 +4,7 @@ project(USTAR)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 
+#add_compile_options(-O0 -W)
 add_compile_options(-O3 -W)
 
 add_executable(ustar

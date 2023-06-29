@@ -32,7 +32,7 @@ int main(){
         dbg.print_stat();
 
         Sorter sorter(seeding_method_t::HIGHER_AVERAGE_ABUNDANCE, extending_method_t::LESS_CONNECTED);
-        SPSS spss(&dbg, &sorter, true);
+        SPSS spss(&dbg, &sorter, false, true);
         spss.compute_path_cover();
         spss.extract_simplitigs_and_counts();
         spss.print_stats();

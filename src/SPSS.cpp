@@ -45,7 +45,7 @@ void SPSS::extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards) 
 
     // add the seed
     node_idx_t seed = path_nodes.back();
-    bool forward = path_nodes.back();
+    bool forward = path_forwards.back();
     visited.at(seed) = true;
 
     // extension vars
@@ -266,8 +266,7 @@ void reverse_path(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards){
     std::reverse(path_nodes.begin(), path_nodes.end());
     std::reverse(path_forwards.begin(), path_forwards.end());
     for(auto && forward : path_forwards)
-        forward = !forward;
-
+        forward = (!forward);
 }
 
 void SPSS::compute_path_cover(bool two_way) {
@@ -279,17 +278,25 @@ void SPSS::compute_path_cover(bool two_way) {
     vector<node_idx_t> path_nodes; vector<bool> path_forwards;
     while(sorter->has_seed()){
         path_nodes.clear(); path_forwards.clear();
+
+        // extends(sorter->next_seed(), path_nodes, path_forwards, true);
+
         path_nodes.push_back(sorter->next_seed());
         path_forwards.push_back(true);
 
+        // forward extending
         extends(path_nodes, path_forwards);
         if(two_way) {
+            if(debug) cout << "Doing two-way...\n";
+            // backward extending
             reverse_path(path_nodes, path_forwards);
             extends(path_nodes, path_forwards);
+            if(debug) cout << "Done.\n";
         }
 
         path_cover_nodes.push_back(path_nodes);
         path_cover_forwards.push_back(path_forwards);
+
     }
 }
 
