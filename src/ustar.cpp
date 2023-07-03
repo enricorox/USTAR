@@ -18,7 +18,7 @@ struct params_t{
 
     int kmer_size = 31;
 
-    bool duplicates = false;
+    int visited_depth = 0;
 
     bool debug = false;
 
@@ -42,7 +42,7 @@ void print_help(const params_t &params){
 
     cout << "   -o  fasta file name [" << params.fasta_file_name << "]\n\n";
 
-    cout << "   -D  allow duplicate k-mers [" << params.duplicates << "]\n\n";
+    cout << "   -D  depth for exploring visited nodes [" << params.visited_depth << "]\n\n";
 
     cout << "   -v  print version and author\n\n";
 
@@ -90,7 +90,7 @@ void print_params(const params_t &params){
     cout << "Params:\n";
     cout << "   input file:             " << params.input_file_name << "\n";
     cout << "   kmer size:              " << params.kmer_size << "\n";
-    cout << "   allow duplicates:       " << (params.duplicates?"true":"false") << "\n";
+    cout << "   visited nodes depth:    " << params.visited_depth << "\n";
     cout << "   fasta file name:        " << params.fasta_file_name << "\n";
     cout << "   counts file name:       " << params.counts_file_name << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
@@ -105,7 +105,7 @@ void parse_cli(int argc, char **argv, params_t &params){
     bool new_counts_name = false;
     bool new_fasta_name = false;
     int c;
-    while((c = getopt(argc, argv, "i:k:vo:Ddhe:s:x:c:")) != -1){
+    while((c = getopt(argc, argv, "i:k:vo:D:dhe:s:x:c:")) != -1){
         switch(c){
             case 'i':
                 params.input_file_name = string(optarg);
@@ -131,7 +131,11 @@ void parse_cli(int argc, char **argv, params_t &params){
                 }
                 break;
             case 'D':
-                params.duplicates = true;
+                params.visited_depth = atoi(optarg);
+                if(params.visited_depth <= 0) {
+                    cerr << "parse_cli(): Need a positive depth!" << endl;
+                    exit(EXIT_FAILURE);
+                }
                 break;
             case 'v':
                 cout << "Version: " << VERSION << "\n";
@@ -223,7 +227,7 @@ int main(int argc, char **argv) {
     // choose SPSS sorter
     Sorter sorter(params.seeding_method, params.extending_method, params.debug);
     // make an SPSS
-    SPSS spss(&dbg, &sorter, params.duplicates ,params.debug);
+    SPSS spss(&dbg, &sorter, params.visited_depth , params.debug);
 
     cout << "Computing a path cover..." << endl;
     start_time = steady_clock::now();
