@@ -86,6 +86,44 @@ void Sorter::init(const vector<node_t> *dbg_nodes, const vector<bool> *spss_visi
                 sort(seed_order.begin(), seed_order.end(), lambda);
             }
             break;
+        case seeding_method_t::LESS_UNBALANCED: {
+            auto lambda = [this](size_t a, size_t b) {
+                uint32_t num_forward_a = 0; uint32_t num_backward_a = 0;
+                uint32_t num_forward_b = 0; uint32_t num_backward_b = 0;
+                for(auto arc : nodes->at(a).arcs)
+                    if(arc.forward)
+                        num_forward_a++;
+                    else
+                        num_backward_a++;
+                for(auto arc : nodes->at(b).arcs)
+                    if(arc.forward)
+                        num_forward_b++;
+                    else
+                        num_backward_b++;
+                return d(num_forward_a, num_backward_a) < d(num_forward_b, num_backward_b);
+            };
+            sort(seed_order.begin(), seed_order.end(), lambda);
+        }
+            break;
+        case seeding_method_t::MORE_UNBALANCED: {
+            auto lambda = [this](size_t a, size_t b) {
+                uint32_t num_forward_a = 0; uint32_t num_backward_a = 0;
+                uint32_t num_forward_b = 0; uint32_t num_backward_b = 0;
+                for(auto arc : nodes->at(a).arcs)
+                    if(arc.forward)
+                        num_forward_a++;
+                    else
+                        num_backward_a++;
+                for(auto arc : nodes->at(b).arcs)
+                    if(arc.forward)
+                        num_forward_b++;
+                    else
+                        num_backward_b++;
+                return d(num_forward_a, num_backward_a) > d(num_forward_b, num_backward_b);
+            };
+            sort(seed_order.begin(), seed_order.end(), lambda);
+        }
+            break;
         case seeding_method_t::FIRST:
             break;
         case seeding_method_t::RANDOM:

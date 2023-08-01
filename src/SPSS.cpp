@@ -6,11 +6,13 @@
 #include <stack>
 #include <fstream>
 #include <algorithm>
+#include <set>
 #include "SPSS.h"
 
-SPSS::SPSS(DBG *dbg, Sorter *sorter, int depth ,bool debug){
+SPSS::SPSS(DBG *dbg, Sorter *sorter, int depth, bool phases, bool debug){
     this->debug = debug;
     this->depth = depth;
+    this->phases = phases;
 
     this->dbg = dbg;
     n_nodes = dbg->get_n_nodes();
@@ -36,17 +38,31 @@ const vector<vector<uint32_t>> * SPSS::get_counts(){
     return &counts;
 }
 
+size_t SPSS::compute_contig_length(const vector<node_idx_t>& nodes){
+    size_t len = 0;
+    for(auto n: nodes){
+        len += dbg->get_node(n).length;
+    }
+    len = len - (dbg->get_kmer_size() - 1) * (nodes.size() - 1);
+    if(debug) cout << "contig length: " << len << "\n";
+    return len;
+}
+
 void SPSS::jump_visited(node_idx_t node, bool forward, size_t max_depth, vector<node_idx_t> &nodes, vector<bool> &forwards){
     // --- is there a node with non-visited neighbours? ---
     // --- find the one with minimum connectivity ---
     vector<bool> dummy_visited;
     vector<node_idx_t> child_to_nodes; vector<bool> child_to_forwards;
 
+    // visited node in BFS
+    set<node_idx_t> visited_bfs;
+    visited_bfs.insert(node);
+
     // paths to each node
     map<node_idx_t, vector<node_idx_t>> paths_nodes;
     map<node_idx_t, vector<bool>> paths_forwards;
 
-    // path to node "node"
+    // path to starting node
     paths_nodes[node] = vector<node_idx_t>();
     paths_nodes[node].push_back(node);
     paths_forwards[node] = vector<bool>();
@@ -71,7 +87,9 @@ void SPSS::jump_visited(node_idx_t node, bool forward, size_t max_depth, vector<
         dbg->get_consistent_nodes_from(child, child_forward, child_to_nodes, child_to_forwards, dummy_visited);
         for(size_t i = 0; i < child_to_nodes.size(); i++){
             // find loops
-            if(paths_nodes.find(child_to_nodes[i]) != paths_nodes.end()) continue;
+            //if(paths_nodes.find(child_to_nodes[i]) != paths_nodes.end()) continue;
+            if(visited_bfs.find(child_to_nodes[i]) != visited_bfs.end()) continue;
+            visited_bfs.insert(child_to_nodes[i]);
 
             q_nodes.push_back(child_to_nodes[i]);
             q_forwards.push_back(child_to_forwards[i]);
@@ -95,6 +113,83 @@ void SPSS::jump_visited(node_idx_t node, bool forward, size_t max_depth, vector<
 
         // check unvisited
         if(!visited.at(child)) {
+            auto doubled = vector<node_idx_t>(paths_nodes.at(child).begin() + 1, paths_nodes.at(child).end() - 1); // TODO fix this!
+            if(compute_contig_length(doubled) > 2 * dbg->get_kmer_size() - 2) continue;
+            max_depth = paths_nodes.at(child).size() - 1;
+
+            // accumulate minimum
+            if (dbg->get_node(child).arcs.size() < z_min) {
+            //if (dbg->get_node(child).length < z_min) {
+                z_min = dbg->get_node(child).arcs.size();
+                //z_min = dbg->get_node(child).length;
+                node_min = child;
+            }
+        }
+    }
+    // return minimum cost path
+    nodes = paths_nodes.at(node_min);
+    forwards = paths_forwards.at(node_min);
+}
+
+size_t SPSS::jump_visited_phase(node_idx_t node, bool forward, size_t max_depth, vector<node_idx_t> &nodes, vector<bool> &forwards){
+    // --- is there a node with non-visited neighbours? ---
+    // --- find the one with minimum connectivity ---
+    vector<bool> dummy_visited;
+    vector<node_idx_t> child_to_nodes; vector<bool> child_to_forwards;
+
+    // paths to each node
+    map<node_idx_t, vector<node_idx_t>> paths_nodes;
+    map<node_idx_t, vector<bool>> paths_forwards;
+
+    // path to starting node
+    paths_nodes[node] = vector<node_idx_t>();
+    paths_nodes[node].push_back(node);
+    paths_forwards[node] = vector<bool>();
+    paths_forwards[node].push_back(forward);
+
+    deque<node_idx_t> q_nodes;
+    deque<bool> q_forwards;
+
+    q_nodes.push_back(node);
+    q_forwards.push_back(forward);
+
+    size_t z_min = UINT64_MAX;
+    node_idx_t node_min = node;
+    while(!q_nodes.empty()){
+        // pop node & orientation
+        node_idx_t child = q_nodes.front();
+        q_nodes.pop_front();
+        bool child_forward = q_forwards.front();
+        q_forwards.pop_front();
+
+        // push its children to q and save path
+        dbg->get_consistent_nodes_from(child, child_forward, child_to_nodes, child_to_forwards, dummy_visited);
+        for(size_t i = 0; i < child_to_nodes.size(); i++){
+            // find and break loops
+            if(paths_nodes.find(child_to_nodes[i]) != paths_nodes.end()) continue;
+
+            q_nodes.push_back(child_to_nodes[i]);
+            q_forwards.push_back(child_to_forwards[i]);
+
+            // save path nodes
+            vector<node_idx_t> new_path_nodes = vector<node_idx_t>(paths_nodes.at(child));
+            new_path_nodes.push_back(child_to_nodes[i]);
+            paths_nodes[child_to_nodes[i]] =  new_path_nodes;
+            // save path forwards
+            vector<bool> new_path_forwards = vector<bool>(paths_forwards.at(child));
+            new_path_forwards.push_back(child_to_forwards[i]);
+            paths_forwards[child_to_nodes[i]] = new_path_forwards;
+        }
+
+        // check depth
+        if(debug) cout << "size(" << child << ") = " << paths_nodes.at(child).size() << "\n";
+        if(paths_nodes.at(child).size() - 1 > max_depth) {
+            if(debug) cout << "too deep: break\n";
+            break;
+        }
+
+        // check if we can link paths
+        if(heads.find(child) != heads.end()){
             max_depth = paths_nodes.at(child).size() - 1;
 
             // accumulate minimum
@@ -107,19 +202,7 @@ void SPSS::jump_visited(node_idx_t node, bool forward, size_t max_depth, vector<
     // return minimum cost path
     nodes = paths_nodes.at(node_min);
     forwards = paths_forwards.at(node_min);
-    if(nodes.size() != forwards.size()) {
-        cerr << "WARNING: this should not happen!\n";
-        cout << "nodes:\n";
-        for(auto n : nodes)
-            cout << n << " ";
-        cout << "\n";
-        cout << "forwards:\n";
-        for(auto n : forwards)
-            cout << n << " ";
-        cout << "\n";
-        cout << "#nodes = " << nodes.size() << "; #forwards = " << forwards.size() << "\n";
-        cout << "max size should be " << max_depth << "\n";
-    }
+    return node_min;
 }
 
 void SPSS::extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards) {
@@ -141,7 +224,7 @@ void SPSS::extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards) 
         dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, visited);
 
         if (to_nodes.empty()) {
-            if(depth <= 0) break;
+            if(phases || (depth <= 0)) break;
 
             if(debug) cout << "No more unvisited; jumping...\n";
             vector<node_idx_t> jump_nodes; vector<bool> jump_forwards;
@@ -156,51 +239,6 @@ void SPSS::extends(vector<node_idx_t> &path_nodes, vector<bool> &path_forwards) 
             forward = jump_forwards.back();
             visited.at(node) = true;
             continue;
-            /*
-            // check visited nodes
-            vector<bool> dummy;
-            dbg->get_consistent_nodes_from(node, forward, to_nodes, to_forwards, dummy);
-            if (to_nodes.empty()) break; // dead end
-
-            // --- is there a node with non-visited neighbours? ---
-            vector<node_idx_t> to_nodes_e;
-            vector<bool> to_forwards_e;
-            bool found = false;  bool dummy_f = false;
-            int best = INT32_MAX; int conn = 0;
-            node_idx_t best_node = to_nodes[0]; bool best_forward = to_forwards[0];
-            vector<node_idx_t> best_to_nodes_e; vector<bool> best_to_forwards_e;
-            for(int i = 0; i < to_nodes.size(); i++){
-                node = to_nodes[i];
-                forward = to_forwards[i];
-
-                dbg->get_consistent_nodes_from(node, forward, to_nodes_e, to_forwards_e, visited);
-                if(!to_nodes_e.empty()){ // node found!
-                    found = true;
-                    sorter->next_successor(node, forward, to_nodes_e, to_forwards_e, dummy_f, conn);
-                    if(conn < best){
-                        best = conn;
-                        best_node = node;
-                        best_forward = forward;
-                        best_to_nodes_e = to_nodes_e;
-                        best_to_forwards_e = to_forwards_e;
-                        if(best == 1) break;
-                    }
-                }
-            }
-            if(!found)
-                break; // --- no unvisited node ---
-            else{
-                // current node and neighbours
-                node = best_node;
-                forward = best_forward;
-                to_nodes = best_to_nodes_e;
-                to_forwards = best_to_forwards_e;
-                // append to the path
-                path_nodes.push_back(node);
-                path_forwards.push_back(forward);
-                // --- yes ---
-            }
-             */
         }
         successor = sorter->next_successor(node, forward, to_nodes, to_forwards, to_forward);
 
@@ -249,6 +287,15 @@ void SPSS::compute_path_cover(bool two_way) {
         path_cover_nodes.push_back(path_nodes);
         path_cover_forwards.push_back(path_forwards);
 
+        if(phases) {
+            // put starts & ends in hash map
+            heads[path_nodes.front()] = path_nodes.size() - 1;
+            tails[path_nodes.back()] = path_nodes.size() - 1;
+        }
+    }
+    if(phases) {
+        // --- find link between path using jumps ---
+        // ...
     }
 }
 

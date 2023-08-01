@@ -150,6 +150,19 @@ DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size, bool debug){
         sum_abundances += node.average_abundance * (double) node.abundances.size();
 
         if(node.arcs.empty()) n_iso++;
+
+        size_t n_arcs_in = 0;
+        size_t n_arcs_out = 0;
+        for(const auto &arc : node.arcs)
+            if(arc.forward)
+                n_arcs_out++;
+            else
+                n_arcs_in++;
+
+        if(n_arcs_out == 0)
+            n_sinks++;
+        if(n_arcs_in == 0)
+            n_sources++;
     }
     avg_unitig_len = (double) sum_unitig_length / (double) nodes.size();
     avg_abundances = sum_abundances / (double) n_kmers;
@@ -163,6 +176,8 @@ void DBG::print_stat() {
     cout << "   number of kmers:            " << n_kmers << "\n";
     cout << "   number of nodes:            " << nodes.size() << "\n";
     cout << "   number of isolated nodes:   " << n_iso << " (" << double (n_iso) / double (nodes.size()) * 100 << "%)\n";
+    cout << "   number of sources:          " << n_sources << " (" << double (n_sources) / double (nodes.size()) * 100 << "%)\n";
+    cout << "   number of sinks:            " << n_sinks << " (" << double (n_sinks) / double (nodes.size()) * 100 << "%)\n";
     cout << "   number of arcs:             " << n_arcs << "\n";
     cout << "   graph density:              " << double (n_arcs) / double (8 * nodes.size()) * 100 << "%\n";
     cout << "   average unitig length:      " << avg_unitig_len << "\n";

@@ -35,6 +35,8 @@ class DBG{
     uint32_t kmer_size = 0;
     vector<node_t> nodes;
     size_t n_iso = 0;
+    size_t n_sources = 0;
+    size_t n_sinks = 0;
     size_t n_arcs = 0;
     size_t n_kmers = 0;
     double avg_unitig_len = 0;

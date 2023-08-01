@@ -25,6 +25,8 @@ struct params_t{
     encoding_t encoding = encoding_t::PLAIN;
     seeding_method_t seeding_method = seeding_method_t::FIRST;
     extending_method_t extending_method = extending_method_t::FIRST;
+    bool phases = false;
+    bool profile = false;
 };
 
 
@@ -44,6 +46,10 @@ void print_help(const params_t &params){
 
     cout << "   -D  depth for exploring visited nodes [" << params.visited_depth << "]\n\n";
 
+    cout << "   -p  connect visited nodes in a second phase [" << (params.phases ? "true":"false") << "]\n\n";
+
+    cout << "   -P  only profile dBG [" << (params.profile ? "true":"false") << "]\n\n";
+
     cout << "   -v  print version and author\n\n";
 
     cout << "   -h  print this help\n\n" << endl;
@@ -61,6 +67,8 @@ void print_help(const params_t &params){
     cout << "       +l              choose the seed with bigger length\n";
     cout << "       -c              choose the seed with less arcs\n";
     cout << "       +c              choose the seed with more arcs\n";
+    cout << "       -u              choose the seed less unbalanced\n";
+    cout << "       +u              choose the seed more unbalanced\n";
     cout << "\n";
 
     cout << "   -x  extending method [" << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "]\n";
@@ -91,11 +99,13 @@ void print_params(const params_t &params){
     cout << "   input file:             " << params.input_file_name << "\n";
     cout << "   kmer size:              " << params.kmer_size << "\n";
     cout << "   visited nodes depth:    " << params.visited_depth << "\n";
+    cout << "   phases:                 " << (params.phases?"true":"false") << "\n";
     cout << "   fasta file name:        " << params.fasta_file_name << "\n";
     cout << "   counts file name:       " << params.counts_file_name << "\n";
     cout << "   seeding method:         " << inv_map<seeding_method_t>(seeding_method_names, params.seeding_method) << "\n";
     cout << "   extending method:       " << inv_map<extending_method_t>(extending_method_names, params.extending_method) << "\n";
     cout << "   encoding:               " << inv_map<encoding_t>(encoding_names, params.encoding) << "\n";
+    cout << "   profile:                " << (params.profile?"true":"false") << "\n";
     cout << "   debug:                  " << (params.debug?"true":"false") << "\n";
     cout << endl;
 }
@@ -105,7 +115,7 @@ void parse_cli(int argc, char **argv, params_t &params){
     bool new_counts_name = false;
     bool new_fasta_name = false;
     int c;
-    while((c = getopt(argc, argv, "i:k:vo:D:dhe:s:x:c:")) != -1){
+    while((c = getopt(argc, argv, "i:k:vo:D:dhe:s:x:c:pP")) != -1){
         switch(c){
             case 'i':
                 params.input_file_name = string(optarg);
@@ -136,6 +146,12 @@ void parse_cli(int argc, char **argv, params_t &params){
                     cerr << "parse_cli(): Need a positive depth!" << endl;
                     exit(EXIT_FAILURE);
                 }
+                break;
+            case 'p':
+                params.phases = true;
+                break;
+            case 'P':
+                params.profile = true;
                 break;
             case 'v':
                 cout << "Version: " << VERSION << "\n";
@@ -223,11 +239,13 @@ int main(int argc, char **argv) {
         }
     }
 
+    if(params.profile)
+        exit(0);
 
     // choose SPSS sorter
     Sorter sorter(params.seeding_method, params.extending_method, params.debug);
     // make an SPSS
-    SPSS spss(&dbg, &sorter, params.visited_depth , params.debug);
+    SPSS spss(&dbg, &sorter, params.visited_depth , params.phases, params.debug);
 
     cout << "Computing a path cover..." << endl;
     start_time = steady_clock::now();

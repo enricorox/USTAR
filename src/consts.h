@@ -22,7 +22,9 @@ enum class seeding_method_t{
     BIGGER_LENGTH,
     SMALLER_LENGTH,
     MORE_CONNECTED,
-    LESS_CONNECTED
+    LESS_CONNECTED,
+    LESS_UNBALANCED,
+    MORE_UNBALANCED
 };
 
 const map<string, seeding_method_t> seeding_method_names = {
@@ -35,7 +37,9 @@ const map<string, seeding_method_t> seeding_method_names = {
         {"-l", seeding_method_t::SMALLER_LENGTH},
         {"+l", seeding_method_t::BIGGER_LENGTH},
         {"-c", seeding_method_t::LESS_CONNECTED},
-        {"+c", seeding_method_t::MORE_CONNECTED}
+        {"+c", seeding_method_t::MORE_CONNECTED},
+        {"-u", seeding_method_t::LESS_UNBALANCED},
+        {"+u", seeding_method_t::MORE_UNBALANCED}
 };
 
 enum class extending_method_t{
