@@ -52,7 +52,7 @@ void SPSS::jump_visited(node_idx_t node, bool forward, size_t max_depth, vector<
     // --- is there a node with non-visited neighbours? ---
     // --- find the one with minimum connectivity ---
     vector<bool> dummy_visited;
-    vector<node_idx_t> child_to_nodes; vector<bool> child_to_forwards;
+    vector<node_idx_t> curr_to_nodes; vector<bool> curr_to_forwards;
 
     // visited node in BFS
     set<node_idx_t> visited_bfs;
@@ -78,51 +78,56 @@ void SPSS::jump_visited(node_idx_t node, bool forward, size_t max_depth, vector<
     node_idx_t node_min = node;
     while(!q_nodes.empty()){
         // pop node & orientation
-        node_idx_t child = q_nodes.front();
+        node_idx_t curr = q_nodes.front();
         q_nodes.pop_front();
-        bool child_forward = q_forwards.front();
+        bool curr_forward = q_forwards.front();
         q_forwards.pop_front();
 
-        // push its children to q and save path
-        dbg->get_consistent_nodes_from(child, child_forward, child_to_nodes, child_to_forwards, dummy_visited);
-        for(size_t i = 0; i < child_to_nodes.size(); i++){
-            // find loops
-            //if(paths_nodes.find(child_to_nodes[i]) != paths_nodes.end()) continue;
-            if(visited_bfs.find(child_to_nodes[i]) != visited_bfs.end()) continue;
-            visited_bfs.insert(child_to_nodes[i]);
+        // contig length check
+        if(paths_nodes.at(curr).size() > 2) {
+            auto doubled = vector<node_idx_t>(paths_nodes.at(curr).begin() + 1,
+                                              paths_nodes.at(curr).end() - 1);
+            if (compute_contig_length(doubled) > 2 * dbg->get_kmer_size() - 2) continue;
+        }
 
-            q_nodes.push_back(child_to_nodes[i]);
-            q_forwards.push_back(child_to_forwards[i]);
+        // push its children to q and save path
+        dbg->get_consistent_nodes_from(curr, curr_forward, curr_to_nodes, curr_to_forwards, dummy_visited);
+        for(size_t i = 0; i < curr_to_nodes.size(); i++){
+            // find loops
+            //if(paths_nodes.find(curr_to_nodes[i]) != paths_nodes.end()) continue;
+            if(visited_bfs.find(curr_to_nodes[i]) != visited_bfs.end()) continue;
+            visited_bfs.insert(curr_to_nodes[i]);
+
+            q_nodes.push_back(curr_to_nodes[i]);
+            q_forwards.push_back(curr_to_forwards[i]);
 
             // save path nodes
-            vector<node_idx_t> new_path_nodes = vector<node_idx_t>(paths_nodes.at(child));
-            new_path_nodes.push_back(child_to_nodes[i]);
-            paths_nodes[child_to_nodes[i]] =  new_path_nodes;
+            vector<node_idx_t> new_path_nodes = vector<node_idx_t>(paths_nodes.at(curr));
+            new_path_nodes.push_back(curr_to_nodes[i]);
+            paths_nodes[curr_to_nodes[i]] =  new_path_nodes;
             // save path forwards
-            vector<bool> new_path_forwards = vector<bool>(paths_forwards.at(child));
-            new_path_forwards.push_back(child_to_forwards[i]);
-            paths_forwards[child_to_nodes[i]] = new_path_forwards;
+            vector<bool> new_path_forwards = vector<bool>(paths_forwards.at(curr));
+            new_path_forwards.push_back(curr_to_forwards[i]);
+            paths_forwards[curr_to_nodes[i]] = new_path_forwards;
         }
 
         // check depth
-        if(debug) cout << "size(" << child << ") = " << paths_nodes.at(child).size() << "\n";
-        if(paths_nodes.at(child).size() - 1 > max_depth) {
+        if(debug) cout << "size(" << curr << ") = " << paths_nodes.at(curr).size() << "\n";
+        if(paths_nodes.at(curr).size() > max_depth + 2) {
             if(debug) cout << "too deep: break\n";
             break;
         }
 
         // check unvisited
-        if(!visited.at(child)) {
-            auto doubled = vector<node_idx_t>(paths_nodes.at(child).begin() + 1, paths_nodes.at(child).end() - 1); // TODO fix this!
-            if(compute_contig_length(doubled) > 2 * dbg->get_kmer_size() - 2) continue;
-            max_depth = paths_nodes.at(child).size() - 1;
+        if(!visited.at(curr)) {
+            max_depth = paths_nodes.at(curr).size() - 2;
 
             // accumulate minimum
-            if (dbg->get_node(child).arcs.size() < z_min) {
-            //if (dbg->get_node(child).length < z_min) {
-                z_min = dbg->get_node(child).arcs.size();
-                //z_min = dbg->get_node(child).length;
-                node_min = child;
+            if (dbg->get_node(curr).arcs.size() < z_min) {
+            //if (dbg->get_node(curr).length < z_min) {
+                z_min = dbg->get_node(curr).arcs.size();
+                //z_min = dbg->get_node(curr).length;
+                node_min = curr;
             }
         }
     }
