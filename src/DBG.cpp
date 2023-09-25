@@ -49,7 +49,7 @@ void DBG::parse_bcalm_file() {
 
         // check if line fits in dyn_line
         if(line.size() > MAX_LINE_LEN){
-            cerr << "parse_bcalm_file(): Lines must be smaller than " << MAX_LINE_LEN << " characters!" << endl;
+            cerr << "parse_bcalm_file(): Lines must be smaller than " << MAX_LINE_LEN << " characters! Found " << line.length() << endl;
             exit(EXIT_FAILURE);
         }
 

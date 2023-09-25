@@ -8,7 +8,8 @@
 #include <string>
 #include <vector>
 
-#define MAX_LINE_LEN 100000
+// array size 1MB
+#define MAX_LINE_LEN 1000000
 
 using namespace std;
 
