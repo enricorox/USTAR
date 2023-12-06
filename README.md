@@ -41,3 +41,21 @@ If you want to check that __kmers and counts__ are correct,
 * `./validate <kmer-size> <your-multi-fasta> <ustar-kmers-counts>` 
 
 Note that you'll need to install [Jellyfish-2](https://github.com/zippav/Jellyfish-2) in order to use `validate`.
+
+## References
+
+Please cite [our paper](https://link.springer.com/chapter/10.1007/978-981-99-7074-2_16) in your research:
+```
+@InProceedings{10.1007/978-981-99-7074-2_16,
+author="Rossignolo, Enrico and Comin, Matteo",
+editor="Guo, Xuan and Mangul, Serghei and Patterson, Murray and Zelikovsky, Alexander",
+title="USTAR: Improved Compression of k-mer Sets with Counters Using de Bruijn Graphs",
+booktitle="Bioinformatics Research and Applications",
+year="2023",
+publisher="Springer Nature Singapore",
+address="Singapore",
+pages="202--213",
+abstract="A fundamental operation in computational genomics is to reduce the input sequences to their constituent k-mers. Finding a space-efficient way to represent a set of k-mers is important for improving the scalability of bioinformatics analyses. One popular approach is to convert the set of k-mers into a de Bruijn graph and then find a compact representation of the graph through the smallest path cover.",
+isbn="978-981-99-7074-2"
+}
+```
